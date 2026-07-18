@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Supplier extends Model
 {
+    /** @use HasFactory<SupplierFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -54,17 +57,26 @@ class Supplier extends Model
         'application_approved_at',
     ];
 
-    public function user()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function applicationReviewedBy()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function applicationReviewedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'application_reviewed_by');
     }
 
-    public function applicationApprovedBy()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function applicationApprovedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'application_approved_by');
     }

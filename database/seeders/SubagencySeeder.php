@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
 use App\Models\Agency;
+use Illuminate\Database\Seeder;
 
 class SubagencySeeder extends Seeder
 {
@@ -14,12 +12,12 @@ class SubagencySeeder extends Seeder
      */
     public function run(): void
     {
-        foreach(Agency::all() as $agency) {
+        foreach (Agency::all() as $agency) {
             $subagencyCount = rand(1, 5); // Random number of subagencies for each agency
             for ($i = 0; $i < $subagencyCount; $i++) {
                 $agency->subagencies()->create([
-                    'code' => $this->faker->unique()->bothify('A##'),
-                    'name' => $this->faker->company(),
+                    'code' => fake()->unique()->bothify('A##'),
+                    'name' => fake()->company(),
                     'is_active' => true,
                 ]);
             }

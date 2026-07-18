@@ -13,4 +13,5 @@ test('boilerplate preview routes return successful response', function (string $
     '/profile',
     '/404',
     '/403',
+    '/agency',
 ]);

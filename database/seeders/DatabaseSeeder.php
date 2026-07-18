@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        CreateSuperadmin::execute();
+        app(CreateSuperadmin::class)->execute();
 
         $this->call([
             VotTypeSeeder::class,
