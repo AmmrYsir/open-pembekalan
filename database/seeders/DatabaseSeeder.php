@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             VotTypeSeeder::class,
             AgencySeeder::class,
+            SubagencySeeder::class,
         ]);
     }
 }
