@@ -32,24 +32,14 @@
     </div>
 
     <!-- Navigation Header -->
-    <header class="sticky top-0 z-40 w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-6 lg:px-12 py-4 lg:py-5 flex items-center justify-between">
+    <header class="sticky top-0 z-40 w-full border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-6 lg:px-6 py-42 lg:py-3 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
             <span class="w-8 h-8 rounded-xl bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">O</span>
             <span class="font-bold text-zinc-900 dark:text-zinc-100 tracking-tight text-lg">openPembekalan</span>
         </div>
-        
-        <!-- Navigation Links -->
-        <nav class="hidden md:flex items-center gap-6" aria-label="Main Navigation">
-            <a href="/agency" class="text-sm font-medium text-zinc-650 dark:text-zinc-350 hover:text-zinc-900 dark:hover:text-white transition-colors">Agencies</a>
-            <a href="/dashboard" class="text-sm font-medium text-zinc-650 dark:text-zinc-350 hover:text-zinc-900 dark:hover:text-white transition-colors">Dashboard</a>
-            <a href="/profile" class="text-sm font-medium text-zinc-650 dark:text-zinc-350 hover:text-zinc-900 dark:hover:text-white transition-colors">My Profile</a>
-        </nav>
 
         <div class="flex items-center gap-4">
             <x-ui.theme-toggle />
-            
-            <a href="/login" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors hidden sm:block">Sign In</a>
-            <a href="/register" class="inline-flex items-center justify-center px-4 py-2 text-xs font-bold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 rounded-xl transition-all duration-200 shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/50">Register</a>
         </div>
     </header>
 
@@ -138,12 +128,6 @@
                                 </div>
                                 <span class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/10">Auditing</span>
                             </div>
-                        </div>
-
-                        <!-- Mini footer inside mockup -->
-                        <div class="flex justify-between items-center text-[9px] text-zinc-650 border-t border-zinc-900/80 pt-3 mt-4">
-                            <span>Logged in as Ammar Yasir (Staff)</span>
-                            <span>openPembekalan v1.0</span>
                         </div>
                     </div>
                 </div>
@@ -242,14 +226,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+    <footer class="w-full border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 px-6 py-8 flex flex-col sm:flex-row items-center justify-end gap-4 text-xs text-zinc-500 dark:text-zinc-400">
         <div>
             &copy; {{ date('Y') }} openPembekalan Portal. All rights reserved.
-        </div>
-        <div class="flex items-center gap-6" aria-label="Footer Links">
-            <a href="/login" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Sign In</a>
-            <a href="/register" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Onboard Supplier</a>
-            <a href="/agency" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Agencies Directory</a>
         </div>
     </footer>
 
