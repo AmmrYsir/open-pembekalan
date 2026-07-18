@@ -2,15 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
 use App\Models\VotType;
+use Illuminate\Database\Seeder;
 
 class VotTypeSeeder extends Seeder
 {
     public function run(): void
     {
-		VotType::factory()->count(5)->create();
+        VotType::factory()->count(5)->create();
     }
 }

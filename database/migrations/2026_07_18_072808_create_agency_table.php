@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('agency', function (Blueprint $table) {
             $table->id();
-			$table->string('code')->unique();
-			$table->string('name');
-			$table->boolean('is_active')->default(true);
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

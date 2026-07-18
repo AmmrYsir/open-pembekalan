@@ -42,4 +42,18 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    public function experimentalUser(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_experimental_user' => true,
+        ]);
+    }
+
+    public function changePassword(string $password): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'password' => Hash::make($password),
+        ]);
+    }
 }

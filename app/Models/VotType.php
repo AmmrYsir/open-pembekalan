@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class VotType extends Model
 {
-	protected $fillable = [
-		'code',
-		'name',
-	];
+    protected $fillable = [
+        'code',
+        'name',
+    ];
 }

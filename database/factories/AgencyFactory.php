@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Agency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AgencyFactory extends Factory
@@ -10,16 +9,16 @@ class AgencyFactory extends Factory
     public function definition(): array
     {
         return [
-			'code' => $this->faker->unique()->bothify('A##'),
-			'name' => $this->faker->company(),
-			'is_active' => $this->faker->boolean(),
+            'code' => $this->faker->unique()->bothify('A##'),
+            'name' => $this->faker->company(),
+            'is_active' => $this->faker->boolean(),
         ];
     }
 
-	public function active(): static
-	{
-		return $this->state(fn (array $attributes) => [
-			'is_active' => true,
-		]);
-	}
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => true,
+        ]);
+    }
 }
