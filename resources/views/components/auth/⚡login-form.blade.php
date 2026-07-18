@@ -1,7 +1,7 @@
 <?php
 
 use Livewire\Component;
-
+use Livewire\Attributes\Validate;
 use App\Services\AuthService;
 
 new class extends Component
@@ -14,7 +14,9 @@ new class extends Component
 
     public function login()
     {
-        (new AuthService())->login($this->email, $this->password);
+        $this->validate();
+
+        app(AuthService::class)->login($this->email, $this->password);
     }
 };
 ?>
