@@ -3,14 +3,8 @@
         "antigravity"
     ],
     "cloud": false,
+    "guidelines": true,
     "packages": [
         "livewire/blaze"
-    ],
-    "skills": [
-        "laravel-best-practices",
-        "livewire-development",
-        "pest-testing",
-        "tailwindcss-development",
-        "blaze-optimize"
     ]
 }
