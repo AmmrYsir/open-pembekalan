@@ -2,8 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'landing-page')->name('home');
-Route::view('/login', 'auth.login')->name('login');
+Route::middleware('guest')->group(function () {
+    Route::view('/', 'landing-page')->name('home');
+    Route::view('/login', 'auth.login')->name('login');
+});
+
 Route::view('/register', 'auth.register')->name('register');
 Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
 Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
