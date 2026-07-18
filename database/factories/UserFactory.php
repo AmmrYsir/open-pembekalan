@@ -56,4 +56,18 @@ class UserFactory extends Factory
             'password' => Hash::make($password),
         ]);
     }
+
+    public function changeName(string $name): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => $name,
+        ]);
+    }
+
+    public function changeEmail(string $email): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email' => $email,
+        ]);
+    }
 }
