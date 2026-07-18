@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Map layout components to resources/views/layouts folder
+        Blade::component('layouts.app', 'layouts.app');
+        Blade::component('layouts.guest', 'layouts.guest');
 
         if (class_exists(Blaze::class)) {
             Blaze::optimize()->in(resource_path('views/components'));
