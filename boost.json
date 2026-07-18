@@ -1,0 +1,14 @@
+{
+    "agents": [
+        "claude_code",
+        "codex",
+        "opencode",
+        "antigravity",
+        "copilot"
+    ],
+    "cloud": false,
+    "guidelines": true,
+    "packages": [
+        "livewire/blaze"
+    ]
+}
