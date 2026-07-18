@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SsmType;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -16,7 +17,7 @@ class SupplierFactory extends Factory
         return [
             'user_id' => User::factory(),
             'company_name' => $this->faker->company,
-            'ssm_type' => $this->faker->randomElement(['Type A', 'Type B', 'Type C']),
+            'ssm_type' => $this->faker->randomElement(SsmType::cases()),
             'ssm_number' => $this->faker->unique()->numerify('SSM-#####'),
             'old_registration_number' => $this->faker->optional()->numerify('OLD-#####'),
             'mobile_no' => $this->faker->phoneNumber,

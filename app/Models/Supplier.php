@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\SsmType;
 use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Enums\SsmType;
 
 class Supplier extends Model
 {
