@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Enums;
+
+enum SsmType: string
+{
+    case ROB_PERSEORANGAN = 'ROB: PERSEORANGAN';
+    case ROB_PERKONGSIAN = 'ROB: PERKONGSIAN';
+    case ROC_BERHAD = 'ROC: BERHAD';
+    case ROC_SENDIRIAN_BERHAD = 'ROC: SENDIRIAN BERHAD';
+    case ROS_PERTUBUHAN = 'ROS: PERTUBUHAN';
+    case ROS_PERSATUAN = 'ROS: PERSATUAN';
+    case ROS_KOPERASI = 'ROS: KOPERASI';
+}

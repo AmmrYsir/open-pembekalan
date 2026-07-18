@@ -6,6 +6,7 @@ use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\SsmType;
 
 class Supplier extends Model
 {
@@ -56,6 +57,27 @@ class Supplier extends Model
         'application_approved_by',
         'application_approved_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'ssm_type' => SsmType::class,
+            'established_date' => 'date',
+            'ssm_start_date' => 'date',
+            'ssm_expiry_date' => 'date',
+            'kpb_active_date' => 'date',
+            'kpb_expiry_date' => 'date',
+            'cidb_active_date' => 'date',
+            'cidb_bumiputera_active_date' => 'date',
+            'cidb_expiry_date' => 'date',
+            'cidb_bumiputera_expiry_date' => 'date',
+            'mof_active_date' => 'date',
+            'mof_bumiputera_active_date' => 'date',
+            'mof_expiry_date' => 'date',
+            'mof_bumiputera_expiry_date' => 'date',
+            'is_submitted' => 'boolean',
+        ];
+    }
 
     /**
      * @return BelongsTo<User, $this>
