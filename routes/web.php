@@ -20,3 +20,4 @@ Route::view('/profile', 'profile')->name('profile');
 Route::view('/403', 'errors.403')->name('403');
 Route::view('/404', 'errors.404')->name('404');
 Route::view('/agency', 'agency')->name('agency');
+Route::view('/portal', 'portal')->name('portal');

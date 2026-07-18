@@ -14,7 +14,7 @@
     @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200 antialiased font-sans flex flex-col justify-between"
+<body class="h-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-200 antialiased font-sans flex flex-col justify-between overflow-x-hidden"
       x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
       }"
@@ -32,14 +32,14 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col justify-center items-center p-6 relative overflow-hidden">
+    <main class="flex-1 flex flex-col p-6 relative overflow-y-auto overflow-x-hidden">
         <!-- Ambient Background Gradients -->
         <div class="absolute inset-0 -z-10 pointer-events-none opacity-40 dark:opacity-20 transition-opacity duration-300">
             <div class="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full bg-emerald-300/30 dark:bg-emerald-800/30 blur-3xl"></div>
             <div class="absolute bottom-[-20%] right-[-20%] w-[80%] h-[80%] rounded-full bg-indigo-300/20 dark:bg-indigo-800/20 blur-3xl"></div>
         </div>
 
-        <div class="w-full max-w-md">
+        <div class="{{ $containerClass ?? 'w-full max-w-md mx-auto my-auto' }}">
             {{ $slot }}
         </div>
     </main>
