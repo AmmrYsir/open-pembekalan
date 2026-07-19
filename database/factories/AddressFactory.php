@@ -29,7 +29,7 @@ class AddressFactory extends Factory
         ];
     }
 
-    public function assignTo($addressable)
+    public function assignTo($addressable): self
     {
         return $this->state(function (array $attributes) use ($addressable) {
             return [
@@ -39,7 +39,7 @@ class AddressFactory extends Factory
         });
     }
 
-    public function state(State $state)
+    public function state(State $state): self
     {
         return $this->state(function (array $attributes) use ($state) {
             return [

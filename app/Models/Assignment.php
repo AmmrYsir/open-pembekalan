@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Database\Factories\AssignmentFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Collection;
+use App\Traits\HasUuid;
 
 class Assignment extends Model
 {
-    /** @use HasFactory<AssignmentFactory> */
-    use HasFactory;
+	use HasUuid;
 
     protected $fillable = [
         'uuid',
@@ -26,17 +27,17 @@ class Assignment extends Model
         'user_ids' => 'array',
     ];
 
-    public function assignable()
+    public function assignable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function acquisition()
+    public function acquisition(): BelongsTo
     {
         return $this->belongsTo(Acquisition::class);
     }
 
-    public function getUserModelsAttribute()
+    public function getUserModelsAttribute(): Collection
     {
         return User::whereIn('id', $this->user_ids)->get();
     }

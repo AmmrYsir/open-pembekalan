@@ -6,6 +6,8 @@ use App\Traits\HasUuid;
 use Database\Factories\AgencyOfficerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class AgencyOfficer extends Model
 {
@@ -28,22 +30,22 @@ class AgencyOfficer extends Model
         'updated_by',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function agency()
+    public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
     }
 
-    public function subagency()
+    public function subagency(): BelongsTo
     {
         return $this->belongsTo(Subagency::class);
     }
 
-    public function address()
+    public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable');
     }

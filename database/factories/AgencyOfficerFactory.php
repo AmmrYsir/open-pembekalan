@@ -35,7 +35,7 @@ class AgencyOfficerFactory extends Factory
         ];
     }
 
-    public function randomizeExistingAgency()
+    public function randomizeExistingAgency(): self
     {
         return $this->state(function (array $attributes) {
             $agency = Agency::inRandomOrder()->first();
