@@ -1,0 +1,986 @@
+<?php
+
+use App\Enums\AcquisitionMethod;
+use App\Enums\AcquisitionType;
+use App\Models\Acquisition;
+use App\Models\Agency;
+use App\Models\Subagency;
+use App\Models\VotType;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+new class extends Component
+{
+    use WithPagination;
+
+    // ── Table / Search ──────────────────────────────────────────────────────
+    public string $search = '';
+    public string $filterType = '';
+    public string $filterMethod = '';
+    public string $filterStatus = '';
+    public string $sortBy = 'created_at';
+    public string $sortDir = 'desc';
+
+    // ── Slide-over state ────────────────────────────────────────────────────
+    public bool $showForm = false;
+    public bool $showDeleteConfirm = false;
+    public ?int $editingId = null;
+    public ?int $deletingId = null;
+
+    // ── Form fields ─────────────────────────────────────────────────────────
+    public string $type = '';
+    public string $method = '';
+    public string $project_number = '';
+    public string $project_name = '';
+    public string $status = '';
+    public string $provision_type = '';
+    public string $submission_type = '';
+    public ?int $vot_type_id = null;
+    public string $tender_number = '';
+    public string $siling_price = '';
+    public string $no_allocation_warrant = '';
+    public ?int $agency_id = null;
+    public ?int $subagency_id = null;
+    public bool $is_required_kbp = false;
+    public bool $mof_required = false;
+    public bool $cidb_required = false;
+    public string $committee_type = '';
+
+    // ── Validation ──────────────────────────────────────────────────────────
+    /**
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+            'type'                  => ['required', 'string'],
+            'method'                => ['required', 'string'],
+            'project_number'        => ['required', 'string', 'max:100'],
+            'project_name'          => ['required', 'string', 'max:255'],
+            'status'                => ['required', 'string'],
+            'provision_type'        => ['nullable', 'string', 'max:100'],
+            'submission_type'       => ['nullable', 'string', 'max:100'],
+            'vot_type_id'           => ['nullable', 'integer', 'exists:vot_types,id'],
+            'tender_number'         => ['nullable', 'string', 'max:100'],
+            'siling_price'          => ['nullable', 'numeric', 'min:0'],
+            'no_allocation_warrant' => ['nullable', 'string', 'max:100'],
+            'agency_id'             => ['nullable', 'integer', 'exists:agencies,id'],
+            'subagency_id'          => ['nullable', 'integer', 'exists:subagencies,id'],
+            'is_required_kbp'       => ['boolean'],
+            'mof_required'          => ['boolean'],
+            'cidb_required'         => ['boolean'],
+            'committee_type'        => ['nullable', 'string', 'max:100'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function validationAttributes(): array
+    {
+        return [
+            'type'                  => 'Acquisition Type',
+            'method'                => 'Acquisition Method',
+            'project_number'        => 'Project Number',
+            'project_name'          => 'Project Name',
+            'status'                => 'Status',
+            'provision_type'        => 'Provision Type',
+            'submission_type'       => 'Submission Type',
+            'vot_type_id'           => 'VOT Type',
+            'tender_number'         => 'Tender Number',
+            'siling_price'          => 'Ceiling Price',
+            'no_allocation_warrant' => 'Allocation Warrant No.',
+            'agency_id'             => 'Agency',
+            'subagency_id'          => 'Sub-Agency',
+            'committee_type'        => 'Committee Type',
+        ];
+    }
+
+    // ── Lifecycle ───────────────────────────────────────────────────────────
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterMethod(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    // ── Computed ────────────────────────────────────────────────────────────
+    #[Computed]
+    public function acquisitions(): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return Acquisition::query()
+            ->with(['agency', 'subagency', 'votType'])
+            ->when($this->search, fn ($q) => $q->where(function ($q) {
+                $q->where('project_name', 'like', "%{$this->search}%")
+                    ->orWhere('project_number', 'like', "%{$this->search}%")
+                    ->orWhere('tender_number', 'like', "%{$this->search}%");
+            }))
+            ->when($this->filterType, fn ($q) => $q->where('type', $this->filterType))
+            ->when($this->filterMethod, fn ($q) => $q->where('method', $this->filterMethod))
+            ->when($this->filterStatus, fn ($q) => $q->where('status', $this->filterStatus))
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate(10);
+    }
+
+    #[Computed]
+    public function agencies(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Agency::orderBy('name')->get(['id', 'name']);
+    }
+
+    #[Computed]
+    public function subagencies(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Subagency::when($this->agency_id, fn ($q) => $q->where('agency_id', $this->agency_id))
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    #[Computed]
+    public function votTypes(): \Illuminate\Database\Eloquent\Collection
+    {
+        return VotType::orderBy('name')->get(['id', 'name', 'code']);
+    }
+
+    #[Computed]
+    public function acquisitionTypes(): array
+    {
+        return AcquisitionType::cases();
+    }
+
+    #[Computed]
+    public function acquisitionMethods(): array
+    {
+        return AcquisitionMethod::cases();
+    }
+
+    #[Computed]
+    public function totalCount(): int
+    {
+        return Acquisition::count();
+    }
+
+    #[Computed]
+    public function draftCount(): int
+    {
+        return Acquisition::where('status', 'DRAF')->count();
+    }
+
+    #[Computed]
+    public function activeCount(): int
+    {
+        return Acquisition::whereIn('status', ['DIKEMUKAKAN', 'DILULUSKAN'])->count();
+    }
+
+    // ── Sorting ─────────────────────────────────────────────────────────────
+    public function sort(string $column): void
+    {
+        if ($this->sortBy === $column) {
+            $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy  = $column;
+            $this->sortDir = 'asc';
+        }
+
+        $this->resetPage();
+    }
+
+    // ── CRUD ────────────────────────────────────────────────────────────────
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->editingId = null;
+        $this->showForm  = true;
+    }
+
+    public function openEdit(int $id): void
+    {
+        $acquisition = Acquisition::findOrFail($id);
+
+        $this->editingId              = $id;
+        $this->type                   = $acquisition->type instanceof AcquisitionType ? $acquisition->type->value : (string) $acquisition->type;
+        $this->method                 = $acquisition->method instanceof AcquisitionMethod ? $acquisition->method->value : (string) $acquisition->method;
+        $this->project_number         = $acquisition->project_number ?? '';
+        $this->project_name           = $acquisition->project_name ?? '';
+        $this->status                 = $acquisition->status ?? '';
+        $this->provision_type         = $acquisition->provision_type ?? '';
+        $this->submission_type        = $acquisition->submission_type ?? '';
+        $this->vot_type_id            = $acquisition->vot_type_id;
+        $this->tender_number          = $acquisition->tender_number ?? '';
+        $this->siling_price           = $acquisition->siling_price !== null ? (string) $acquisition->siling_price : '';
+        $this->no_allocation_warrant  = $acquisition->no_allocation_warrant ?? '';
+        $this->agency_id              = $acquisition->agency_id;
+        $this->subagency_id           = $acquisition->subagency_id;
+        $this->is_required_kbp        = (bool) $acquisition->is_required_kbp;
+        $this->mof_required           = (bool) $acquisition->mof_required;
+        $this->cidb_required          = (bool) $acquisition->cidb_required;
+        $this->committee_type         = $acquisition->committee_type ?? '';
+
+        $this->showForm = true;
+    }
+
+    public function save(): void
+    {
+        $this->validate();
+
+        $data = [
+            'type'                  => $this->type,
+            'method'                => $this->method,
+            'project_number'        => $this->project_number,
+            'project_name'          => $this->project_name,
+            'status'                => $this->status,
+            'provision_type'        => $this->provision_type ?: null,
+            'submission_type'       => $this->submission_type ?: null,
+            'vot_type_id'           => $this->vot_type_id,
+            'tender_number'         => $this->tender_number ?: null,
+            'siling_price'          => $this->siling_price !== '' ? (float) $this->siling_price : null,
+            'no_allocation_warrant' => $this->no_allocation_warrant ?: null,
+            'agency_id'             => $this->agency_id,
+            'subagency_id'          => $this->subagency_id,
+            'is_required_kbp'       => $this->is_required_kbp,
+            'mof_required'          => $this->mof_required,
+            'cidb_required'         => $this->cidb_required,
+            'committee_type'        => $this->committee_type ?: null,
+        ];
+
+        if ($this->editingId) {
+            Acquisition::findOrFail($this->editingId)->update($data);
+            session()->flash('success', 'Acquisition updated successfully.');
+        } else {
+            Acquisition::create($data);
+            session()->flash('success', 'Acquisition created successfully.');
+        }
+
+        $this->showForm = false;
+        $this->resetForm();
+        $this->resetPage();
+    }
+
+    public function confirmDelete(int $id): void
+    {
+        $this->deletingId        = $id;
+        $this->showDeleteConfirm = true;
+    }
+
+    public function delete(): void
+    {
+        if ($this->deletingId) {
+            Acquisition::findOrFail($this->deletingId)->delete();
+            session()->flash('success', 'Acquisition deleted successfully.');
+        }
+
+        $this->showDeleteConfirm = false;
+        $this->deletingId        = null;
+        $this->resetPage();
+    }
+
+    public function closeForm(): void
+    {
+        $this->showForm = false;
+        $this->resetForm();
+        $this->resetValidation();
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->showDeleteConfirm = false;
+        $this->deletingId        = null;
+    }
+
+    private function resetForm(): void
+    {
+        $this->type                   = '';
+        $this->method                 = '';
+        $this->project_number         = '';
+        $this->project_name           = '';
+        $this->status                 = '';
+        $this->provision_type         = '';
+        $this->submission_type        = '';
+        $this->vot_type_id            = null;
+        $this->tender_number          = '';
+        $this->siling_price           = '';
+        $this->no_allocation_warrant  = '';
+        $this->agency_id              = null;
+        $this->subagency_id           = null;
+        $this->is_required_kbp        = false;
+        $this->mof_required           = false;
+        $this->cidb_required          = false;
+        $this->committee_type         = '';
+        $this->editingId              = null;
+    }
+};
+?>
+
+{{-- ── Root wrapper — enables Alpine darkMode & slide-over state ─────────── --}}
+<div class="space-y-6">
+
+    {{-- ── Flash messages ────────────────────────────────────────────────── --}}
+    @if(session('success'))
+        <div
+            x-data="{ show: true }"
+            x-init="setTimeout(() => show = false, 4000)"
+            x-show="show"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-2"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-2"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 text-sm font-medium shadow-xs"
+        >
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- ── Stat summary cards ──────────────────────────────────────────────── --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Acquisitions</span>
+                <span class="text-emerald-600 dark:text-emerald-400 p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->totalCount }}</h3>
+                <p class="text-xs text-zinc-500 mt-1">All time records</p>
+            </div>
+        </x-ui.card>
+
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Draft</span>
+                <span class="text-amber-600 dark:text-amber-400 p-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/30">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->draftCount }}</h3>
+                <p class="text-xs text-zinc-500 mt-1">Pending submission</p>
+            </div>
+        </x-ui.card>
+
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active</span>
+                <span class="text-blue-600 dark:text-blue-400 p-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/30">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->activeCount }}</h3>
+                <p class="text-xs text-zinc-500 mt-1">Submitted or approved</p>
+            </div>
+        </x-ui.card>
+    </div>
+
+    {{-- ── Main table card ─────────────────────────────────────────────────── --}}
+    <x-ui.card>
+        <x-slot:header>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full mb-5">
+                {{-- Search --}}
+                <div class="relative flex-1 max-w-xs">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input
+                        type="text"
+                        wire:model.live.debounce.400ms="search"
+                        placeholder="Search projects..."
+                        class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 py-2 pl-10 pr-3.5 text-sm transition-all focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:outline-none"
+                    >
+                </div>
+
+                {{-- Filters --}}
+                <div class="flex items-center gap-2 flex-wrap">
+                    <select wire:model.live="filterType" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
+                        <option value="">All Types</option>
+                        @foreach($this->acquisitionTypes as $t)
+                            <option value="{{ $t->value }}">{{ $t->label() }}</option>
+                        @endforeach
+                    </select>
+
+                    <select wire:model.live="filterMethod" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
+                        <option value="">All Methods</option>
+                        @foreach($this->acquisitionMethods as $m)
+                            <option value="{{ $m->value }}">{{ $m->value }}</option>
+                        @endforeach
+                    </select>
+
+                    <select wire:model.live="filterStatus" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
+                        <option value="">All Statuses</option>
+                        <option value="DRAF">Draf</option>
+                        <option value="DIKEMUKAKAN">Dikemukakan</option>
+                        <option value="DILULUSKAN">Diluluskan</option>
+                        <option value="DITOLAK">Ditolak</option>
+                        <option value="DIBATALKAN">Dibatalkan</option>
+                    </select>
+                </div>
+
+                {{-- Add Button --}}
+                <x-ui.button variant="primary" size="sm" wire:click="openCreate" class="ml-auto shrink-0">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    New Acquisition
+                </x-ui.button>
+            </div>
+        </x-slot:header>
+
+        {{-- Table --}}
+        <div class="overflow-x-auto rounded-2xl border border-zinc-100 dark:border-zinc-800/80 shadow-xs">
+            <table class="min-w-full divide-y divide-zinc-100 dark:divide-zinc-800/50">
+                <thead class="bg-zinc-50/70 dark:bg-zinc-800/40">
+                    <tr>
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            <button wire:click="sort('project_number')" class="flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
+                                Project
+                                <span class="text-zinc-300 dark:text-zinc-600">
+                                    @if($sortBy === 'project_number')
+                                        @if($sortDir === 'asc')
+                                            <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                        @else
+                                            <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                                        @endif
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+                                    @endif
+                                </span>
+                            </button>
+                        </th>
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Type / Method</th>
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            <button wire:click="sort('siling_price')" class="flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
+                                Ceiling Price
+                                <span>
+                                    @if($sortBy === 'siling_price')
+                                        @if($sortDir === 'asc')
+                                            <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                        @else
+                                            <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                                        @endif
+                                    @else
+                                        <svg class="w-3 h-3 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+                                    @endif
+                                </span>
+                            </button>
+                        </th>
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Agency</th>
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-5 py-3.5 text-right text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-100 dark:divide-zinc-800/50">
+                    @forelse($this->acquisitions as $acquisition)
+                        <tr wire:key="acq-{{ $acquisition->id }}" class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
+                            <td class="px-5 py-4">
+                                <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $acquisition->project_name }}</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-mono">{{ $acquisition->project_number }}</div>
+                                @if($acquisition->tender_number)
+                                    <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Tender: {{ $acquisition->tender_number }}</div>
+                                @endif
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="flex flex-col gap-1.5">
+                                    @if($acquisition->type)
+                                        <x-ui.badge variant="primary">
+                                            {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->label() : $acquisition->type }}
+                                        </x-ui.badge>
+                                    @endif
+                                    @if($acquisition->method)
+                                        <x-ui.badge variant="secondary">
+                                            {{ $acquisition->method instanceof \App\Enums\AcquisitionMethod ? $acquisition->method->value : $acquisition->method }}
+                                        </x-ui.badge>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap font-mono text-sm text-zinc-700 dark:text-zinc-300">
+                                @if($acquisition->siling_price !== null)
+                                    RM {{ number_format((float) $acquisition->siling_price, 2) }}
+                                @else
+                                    <span class="text-zinc-400 dark:text-zinc-600">—</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-4">
+                                @if($acquisition->agency)
+                                    <div class="text-sm text-zinc-700 dark:text-zinc-300">{{ $acquisition->agency->name }}</div>
+                                @endif
+                                @if($acquisition->subagency)
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $acquisition->subagency->name }}</div>
+                                @endif
+                                @if(!$acquisition->agency)
+                                    <span class="text-zinc-400 dark:text-zinc-600 text-sm">—</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                @php
+                                    $statusVariant = match($acquisition->status) {
+                                        'DILULUSKAN'   => 'success',
+                                        'DIKEMUKAKAN'  => 'info',
+                                        'DRAF'         => 'warning',
+                                        'DITOLAK'      => 'danger',
+                                        'DIBATALKAN'   => 'secondary',
+                                        default        => 'secondary',
+                                    };
+                                    $statusLabel = match($acquisition->status) {
+                                        'DILULUSKAN'   => 'Diluluskan',
+                                        'DIKEMUKAKAN'  => 'Dikemukakan',
+                                        'DRAF'         => 'Draf',
+                                        'DITOLAK'      => 'Ditolak',
+                                        'DIBATALKAN'   => 'Dibatalkan',
+                                        default        => $acquisition->status ?? '—',
+                                    };
+                                @endphp
+                                <x-ui.badge :variant="$statusVariant" pill>{{ $statusLabel }}</x-ui.badge>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button
+                                        wire:click="openEdit({{ $acquisition->id }})"
+                                        title="Edit"
+                                        class="p-1.5 rounded-lg text-zinc-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400 transition-all"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        wire:click="confirmDelete({{ $acquisition->id }})"
+                                        title="Delete"
+                                        class="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 transition-all"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-5 py-16 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                                        <svg class="w-7 h-7 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                    </span>
+                                    <div>
+                                        <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No acquisitions found</p>
+                                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Try adjusting your search or filters, or create a new acquisition.</p>
+                                    </div>
+                                    <x-ui.button variant="primary" size="sm" wire:click="openCreate">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        New Acquisition
+                                    </x-ui.button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Pagination --}}
+        @if($this->acquisitions->hasPages())
+            <div class="mt-5 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+                {{ $this->acquisitions->links() }}
+            </div>
+        @endif
+    </x-ui.card>
+
+    {{-- ══════════════════════════════════════════════════════════════════════
+         Slide-over Form Panel
+    ══════════════════════════════════════════════════════════════════════ --}}
+    <div
+        x-data
+        x-show="$wire.showForm"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 overflow-hidden"
+        style="display: none;"
+        aria-labelledby="slide-over-title"
+        role="dialog"
+        aria-modal="true"
+    >
+        {{-- Backdrop --}}
+        <div
+            class="absolute inset-0 bg-zinc-950/50 backdrop-blur-xs"
+            wire:click="closeForm"
+        ></div>
+
+        {{-- Panel --}}
+        <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+            <div
+                x-show="$wire.showForm"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+                class="pointer-events-auto w-screen max-w-2xl"
+            >
+                <div class="flex h-full flex-col bg-white dark:bg-zinc-900 shadow-2xl border-l border-zinc-200/80 dark:border-zinc-800/80">
+
+                    {{-- Panel Header --}}
+                    <div class="flex items-center justify-between px-6 py-5 border-b border-zinc-100 dark:border-zinc-800/50">
+                        <div>
+                            <h2 id="slide-over-title" class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                                {{ $editingId ? 'Edit Acquisition' : 'New Acquisition' }}
+                            </h2>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                {{ $editingId ? 'Update the acquisition details below.' : 'Fill in the details to create a new acquisition.' }}
+                            </p>
+                        </div>
+                        <button
+                            wire:click="closeForm"
+                            class="p-2 rounded-xl text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                        >
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Scrollable Form Body --}}
+                    <div class="flex-1 overflow-y-auto px-6 py-6">
+                        <form wire:submit="save" id="acquisition-form" class="space-y-7">
+
+                            {{-- Section: Project Info --}}
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                    Project Information
+                                    <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <x-ui.input
+                                        id="project_number"
+                                        label="Project Number"
+                                        placeholder="e.g. PRJ-2026-001"
+                                        wire:model="project_number"
+                                        :required="true"
+                                        :error="$errors->first('project_number')"
+                                    />
+                                    <x-ui.input
+                                        id="tender_number"
+                                        label="Tender Number"
+                                        placeholder="e.g. TND-2026-001"
+                                        wire:model="tender_number"
+                                        :error="$errors->first('tender_number')"
+                                    />
+                                    <div class="sm:col-span-2">
+                                        <x-ui.input
+                                            id="project_name"
+                                            label="Project Name"
+                                            placeholder="Full name of the acquisition project"
+                                            wire:model="project_name"
+                                            :required="true"
+                                            :error="$errors->first('project_name')"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Section: Classification --}}
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                    Classification
+                                    <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {{-- Type --}}
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="type" :required="true">Acquisition Type</x-ui.label>
+                                        <select id="type" wire:model="type"
+                                            class="block w-full rounded-xl border {{ $errors->has('type') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
+                                            <option value="">Select type...</option>
+                                            @foreach($this->acquisitionTypes as $t)
+                                                <option value="{{ $t->value }}">{{ $t->label() }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('type') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
+
+                                    {{-- Method --}}
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="method" :required="true">Acquisition Method</x-ui.label>
+                                        <select id="method" wire:model="method"
+                                            class="block w-full rounded-xl border {{ $errors->has('method') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
+                                            <option value="">Select method...</option>
+                                            @foreach($this->acquisitionMethods as $m)
+                                                <option value="{{ $m->value }}">{{ $m->value }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('method') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
+
+                                    {{-- Status --}}
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="status" :required="true">Status</x-ui.label>
+                                        <select id="status" wire:model="status"
+                                            class="block w-full rounded-xl border {{ $errors->has('status') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
+                                            <option value="">Select status...</option>
+                                            <option value="DRAF">Draf</option>
+                                            <option value="DIKEMUKAKAN">Dikemukakan</option>
+                                            <option value="DILULUSKAN">Diluluskan</option>
+                                            <option value="DITOLAK">Ditolak</option>
+                                            <option value="DIBATALKAN">Dibatalkan</option>
+                                        </select>
+                                        @error('status') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
+
+                                    {{-- VOT Type --}}
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="vot_type_id">VOT Type</x-ui.label>
+                                        <select id="vot_type_id" wire:model="vot_type_id"
+                                            class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
+                                            <option value="">None</option>
+                                            @foreach($this->votTypes as $vot)
+                                                <option value="{{ $vot->id }}">{{ $vot->code }} — {{ $vot->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Section: Financial --}}
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                    Financial
+                                    <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="siling_price">Ceiling Price (RM)</x-ui.label>
+                                        <div class="relative rounded-xl shadow-xs">
+                                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 text-sm font-medium">RM</div>
+                                            <input
+                                                id="siling_price"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                wire:model="siling_price"
+                                                placeholder="0.00"
+                                                class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 py-2.5 pl-10 pr-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500"
+                                            >
+                                        </div>
+                                        @error('siling_price') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
+
+                                    <x-ui.input
+                                        id="no_allocation_warrant"
+                                        label="Allocation Warrant No."
+                                        placeholder="e.g. WP-2026-0012"
+                                        wire:model="no_allocation_warrant"
+                                        :error="$errors->first('no_allocation_warrant')"
+                                    />
+                                </div>
+                            </div>
+
+                            {{-- Section: Agency --}}
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                    Agency
+                                    <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="agency_id">Agency</x-ui.label>
+                                        <select id="agency_id" wire:model.live="agency_id"
+                                            class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
+                                            <option value="">No agency</option>
+                                            @foreach($this->agencies as $agency)
+                                                <option value="{{ $agency->id }}">{{ $agency->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="subagency_id">Sub-Agency</x-ui.label>
+                                        <select id="subagency_id" wire:model="subagency_id"
+                                            class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            @if(!$agency_id) disabled @endif
+                                        >
+                                            <option value="">No sub-agency</option>
+                                            @foreach($this->subagencies as $sub)
+                                                <option value="{{ $sub->id }}">{{ $sub->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Section: Additional --}}
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                    Additional Details
+                                    <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <x-ui.input
+                                        id="provision_type"
+                                        label="Provision Type"
+                                        placeholder="e.g. Pusat"
+                                        wire:model="provision_type"
+                                        :error="$errors->first('provision_type')"
+                                    />
+                                    <x-ui.input
+                                        id="submission_type"
+                                        label="Submission Type"
+                                        placeholder="e.g. Baharu"
+                                        wire:model="submission_type"
+                                        :error="$errors->first('submission_type')"
+                                    />
+                                    <x-ui.input
+                                        id="committee_type"
+                                        label="Committee Type"
+                                        placeholder="e.g. JK Teknikal"
+                                        wire:model="committee_type"
+                                        :error="$errors->first('committee_type')"
+                                    />
+                                </div>
+
+                                {{-- Toggles --}}
+                                <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    @foreach([
+                                        ['is_required_kbp', 'KBP Required', 'Kontraktor Bumiputera'],
+                                        ['mof_required', 'MOF Required', 'Ministry of Finance'],
+                                        ['cidb_required', 'CIDB Required', 'Const. Industry Dev. Board'],
+                                    ] as [$field, $label, $desc])
+                                        <label class="flex items-start gap-3 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700/80 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors group">
+                                            <div class="relative mt-0.5 shrink-0">
+                                                <input
+                                                    type="checkbox"
+                                                    wire:model="{{ $field }}"
+                                                    class="peer sr-only"
+                                                    id="{{ $field }}"
+                                                >
+                                                <div class="w-9 h-5 rounded-full bg-zinc-200 dark:bg-zinc-700 peer-checked:bg-emerald-500 transition-colors"></div>
+                                                <div class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></div>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs font-semibold text-zinc-700 dark:text-zinc-200">{{ $label }}</div>
+                                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $desc }}</div>
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    {{-- Panel Footer --}}
+                    <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 flex items-center justify-end gap-3 bg-zinc-50/60 dark:bg-zinc-900">
+                        <x-ui.button variant="outline" size="md" wire:click="closeForm">
+                            Cancel
+                        </x-ui.button>
+                        <x-ui.button variant="primary" size="md" wire:click="save" wire:loading.attr="disabled" wire:target="save">
+                            <span wire:loading.remove wire:target="save">
+                                {{ $editingId ? 'Update Acquisition' : 'Create Acquisition' }}
+                            </span>
+                            <span wire:loading wire:target="save" class="flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-current" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Saving...
+                            </span>
+                        </x-ui.button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ══════════════════════════════════════════════════════════════════════
+         Delete Confirmation Modal
+    ══════════════════════════════════════════════════════════════════════ --}}
+    <div
+        x-data
+        x-show="$wire.showDeleteConfirm"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="display: none;"
+        role="dialog"
+        aria-modal="true"
+    >
+        {{-- Backdrop --}}
+        <div class="absolute inset-0 bg-zinc-950/60 backdrop-blur-xs" wire:click="cancelDelete"></div>
+
+        {{-- Dialog --}}
+        <div
+            x-show="$wire.showDeleteConfirm"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 w-full max-w-sm"
+        >
+            <div class="flex items-start gap-4">
+                <span class="shrink-0 w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </span>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Delete Acquisition</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">This action cannot be undone. The acquisition record will be permanently removed.</p>
+                </div>
+            </div>
+            <div class="mt-5 flex gap-3 justify-end">
+                <x-ui.button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-ui.button>
+                <x-ui.button variant="danger" size="sm" wire:click="delete" wire:loading.attr="disabled" wire:target="delete">
+                    <span wire:loading.remove wire:target="delete">Delete</span>
+                    <span wire:loading wire:target="delete">Deleting...</span>
+                </x-ui.button>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
     })->name('profile');
 });
 
+Route::view('/acquisition', 'acquisition')->name('acquisition');
 Route::view('/register', 'auth.register')->name('register');
 Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
 Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
