@@ -18,7 +18,7 @@ class StateFactory extends Factory
      */
     public function definition(): array
     {
-        $state = $this->faker->state();
+        $state = (string) $this->faker->format('state');
 
         return [
             'code' => GetAbbreviation::execute($state),
