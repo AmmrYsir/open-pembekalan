@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AgencySeeder::class,
             SubagencySeeder::class,
 			AgencyOfficerSeeder::class,
+			StateSeeder::class,
         ]);
     }
 }
