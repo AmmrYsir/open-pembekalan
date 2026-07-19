@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Facades\DB;
-
 use App\Models\Committee;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CommitteeSeeder extends Seeder
 {
@@ -39,7 +38,7 @@ class CommitteeSeeder extends Seeder
 
     public function run(): void
     {
-        DB::transaction(function () {   
+        DB::transaction(function () {
             foreach ($this->committees as $committee) {
                 Committee::create($committee);
             }
