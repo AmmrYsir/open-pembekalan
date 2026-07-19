@@ -25,7 +25,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['uuid', 'username', 'name', 'email', 'password'])]
+#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
