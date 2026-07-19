@@ -47,10 +47,7 @@ new class extends Component
     </x-ui.input>
 
     <div class="flex items-center justify-between">
-        <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-emerald-600 focus:ring-emerald-500 focus:ring-offset-0 focus:outline-none">
-            <span class="text-xs text-zinc-600 dark:text-zinc-400">Remember me</span>
-        </label>
+        <x-ui.checkbox id="remember_me" name="remember" label="Remember me" />
         <a href="/forgot-password" class="text-xs font-semibold text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300">Forgot password?</a>
     </div>
 
