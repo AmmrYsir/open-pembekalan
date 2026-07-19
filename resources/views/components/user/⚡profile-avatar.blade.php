@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -14,6 +15,39 @@ new class extends Component
 	 */
 	public $avatar = null;
 
+	#[Computed]
+	public function authUser(): ?User
+	{
+		/** @var User|null */
+		return auth()->user();
+	}
+
+	#[Computed]
+	public function hasAvatar(): bool
+	{
+		return (bool) $this->authUser?->avatar_url;
+	}
+
+	#[Computed]
+	public function avatarSrc(): string
+	{
+		return $this->hasAvatar
+			? Storage::url($this->authUser->avatar_url)
+			: '';
+	}
+
+	#[Computed]
+	public function initials(): string
+	{
+		return $this->authUser?->initials() ?? '';
+	}
+
+	#[Computed]
+	public function avatarColor(): string
+	{
+		return $this->authUser?->avatar_color ?? '#6b7280';
+	}
+
 	/**
 	 * Fires automatically once Livewire finishes uploading the temp file.
 	 * Validates, permanently stores, and updates the user record in one step.
@@ -24,8 +58,7 @@ new class extends Component
 			'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 		]);
 
-		/** @var User|null $user */
-		$user = auth()->user();
+		$user = $this->authUser;
 
 		if (! $user) {
 			return;
@@ -54,8 +87,7 @@ new class extends Component
 
 	public function removeAvatar(): void
 	{
-		/** @var User|null $user */
-		$user = auth()->user();
+		$user = $this->authUser;
 
 		if (! $user) {
 			return;
@@ -74,40 +106,31 @@ new class extends Component
 
 <div class="relative shrink-0 group">
 
-	@php
-		/** @var \App\Models\User|null $user */
-		$user = auth()->user();
-
-		if ($user?->avatar_url) {
-			$avatarSrc = Storage::url($user->avatar_url);
-		} elseif ($user) {
-			$initials  = htmlspecialchars($user->initials(), ENT_XML1);
-			$color     = htmlspecialchars($user->avatar_color, ENT_XML1);
-			$svg       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">'
-				.'<rect width="96" height="96" fill="'.$color.'"/>'
-				.'<text x="50%" y="50%" dy="0.35em" text-anchor="middle" dominant-baseline="central"'
-				.' fill="white" font-size="34" font-weight="700"'
-				.' font-family="ui-sans-serif,system-ui,sans-serif">'.$initials.'</text>'
-				.'</svg>';
-			$avatarSrc = 'data:image/svg+xml;base64,'.base64_encode($svg);
-		} else {
-			$avatarSrc = '';
-		}
-	@endphp
-
 	{{-- ── Avatar display ────────────────────────────────────────────────── --}}
-	<div class="relative">
-		<img
-			class="h-24 w-24 rounded-2xl object-cover ring-4 ring-emerald-500/10"
-			src="{{ $avatarSrc }}"
-			alt="Profile avatar"
-		>
+	<div class="relative h-24 w-24">
 
-		{{-- Spinner overlay — shown during temp upload AND during the save action --}}
+		@if($this->hasAvatar)
+			<img
+				class="h-24 w-24 rounded-2xl object-cover ring-4 ring-emerald-500/10"
+				src="{{ $this->avatarSrc }}"
+				alt="Profile avatar"
+			>
+		@else
+			<div
+				class="flex h-24 w-24 items-center justify-center rounded-2xl ring-4 ring-emerald-500/10"
+				style="background-color: {{ $this->avatarColor }};"
+			>
+				<span class="text-3xl font-bold leading-none text-white select-none">
+					{{ $this->initials }}
+				</span>
+			</div>
+		@endif
+
+		{{-- Spinner overlay — wire:loading.flex forces display:flex so centering works --}}
 		<div
-			wire:loading
+			wire:loading.flex
 			wire:target="avatar,removeAvatar"
-			class="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50 backdrop-blur-sm"
+			class="absolute inset-0 hidden items-center justify-center rounded-2xl bg-black/50 backdrop-blur-sm"
 		>
 			<svg class="h-6 w-6 animate-spin text-white" fill="none" viewBox="0 0 24 24">
 				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -116,7 +139,7 @@ new class extends Component
 		</div>
 
 		{{-- Remove button — appears on group-hover when avatar is set --}}
-		@if($user?->avatar_url)
+		@if($this->hasAvatar)
 			<button
 				wire:click="removeAvatar"
 				wire:confirm="Remove your profile picture?"
@@ -147,11 +170,13 @@ new class extends Component
 		</svg>
 
 		{{-- Hidden file input wired to the avatar property --}}
+		{{-- x-on:change resets the value so re-selecting a file always triggers the change event --}}
 		<input
 			type="file"
 			wire:model="avatar"
 			accept="image/jpeg,image/jpg,image/png,image/webp"
 			class="sr-only"
+			x-on:change="$nextTick(() => { $el.value = '' })"
 		>
 	</label>
 
