@@ -12,11 +12,11 @@ new class extends Component
     #[Validate('required|string|max:124')]
     public $password = '';
 
-    public function login()
+    public function login(AuthService $authService)
     {
         $this->validate();
 
-        app(AuthService::class)->login($this->email, $this->password);
+        return $authService->login($this->email, $this->password);
     }
 };
 ?>
