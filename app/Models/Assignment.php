@@ -27,11 +27,17 @@ class Assignment extends Model
         'user_ids' => 'array',
     ];
 
+	/**
+     * @return MorphTo<assignable, $this>
+     */
     public function assignable(): MorphTo
     {
         return $this->morphTo();
     }
 
+	/**
+     * @return BelongsTo<Acquisition, $this>
+     */
     public function acquisition(): BelongsTo
     {
         return $this->belongsTo(Acquisition::class);

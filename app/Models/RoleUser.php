@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RoleUser extends Pivot
 {
@@ -11,12 +12,18 @@ class RoleUser extends Pivot
         'role_id',
     ];
 
-    public function user()
+	/**
+	 * @return BelongsTo<User, $this>
+	 */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function role()
+	/**
+	 * @return BelongsTo<Role, $this>
+	 */
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }

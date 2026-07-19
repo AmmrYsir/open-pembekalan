@@ -30,21 +30,33 @@ class AgencyOfficer extends Model
         'updated_by',
     ];
 
+	/**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+	/**
+     * @return BelongsTo<Agency, $this>
+     */
     public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
     }
 
+	/**
+     * @return BelongsTo<Subagency, $this>
+     */
     public function subagency(): BelongsTo
     {
         return $this->belongsTo(Subagency::class);
     }
 
+	/**
+	 * @return MorphOne<Address, $this>
+	 */
     public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable');
