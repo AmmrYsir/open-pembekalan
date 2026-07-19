@@ -2,15 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Acquisition;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-use App\Enums\AcquisitionType;
 use App\Enums\AcquisitionMethod;
-
-use App\Models\VotType;
+use App\Enums\AcquisitionType;
+use App\Models\Acquisition;
 use App\Models\Agency;
 use App\Models\Subagency;
+use App\Models\VotType;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Acquisition>

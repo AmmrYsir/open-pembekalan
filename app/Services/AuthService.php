@@ -11,7 +11,7 @@ class AuthService
     {
         if (auth()->attempt(['email' => $email, 'password' => $password])) {
             session()->regenerate();
-			
+
             return redirect()->route('dashboard');
         }
 

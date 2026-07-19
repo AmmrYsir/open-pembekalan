@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\VotType;
-use App\Models\Agency;
-use App\Models\Subagency;
-use Illuminate\Database\Eloquent\Model;
-
-use App\Enums\AcquisitionType;
 use App\Enums\AcquisitionMethod;
+use App\Enums\AcquisitionType;
+use Database\Factories\AcquisitionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Acquisition extends Model
 {
-    /** @use HasFactory<\Database\Factories\AcquisitionFactory> */
+    /** @use HasFactory<AcquisitionFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -33,7 +30,7 @@ class Acquisition extends Model
         'is_required_kbp',
         'mof_required',
         'cidb_required',
-        'committee_type'
+        'committee_type',
     ];
 
     public function casts(): array
