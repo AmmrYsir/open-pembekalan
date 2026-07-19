@@ -30,7 +30,7 @@ class AgencyOfficer extends Model
         'updated_by',
     ];
 
-	/**
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -38,7 +38,7 @@ class AgencyOfficer extends Model
         return $this->belongsTo(User::class);
     }
 
-	/**
+    /**
      * @return BelongsTo<Agency, $this>
      */
     public function agency(): BelongsTo
@@ -46,7 +46,7 @@ class AgencyOfficer extends Model
         return $this->belongsTo(Agency::class);
     }
 
-	/**
+    /**
      * @return BelongsTo<Subagency, $this>
      */
     public function subagency(): BelongsTo
@@ -54,9 +54,9 @@ class AgencyOfficer extends Model
         return $this->belongsTo(Subagency::class);
     }
 
-	/**
-	 * @return MorphOne<Address, $this>
-	 */
+    /**
+     * @return MorphOne<Address, $this>
+     */
     public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable');

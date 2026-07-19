@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Collection;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Assignment extends Model
 {
-	use HasUuid;
+    use HasUuid;
 
     protected $fillable = [
         'uuid',
@@ -27,7 +27,7 @@ class Assignment extends Model
         'user_ids' => 'array',
     ];
 
-	/**
+    /**
      * @return MorphTo<self, $this>
      */
     public function assignable(): MorphTo
@@ -35,7 +35,7 @@ class Assignment extends Model
         return $this->morphTo();
     }
 
-	/**
+    /**
      * @return BelongsTo<Acquisition, $this>
      */
     public function acquisition(): BelongsTo

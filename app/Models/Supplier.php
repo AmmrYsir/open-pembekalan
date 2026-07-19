@@ -105,9 +105,9 @@ class Supplier extends Model
         return $this->belongsTo(User::class, 'application_approved_by');
     }
 
-	/**
-	 * @return MorphOne<Address, $this>
-	 */
+    /**
+     * @return MorphOne<Address, $this>
+     */
     public function address()
     {
         return $this->morphOne(Address::class, 'addressable');

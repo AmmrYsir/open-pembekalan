@@ -60,9 +60,9 @@ class User extends Authenticatable
             : $initials;
     }
 
-	/**
-	 * @return BelongsToMany<Role, $this>
-	 */
+    /**
+     * @return BelongsToMany<Role, $this>
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');

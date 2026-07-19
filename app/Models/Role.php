@@ -17,7 +17,7 @@ class Role extends Model
         'is_hidden',
     ];
 
-	/**
+    /**
      * @return BelongsToMany<User, $this>
      */
     public function users(): BelongsToMany
