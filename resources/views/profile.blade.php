@@ -35,26 +35,7 @@
             </div>
 
             <!-- Profile Info Form -->
-            <div class="md:col-span-2">
-                <x-ui.card>
-                    <form action="#" method="POST" class="space-y-4" onsubmit="event.preventDefault(); alert('Boilerplate: Profile saved!');">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <x-ui.input id="full_name" type="text" label="Full Name" value="Ammar Yasir" required />
-                            <x-ui.input id="work_email" type="email" label="Work Email Address" value="ammar@company.com" required />
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <x-ui.input id="phone_no" type="text" label="Phone Number" value="+60 12-345 6789" />
-                            <div class="space-y-1.5">
-                                <x-ui.label for="user_role">Portal Role</x-ui.label>
-                                <input id="user_role" type="text" disabled value="Procurement Staff / Admin" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 py-2.5 px-3.5 text-sm focus:outline-none cursor-not-allowed">
-                            </div>
-                        </div>
-                        <x-slot:footer>
-                            <x-ui.button type="submit">Save Changes</x-ui.button>
-                        </x-slot:footer>
-                    </x-ui.card>
-                </div>
-            </div>
+            @livewire('user.profile-info')
 
             <hr class="border-zinc-200 dark:border-zinc-805">
 
