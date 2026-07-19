@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -55,4 +56,9 @@ class User extends Authenticatable
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
+
+	public function roles(): BelongsToMany
+	{
+		return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
+	}
 }
