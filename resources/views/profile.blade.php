@@ -47,20 +47,7 @@
                 </div>
 
                 <!-- Password Update Form -->
-                <div class="md:col-span-2">
-                    <x-ui.card>
-                        <form action="#" method="POST" class="space-y-4" onsubmit="event.preventDefault(); alert('Boilerplate: Password updated!');">
-                            <x-ui.input id="current_password" type="password" label="Current Password" placeholder="••••••••" required />
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <x-ui.input id="new_password" type="password" label="New Password" placeholder="••••••••" required />
-                                <x-ui.input id="new_password_confirm" type="password" label="Confirm New Password" placeholder="••••••••" required />
-                            </div>
-                            <x-slot:footer>
-                                <x-ui.button type="submit" variant="primary">Update Password</x-ui.button>
-                            </x-slot:footer>
-                        </form>
-                    </x-ui.card>
-                </div>
+                @livewire('user.update-password')
             </div>
         </div>
     </div>
