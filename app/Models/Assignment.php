@@ -2,17 +2,13 @@
 
 namespace App\Models;
 
-use App\Contracts\HasUuidContract;
-use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Assignment extends Model implements HasUuidContract
+class Assignment extends Model
 {
-    use HasUuid;
-
     protected $fillable = [
         'uuid',
         'acquisition_id',
