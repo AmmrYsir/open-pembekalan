@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <x-slot:title>Procurement Overview</x-slot:title>
+    <x-slot:title>Dashboard</x-slot:title>
 
     <div class="space-y-6">
         <!-- Dashboard Welcome Section -->

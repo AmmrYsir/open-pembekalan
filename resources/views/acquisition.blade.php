@@ -1,8 +1,8 @@
 <x-layouts.app>
-    <x-slot:title>Acquisition Management</x-slot:title>
+    <x-slot:title>Acquisition</x-slot:title>
 
     <x-ui.page-header
-        title="Acquisition Management"
+        title="Acquisition"
         subtitle="Manage procurement acquisition projects — create, review, and track all procurement records."
     />
 
