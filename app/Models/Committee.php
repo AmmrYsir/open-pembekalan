@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\Model;
 
 class Committee extends Model
 {
-	use Uuids;
+    use Uuids;
 
-	protected $fillable = [
-		'uuid',
-		'slug',
-		'name',
-		'position'
-	];
+    protected $fillable = [
+        'uuid',
+        'slug',
+        'name',
+        'position',
+    ];
 
-	protected $casts = [
-		'position' => 'array'
-	];
+    protected $casts = [
+        'position' => 'array',
+    ];
 }

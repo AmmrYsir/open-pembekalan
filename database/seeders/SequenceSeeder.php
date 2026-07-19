@@ -2,23 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
 use App\Models\Sequence;
+use Illuminate\Database\Seeder;
 
 class SequenceSeeder extends Seeder
 {
-	private array $sequences = [
-		[
-			'slug' => 'acquisition-number',
-			'name' => 'Acquisition Number',
-			'format' => 'A{YEAR}XXXXXX'
-		]
-	];	
+    private array $sequences = [
+        [
+            'slug' => 'acquisition-number',
+            'name' => 'Acquisition Number',
+            'format' => 'A{YEAR}XXXXXX',
+        ],
+    ];
 
     public function run(): void
     {
-		Sequence::upsert($this->sequences, ['slug'], ['name', 'format']);
+        Sequence::upsert($this->sequences, ['slug'], ['name', 'format']);
     }
 }
