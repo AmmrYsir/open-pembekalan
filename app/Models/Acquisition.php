@@ -8,11 +8,12 @@ use Database\Factories\AcquisitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\HasUuid;
 
 class Acquisition extends Model
 {
     /** @use HasFactory<AcquisitionFactory> */
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         'type',

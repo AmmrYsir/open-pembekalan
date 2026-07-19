@@ -5,11 +5,12 @@ namespace App\Models;
 use Database\Factories\SubagencyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasUuid;
 
 class Subagency extends Model
 {
     /** @use HasFactory<SubagencyFactory> */
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         'agency_id',

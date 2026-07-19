@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('acquisitions', function (Blueprint $table) {
             $table->id();
+			$table->uuid('uuid')->unique();
             $table->string('type', 14)->nullable();
             $table->string('method', 24)->nullable();
             $table->string('project_number')->nullable();

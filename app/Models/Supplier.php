@@ -7,11 +7,12 @@ use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\HasUuid;
 
 class Supplier extends Model
 {
     /** @use HasFactory<SupplierFactory> */
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         'user_id',
