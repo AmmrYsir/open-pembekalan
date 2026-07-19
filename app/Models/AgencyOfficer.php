@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\HasUuidContract;
 use App\Traits\HasUuid;
 use Database\Factories\AgencyOfficerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class AgencyOfficer extends Model
+class AgencyOfficer extends Model implements HasUuidContract
 {
     /** @use HasFactory<AgencyOfficerFactory> */
     use HasFactory;

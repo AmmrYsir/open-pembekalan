@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Contracts\HasUuidContract;
 use App\Traits\HasUuid;
 use Database\Factories\AgencyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Agency extends Model
+class Agency extends Model implements HasUuidContract
 {
     /** @use HasFactory<AgencyFactory> */
     use HasFactory, HasUuid;

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class CommitteeSeeder extends Seeder
 {
+    /** @var list<array{slug: string, name: string, position: list<string>}> */
     private array $committees = [
         [
             'slug' => 'jk-pendaftaran',

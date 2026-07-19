@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Contracts\HasUuidContract;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Assignment extends Model
+class Assignment extends Model implements HasUuidContract
 {
     use HasUuid;
 
@@ -28,7 +29,7 @@ class Assignment extends Model
     ];
 
     /**
-     * @return MorphTo<self, $this>
+     * @return MorphTo<Model, $this>
      */
     public function assignable(): MorphTo
     {
@@ -43,6 +44,9 @@ class Assignment extends Model
         return $this->belongsTo(Acquisition::class);
     }
 
+    /**
+     * @return Collection<int, User>
+     */
     public function getUserModelsAttribute(): Collection
     {
         return User::whereIn('id', $this->user_ids)->get();

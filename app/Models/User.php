@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Contracts\HasAvatarColorContract;
+use App\Contracts\HasUuidContract;
 use App\Traits\HasAvatarColor;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
@@ -30,7 +32,7 @@ use Illuminate\Support\Str;
  */
 #[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract
 {
     /** @use HasFactory<UserFactory> */
     use HasAvatarColor, HasFactory, HasUuid, Notifiable;

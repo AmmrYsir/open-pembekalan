@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 
 class SequenceSeeder extends Seeder
 {
+    /** @var list<array{slug: string, name: string, format: string}> */
     private array $sequences = [
         [
             'slug' => 'acquisition-number',

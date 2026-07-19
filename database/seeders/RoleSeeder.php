@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
 {
+    /** @var list<array{slug: string, name: string, description: string, is_active: bool, is_hidden: bool}> */
     private array $roles = [
         [
             'slug' => 'superadmin',

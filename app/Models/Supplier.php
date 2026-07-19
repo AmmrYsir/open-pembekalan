@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Contracts\HasUuidContract;
 use App\Enums\SsmType;
 use App\Traits\HasUuid;
 use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class Supplier extends Model
+class Supplier extends Model implements HasUuidContract
 {
     /** @use HasFactory<SupplierFactory> */
     use HasFactory, HasUuid;
@@ -108,7 +110,7 @@ class Supplier extends Model
     /**
      * @return MorphOne<Address, $this>
      */
-    public function address()
+    public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'addressable');
     }

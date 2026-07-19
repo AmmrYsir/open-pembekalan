@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Address;
 use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends Factory<Address>
@@ -20,7 +21,7 @@ class AddressFactory extends Factory
     {
         return [
             'address_line_1' => $this->faker->streetAddress(),
-            'address_line_2' => $this->faker->secondaryAddress(),
+            'address_line_2' => $this->faker->streetAddress(),
             'address_line_3' => $this->faker->city(),
             'postal_code' => $this->faker->postcode(),
             'district' => $this->faker->citySuffix(),
@@ -29,11 +30,11 @@ class AddressFactory extends Factory
         ];
     }
 
-    public function assignTo($addressable): self
+    public function assignTo(Model $addressable): self
     {
         return $this->state(function (array $attributes) use ($addressable) {
             return [
-                'addressable_id' => $addressable->id,
+                'addressable_id' => $addressable->getKey(),
                 'addressable_type' => get_class($addressable),
             ];
         });

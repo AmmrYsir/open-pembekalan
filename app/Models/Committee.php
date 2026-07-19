@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Contracts\HasUuidContract;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
-class Committee extends Model
+class Committee extends Model implements HasUuidContract
 {
     use HasUuid;
 

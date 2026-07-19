@@ -2,8 +2,12 @@
 
 namespace App\Traits;
 
+use App\Contracts\HasAvatarColorContract;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @phpstan-require-implements HasAvatarColorContract
+ */
 trait HasAvatarColor
 {
     /**
@@ -12,7 +16,7 @@ trait HasAvatarColor
      *
      * @var list<string>
      */
-    private static array $avatarColorPalette = [
+    protected static array $avatarColorPalette = [
         '#0ea5e9', // sky-500
         '#6366f1', // indigo-500
         '#8b5cf6', // violet-500
@@ -37,10 +41,10 @@ trait HasAvatarColor
     protected static function bootHasAvatarColor(): void
     {
         static::creating(function (Model $model) {
-            $column = $model->getAvatarColorColumnName();
+            $column = static::avatarColorColumnName();
 
             if (empty($model->{$column})) {
-                $model->{$column} = static::generateAvatarColor((string) $model->email);
+                $model->{$column} = static::generateAvatarColor((string) $model->getAttribute('email'));
             }
         });
     }
@@ -56,11 +60,19 @@ trait HasAvatarColor
     }
 
     /**
-     * The column that stores the avatar color.
+     * Get the column that stores the avatar color (static, safe to call in boot closures).
      * Overridable per model if the column name differs.
+     */
+    public static function avatarColorColumnName(): string
+    {
+        return 'avatar_color';
+    }
+
+    /**
+     * Instance proxy so existing code calling $model->getAvatarColorColumnName() still works.
      */
     public function getAvatarColorColumnName(): string
     {
-        return 'avatar_color';
+        return static::avatarColorColumnName();
     }
 }
