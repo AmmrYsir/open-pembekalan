@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property string $uuid
@@ -50,6 +51,19 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
         ];
     }
 
+    protected $appends = [
+        'avatar'
+    ];
+
+    public function hasAvatar(): bool
+    {
+        if (empty($this?->avatar_url) || $this?->avatar_url == null) {
+            return false;
+        }
+
+        return Storage::disk('public')->exists($this->avatar_url);
+    }
+
     /**
      * Get the user's initials
      */
@@ -60,6 +74,20 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
+    }
+
+    public function getAvatarColor(): string
+    {
+        return $this->avatar_color ?? $this->generateAvatarColor();
+    }
+
+    public function getAvatarAttribute(): string
+    {
+        if ($this->hasAvatar()) {
+            return Storage::disk('public')->url($this->avatar_url);
+        }
+
+        return $this->getAvatarColor();
     }
 
     /**

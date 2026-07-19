@@ -14,16 +14,29 @@ new class extends Component
 
     public function signOut(): void
     {
-        auth()->logout();
-        redirect()->route('home');
+        auth()->logout(); redirect()->route('home');
     }
 };
 ?>
 
 <div class="p-4 border-t border-zinc-100 dark:border-zinc-800/50 flex items-center gap-3">
     <div class="relative">
-        <img class="h-10 w-10 rounded-xl object-cover ring-2 ring-emerald-500/10" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Avatar">
-        <div class="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-zinc-900"></div>
+            @if($user->hasAvatar())
+                <img
+                    class="h-8 w-8 rounded-sm object-cover ring-4 ring-emerald-500/10"
+                    src="{{ $user->getAvatar() }}"
+                    alt="{{ $user->name }}'s avatar"
+                >
+            @else
+                <div
+                    class="flex h-8 w-8 items-center justify-center rounded-sm ring-4 ring-emerald-500/10"
+                    style="background-color: {{ $user->getAvatarColor() }};"
+                >
+                    <span class="text-lg font-bold leading-none text-white select-none">
+                        {{ $user->initials() }}
+                    </span>
+                </div>
+            @endif
     </div>
     <div class="flex-1 min-w-0">
         <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{{ $user?->name ?? 'Guest User' }}</p>
