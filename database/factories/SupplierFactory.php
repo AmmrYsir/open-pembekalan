@@ -15,6 +15,7 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
+			'uuid' => fake()->uuid(),
             'user_id' => User::factory(),
             'company_name' => $this->faker->company,
             'ssm_type' => $this->faker->randomElement(SsmType::cases()),

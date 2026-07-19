@@ -13,6 +13,7 @@ class AgencyFactory extends Factory
     public function definition(): array
     {
         return [
+			'uuid' => fake()->uuid(),
             'code' => $this->faker->unique()->bothify('A##'),
             'name' => $this->faker->company(),
             'is_active' => $this->faker->boolean(),

@@ -23,6 +23,7 @@ class AcquisitionFactory extends Factory
     public function definition(): array
     {
         return [
+			'uuid' => fake()->uuid(),
             'type' => $this->faker->randomElement(AcquisitionType::values()),
             'method' => $this->faker->randomElement(AcquisitionMethod::values()),
             'project_number' => $this->faker->unique()->numerify('PN-#####'),

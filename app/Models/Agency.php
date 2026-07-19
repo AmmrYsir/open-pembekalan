@@ -14,6 +14,7 @@ class Agency extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
+		'uuid',
         'code',
         'name',
         'is_active',

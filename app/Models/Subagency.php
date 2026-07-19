@@ -13,6 +13,7 @@ class Subagency extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
+		'uuid',
         'agency_id',
         'code',
         'name',

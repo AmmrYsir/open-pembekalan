@@ -16,6 +16,7 @@ class Acquisition extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
+		'uuid',
         'type',
         'method',
         'project_number',

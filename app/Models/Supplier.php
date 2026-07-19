@@ -15,6 +15,7 @@ class Supplier extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
+		'uuid',
         'user_id',
         'company_name',
         'ssm_type',
