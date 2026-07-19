@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Committee;
 use Illuminate\Database\Seeder;
 
@@ -37,6 +39,10 @@ class CommitteeSeeder extends Seeder
 
     public function run(): void
     {
-        Committee::upsert($this->committees, ['slug'], ['name', 'position']);
+        DB::transaction(function () {   
+            foreach ($this->committees as $committee) {
+                Committee::create($committee);
+            }
+        }, attempts: 1);
     }
 }

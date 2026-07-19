@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('committees', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
-            $table->string('slug')->unique();
+            $table->uuid('uuid')->nullable()->unique();
+            $table->string('slug', 32)->unique();
             $table->string('name');
             $table->json('position');
             $table->timestamps();

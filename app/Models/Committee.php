@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\Uuids;
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
 class Committee extends Model
 {
-    use Uuids;
+    use HasUuid;
 
     protected $fillable = [
         'uuid',
