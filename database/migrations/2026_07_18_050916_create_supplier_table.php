@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-			$table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique();
             $table->foreignIdFor(User::class, 'user_id')->constrained()->onDelete('cascade');
             $table->string('company_name');
             $table->string('ssm_type')->nullable();

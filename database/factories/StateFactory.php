@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\State;
 use App\Actions\GetAbbreviation;
+use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,13 +18,13 @@ class StateFactory extends Factory
      */
     public function definition(): array
     {
-		$state = $this->faker->state();
+        $state = $this->faker->state();
 
         return [
-			'code' => GetAbbreviation::execute($state),
-			'shortname' => $state,
-			'fullname' => $state,
-			'capital' => $this->faker->city(),
+            'code' => GetAbbreviation::execute($state),
+            'shortname' => $state,
+            'fullname' => $state,
+            'capital' => $this->faker->city(),
         ];
     }
 }

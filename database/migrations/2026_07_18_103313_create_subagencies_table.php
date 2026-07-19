@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('subagencies', function (Blueprint $table) {
             $table->id();
-			$table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique();
             $table->foreignIdFor(Agency::class, 'agency_id')->constrained()->cascadeOnDelete();
             $table->string('code')->unique();
             $table->string('name');

@@ -19,7 +19,7 @@ class SubagencyFactory extends Factory
     public function definition(): array
     {
         return [
-			'uuid' => fake()->uuid(),
+            'uuid' => fake()->uuid(),
             'agency_id' => Agency::factory(),
             'code' => fake()->unique()->word(),
             'name' => fake()->name(),

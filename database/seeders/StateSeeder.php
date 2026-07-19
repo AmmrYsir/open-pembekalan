@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
 use App\Models\State;
+use Illuminate\Database\Seeder;
 
 class StateSeeder extends Seeder
 {
@@ -14,6 +12,6 @@ class StateSeeder extends Seeder
      */
     public function run(): void
     {
-		State::factory()->count(16)->create();
+        State::factory()->count(16)->create();
     }
 }

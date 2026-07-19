@@ -1,10 +1,9 @@
 <?php
 
+use App\Models\State;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
-use App\Models\State;
 
 return new class extends Migration
 {
@@ -15,14 +14,14 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-			$table->morphs('addressable');
-			$table->string('address_line_1', 124);
-			$table->string('address_line_2', 124)->nullable();
-			$table->string('address_line_3', 124)->nullable();
-			$table->string('postal_code', 6);
-			$table->string('district', 124)->nullable();
-			$table->string('city', 124);
-			$table->foreignIdFor(State::class)->constrained()->cascadeOnDelete();
+            $table->morphs('addressable');
+            $table->string('address_line_1', 124);
+            $table->string('address_line_2', 124)->nullable();
+            $table->string('address_line_3', 124)->nullable();
+            $table->string('postal_code', 6);
+            $table->string('district', 124)->nullable();
+            $table->string('city', 124);
+            $table->foreignIdFor(State::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

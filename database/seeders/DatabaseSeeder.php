@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
             VotTypeSeeder::class,
             AgencySeeder::class,
             SubagencySeeder::class,
-			AgencyOfficerSeeder::class,
-			StateSeeder::class,
+            AgencyOfficerSeeder::class,
+            StateSeeder::class,
         ]);
     }
 }

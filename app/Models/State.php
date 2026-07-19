@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use Database\Factories\StateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class State extends Model
 {
-    /** @use HasFactory<\Database\Factories\StateFactory> */
+    /** @use HasFactory<StateFactory> */
     use HasFactory;
 
-	protected $fillable = [
-		'code',
-		'shortname',
-		'fullname',
-		'capital',
-	];
+    protected $fillable = [
+        'code',
+        'shortname',
+        'fullname',
+        'capital',
+    ];
 }

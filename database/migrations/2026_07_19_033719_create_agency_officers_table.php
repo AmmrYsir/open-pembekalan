@@ -1,12 +1,11 @@
 <?php
 
+use App\Models\Agency;
+use App\Models\Subagency;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
-use App\Models\User;
-use App\Models\Agency;
-use App\Models\Subagency;
 
 return new class extends Migration
 {
@@ -17,18 +16,18 @@ return new class extends Migration
     {
         Schema::create('agency_officers', function (Blueprint $table) {
             $table->id();
-			$table->uuid('uuid')->unique();
-			$table->foreignIdFor(User::class, 'user_id')->constrained()->onDelete('cascade');
-			$table->foreignIdFor(Agency::class, 'agency_id')->constrained()->onDelete('cascade');
-			$table->foreignIdFor(Subagency::class, 'subagency_id')->nullable()->constrained()->onDelete('cascade');
-			$table->string('title', 64)->nullable();
-			$table->string('nric', 12)->nullable();
+            $table->uuid('uuid')->unique();
+            $table->foreignIdFor(User::class, 'user_id')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Agency::class, 'agency_id')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Subagency::class, 'subagency_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('title', 64)->nullable();
+            $table->string('nric', 12)->nullable();
             $table->string('position', 128)->nullable();
-			$table->string('mobile_number', 24)->nullable();
-			$table->string('home_phone_number', 24)->nullable();
-			$table->foreignIdFor(User::class, 'created_by')->nullable()->constrained('users')->onDelete('set null');
-			$table->foreignIdFor(User::class, 'updated_by')->nullable()->constrained('users')->onDelete('set null');
-			$table->timestamps();
+            $table->string('mobile_number', 24)->nullable();
+            $table->string('home_phone_number', 24)->nullable();
+            $table->foreignIdFor(User::class, 'created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignIdFor(User::class, 'updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamps();
         });
     }
 

@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\SsmType;
+use App\Traits\HasUuid;
 use Database\Factories\SupplierFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\HasUuid;
 
 class Supplier extends Model
 {
@@ -15,7 +15,7 @@ class Supplier extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
-		'uuid',
+        'uuid',
         'user_id',
         'company_name',
         'ssm_type',
@@ -105,8 +105,8 @@ class Supplier extends Model
         return $this->belongsTo(User::class, 'application_approved_by');
     }
 
-	public function address()
-	{
-		return $this->morphOne(Address::class, 'addressable');
-	}
+    public function address()
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
 }

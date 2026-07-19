@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 trait HasUuid
 {
-	/**
+    /**
      * Automatically boot the trait.
      * Laravel looks for a method named boot[TraitName]
      */

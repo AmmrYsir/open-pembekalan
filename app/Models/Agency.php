@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Database\Factories\AgencyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Traits\HasUuid;
 
 class Agency extends Model
 {
@@ -14,7 +14,7 @@ class Agency extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
-		'uuid',
+        'uuid',
         'code',
         'name',
         'is_active',
