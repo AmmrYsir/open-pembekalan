@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-			$table->uuid('uuid')->unique();
-			$table->string('slug', 64);
-			$table->string('name', 64);
-			$table->string('description', 124)->nullable();
-			$table->boolean('is_active')->default(true);
-			$table->boolean('is_hidden')->default(false);
+            $table->uuid('uuid')->unique();
+            $table->string('slug', 64);
+            $table->string('name', 64);
+            $table->string('description', 124)->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_hidden')->default(false);
             $table->timestamps();
         });
     }
