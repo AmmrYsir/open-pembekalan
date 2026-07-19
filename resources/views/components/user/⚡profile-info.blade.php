@@ -14,13 +14,16 @@ new class extends Component
 	#[Validate('required|email|max:255')]
 	public string $email = '';
 
-	public function mount(): void
+	public function mount(?User $user): void
 	{
-		$this->user = auth()->user();
+		$this->user = $user ?? auth()->user();
 
 		if ($this->user) {
 			$this->full_name = $this->user->name;
 			$this->email = $this->user->email;
+		}
+		else {
+			abort(403, 'Unauthorized');
 		}
 	}
 

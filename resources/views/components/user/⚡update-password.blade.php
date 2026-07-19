@@ -19,16 +19,20 @@ new class extends Component
 	#[Validate('required|string|min:8|confirmed')]
 	public string $new_password_confirmation = '';
 
-	public function mount(): void
+	public function mount(?User $user): void
 	{
-		$this->user = auth()->user();
+		$this->user = $user ?? auth()->user();
+
+		if (! $this->user) {
+			abort(403, 'Unauthorized');
+		}
 	}
 
 	public function updatePassword(): void
 	{
 		$this->validate();
 
-		$user = auth()->user();
+		$user = $this->user;
 
 		if (! $user || ! Hash::check($this->current_password, $user->password)) {
 			session()->flash('error', 'Current password is incorrect.');

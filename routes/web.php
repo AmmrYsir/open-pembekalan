@@ -9,7 +9,15 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
-    Route::view('/profile', 'profile')->name('profile');
+    Route::get('/profile', function() {
+        $user = auth()->user();
+        
+        if (!$user) {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('profile', compact('user'));    
+    })->name('profile');
 });
 
 Route::view('/register', 'auth.register')->name('register');

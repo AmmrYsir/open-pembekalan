@@ -48,6 +48,7 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'created_by' => 'date',
         ];
     }
 

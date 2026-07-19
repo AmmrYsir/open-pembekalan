@@ -15,11 +15,17 @@ new class extends Component
 	 */
 	public $avatar = null;
 
-	#[Computed]
-	public function authUser(): ?User
+	public function mount(?User $user): void
 	{
-		/** @var User|null */
-		return auth()->user();
+		if ($user) {
+			$this->authUser = $user;
+		} else {
+			$this->authUser = auth()->user();
+		}
+
+		if (! $this->authUser) {
+			abort(403, 'Unauthorized');
+		}
 	}
 
 	#[Computed]
