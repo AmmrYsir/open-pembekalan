@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasAvatarColor;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -19,18 +20,20 @@ use Illuminate\Support\Str;
  * @property string $username
  * @property string $name
  * @property string $email
+ * @property string|null $avatar_url
+ * @property string $avatar_color
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'password'])]
+#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasUuid, Notifiable;
+    use HasAvatarColor, HasFactory, HasUuid, Notifiable;
 
     /**
      * Get the attributes that should be cast.
