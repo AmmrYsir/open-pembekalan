@@ -20,7 +20,9 @@ enum AcquisitionType: string
     //     return match($this) {};
     // }
 
-    // Static method: Returns an array of values for select dropdowns
+    /**
+     * @return array<int, string>
+     */
     public static function values(): array
     {
         return array_column(self::cases(), 'value');

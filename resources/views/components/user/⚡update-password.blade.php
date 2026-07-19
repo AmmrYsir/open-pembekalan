@@ -8,7 +8,7 @@ use App\Models\User;
 
 new class extends Component
 {
-    private User $user;
+    private ?User $user = null;
 
 	#[Validate('required|string|min:8')]
 	public string $current_password = '';
@@ -28,12 +28,14 @@ new class extends Component
 	{
 		$this->validate();
 
-		if (!Hash::check($this->current_password, $this->user->password)) {
+		$user = auth()->user();
+
+		if (! $user || ! Hash::check($this->current_password, $user->password)) {
 			session()->flash('error', 'Current password is incorrect.');
 			return;
 		}
 
-		$this->user->update([
+		$user->update([
 			'password' => Hash::make($this->new_password),
 		]);
 

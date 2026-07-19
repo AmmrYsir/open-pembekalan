@@ -6,7 +6,7 @@ use App\Models\User;
 
 new class extends Component
 {
-	private User $user;
+	private ?User $user = null;
 
 	#[Validate('required|string|max:255')]
 	public string $full_name = '';
@@ -18,9 +18,10 @@ new class extends Component
 	{
 		$this->user = auth()->user();
 
-		// fill the form fields with the current user data
-		$this->full_name = $this->user->name;
-		$this->email = $this->user->email;
+		if ($this->user) {
+			$this->full_name = $this->user->name;
+			$this->email = $this->user->email;
+		}
 	}
 
 	public function updateInformation(): void
@@ -28,7 +29,7 @@ new class extends Component
 		// Validate and update user information
 		$this->validate();
 
-		$this->user->update([
+		auth()->user()?->update([
 			'name' => $this->full_name,
 			'email' => $this->email,
 		]);

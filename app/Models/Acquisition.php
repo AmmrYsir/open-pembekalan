@@ -7,6 +7,7 @@ use App\Enums\AcquisitionType;
 use Database\Factories\AcquisitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Acquisition extends Model
 {
@@ -44,17 +45,26 @@ class Acquisition extends Model
         ];
     }
 
-    public function votType()
+    /**
+     * @return BelongsTo<VotType, $this>
+     */
+    public function votType(): BelongsTo
     {
         return $this->belongsTo(VotType::class);
     }
 
-    public function agency()
+    /**
+     * @return BelongsTo<Agency, $this>
+     */
+    public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
     }
 
-    public function subagency()
+    /**
+     * @return BelongsTo<Subagency, $this>
+     */
+    public function subagency(): BelongsTo
     {
         return $this->belongsTo(Subagency::class);
     }
