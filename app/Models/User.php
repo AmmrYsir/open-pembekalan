@@ -84,7 +84,7 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
     public function getAvatarAttribute(): string
     {
         if ($this->hasAvatar()) {
-            return Storage::disk('public')->url($this->avatar_url);
+            return Storage::disk('public')->image($this->avatar_url);
         }
 
         return $this->getAvatarColor();
