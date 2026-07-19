@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Sequence extends Model
 {
@@ -45,8 +45,8 @@ class Sequence extends Model
         return Str::of($this->format)
             ->replace('{y}', now()->format('y'))
             ->replace('{Y}', now()->format('Y'))
-            ->replace('{m}', str_pad(now()->month, 2, '0', STR_PAD_LEFT))
-            ->replaceMatches('/X+/', fn ($matches) => str_pad($value, strlen($matches[0]), '0', STR_PAD_LEFT))
+            ->replace('{m}', str_pad((string) now()->month, 2, '0', STR_PAD_LEFT))
+            ->replaceMatches('/X+/', fn ($matches) => str_pad((string) $value, strlen($matches[0]), '0', STR_PAD_LEFT))
             ->__toString();
     }
 }

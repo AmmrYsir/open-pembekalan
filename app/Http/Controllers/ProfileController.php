@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Sequence;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $user = auth()->user();
-        
-        if (!$user) {
+
+        if (! $user) {
             abort(403, 'Unauthorized');
         }
 

@@ -8,6 +8,7 @@ use App\Contracts\HasUuidContract;
 use App\Traits\HasAvatarColor;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
+use Exception;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,9 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Exception;
+use Illuminate\Support\Str;
 
 /**
  * @property string $uuid
@@ -54,12 +54,12 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
     }
 
     protected $appends = [
-        'avatar'
+        'avatar',
     ];
 
     public function hasAvatar(): bool
     {
-        if (empty($this?->avatar_url) || $this?->avatar_url == null) {
+        if ($this->avatar_url === null || $this->avatar_url === '') {
             return false;
         }
 
@@ -95,7 +95,7 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
 
     public function getAvatarColor(): string
     {
-        return $this->avatar_color ?? $this->generateAvatarColor();
+        return $this->avatar_color ?? static::generateAvatarColor($this->email);
     }
 
     public function getAvatarAttribute(): string

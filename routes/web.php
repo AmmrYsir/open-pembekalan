@@ -9,10 +9,17 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
-});
+    Route::view('/acquisition', 'acquisition')->name('acquisition');
+    Route::get('/profile', function () {
+        $user = auth()->user();
 
-Route::view('/acquisition', 'acquisition')->name('acquisition');
+        if (! $user) {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('profile', compact('user'));
+    })->name('profile');
+});
 Route::view('/register', 'auth.register')->name('register');
 Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
 Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
