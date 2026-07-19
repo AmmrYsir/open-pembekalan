@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('assignments', function (Blueprint $table) {
             $table->id();
 			$table->uuid('uuid')->unique();
-			$table->foreignIdFor(Acquisition::class)->constrained()->cascadeOnDelete();
+			$table->foreignIdFor(Acquisition::class)->nullable()->constrained()->cascadeOnDelete();
 			$table->string('reference_no', 64)->nullable();
 			$table->string('title', 124);
 			$table->string('status', 64)->nullable();
