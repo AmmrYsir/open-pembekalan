@@ -75,4 +75,11 @@ class UserFactory extends Factory
             'email' => $email,
         ]);
     }
+
+    public function assignRole(string $roleName): static
+    {
+        return $this->afterCreating(function (User $user) use ($roleName) {
+            $user->assignRole($roleName);
+        });
+    }
 }

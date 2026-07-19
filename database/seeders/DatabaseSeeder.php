@@ -12,9 +12,8 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        app(CreateSuperadmin::class)->execute();
-
         $this->call([
+            RoleSeeder::class,
             VotTypeSeeder::class,
             AgencySeeder::class,
             SubagencySeeder::class,
@@ -23,5 +22,7 @@ class DatabaseSeeder extends Seeder
             CommitteeSeeder::class,
             SequenceSeeder::class,
         ]);
+
+        app(CreateSuperadmin::class)->execute();
     }
 }

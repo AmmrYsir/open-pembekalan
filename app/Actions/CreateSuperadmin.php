@@ -8,6 +8,6 @@ class CreateSuperadmin
 {
     public function execute(): void
     {
-        User::factory()->changeName('Superadmin')->changeEmail('superadmin@openpembekalan.com')->changePassword('secret')->experimentalUser()->create();
+        User::factory()->changeName('Superadmin')->changeEmail('superadmin@openpembekalan.com')->changePassword('secret')->experimentalUser()->assignRole('superadmin')->create();
     }
 }

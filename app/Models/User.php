@@ -17,6 +17,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 /**
  * @property string $uuid
@@ -75,6 +76,21 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
         return Str::length($initials) > 1
             ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
+    }
+
+    public function assignRole(string $roleName): void
+    {
+        $role = Role::where('slug', $roleName)->first();
+
+        // attach roles through userRoles pivot table
+        if ($role) {
+            $this->roles()->attach($role->id, [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            throw new Exception("Role '{$roleName}' not found.");
+        }
     }
 
     public function getAvatarColor(): string
