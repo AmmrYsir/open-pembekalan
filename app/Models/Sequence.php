@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 class Sequence extends Model
@@ -16,4 +17,36 @@ class Sequence extends Model
         'yearly_reset',
         'is_active',
     ];
+
+    protected $casts = [
+        'daily_reset' => 'boolean',
+        'monthly_reset' => 'boolean',
+        'yearly_reset' => 'boolean',
+        'is_active' => 'boolean',
+    ];
+
+    protected $appends = [
+        'current_sequence',
+        'next_sequence',
+    ];
+
+    public function getCurrentSequenceAttribute(): string
+    {
+        return $this->formatSequence($this->value);
+    }
+
+    public function getNextSequenceAttribute(): string
+    {
+        return $this->formatSequence($this->value + 1);
+    }
+
+    protected function formatSequence(int $value): string
+    {
+        return Str::of($this->format)
+            ->replace('{y}', now()->format('y'))
+            ->replace('{Y}', now()->format('Y'))
+            ->replace('{m}', str_pad(now()->month, 2, '0', STR_PAD_LEFT))
+            ->replaceMatches('/X+/', fn ($matches) => str_pad($value, strlen($matches[0]), '0', STR_PAD_LEFT))
+            ->__toString();
+    }
 }
