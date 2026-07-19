@@ -39,7 +39,7 @@ class AddressFactory extends Factory
         });
     }
 
-    public function state(State $state): self
+    public function changeState(State $state): self
     {
         return $this->state(function (array $attributes) use ($state) {
             return [

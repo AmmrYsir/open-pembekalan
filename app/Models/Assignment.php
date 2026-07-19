@@ -28,7 +28,7 @@ class Assignment extends Model
     ];
 
 	/**
-     * @return MorphTo<assignable, $this>
+     * @return MorphTo<self, $this>
      */
     public function assignable(): MorphTo
     {
