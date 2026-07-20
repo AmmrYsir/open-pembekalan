@@ -2,10 +2,10 @@
 
 namespace App\Enums;
 
-enum AcquisitionType: string
+enum CommitteeType: string
 {
-    case SEBUTHARGA = 'SEBUTHARGA';
-    case LEMBAGA_TENDER = 'LEMBAGA TENDER';
+    case PENILAIAN_SATU_PERINGKAT = 'PENILAIAN SATU PERINGKAT';
+    case PENILAIAN_DUA_PERINGKAT = 'PENILAIAN DUA PERINGKAT';
 
 	/**
      * @return string
@@ -13,8 +13,8 @@ enum AcquisitionType: string
     public function label(): string
     {
         return match ($this) {
-            self::SEBUTHARGA => 'Sebutharga',
-            self::LEMBAGA_TENDER => 'Lembaga Tender',
+            self::PENILAIAN_SATU_PERINGKAT => 'PENILAIAN SATU PERINGKAT',
+            self::PENILAIAN_DUA_PERINGKAT => 'PENILAIAN DUA PERINGKAT',
         };
     }
 
