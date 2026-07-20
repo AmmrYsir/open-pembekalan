@@ -35,11 +35,24 @@ Route::middleware('auth')->group(function () {
 
         return view('profile', compact('user'));
     })->name('profile');
+
+    // System Management Routes
+    Route::view('/suppliers', 'suppliers')->name('suppliers.index');
+    Route::view('/agencies', 'agencies')->name('agencies.index');
+    Route::view('/subagencies', 'subagencies')->name('subagencies.index');
+    Route::view('/agency-officers', 'agency-officers')->name('agency-officers.index');
+    Route::view('/committees', 'committees')->name('committees.index');
+    Route::view('/mof-categories', 'mof-categories')->name('mof-categories.index');
+    Route::view('/mof-subcategories', 'mof-subcategories')->name('mof-subcategories.index');
+    Route::view('/mof-codes', 'mof-codes')->name('mof-codes.index');
+    Route::view('/states', 'states')->name('states.index');
+    Route::view('/vot-types', 'vot-types')->name('vot-types.index');
 });
+
 Route::view('/register', 'auth.register')->name('register');
 Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
 Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
 Route::view('/403', 'errors.403')->name('403');
 Route::view('/404', 'errors.404')->name('404');
-Route::view('/agency', 'agency')->name('agency');
+Route::view('/agency', 'agencies')->name('agency');
 Route::view('/portal', 'portal')->name('portal');
