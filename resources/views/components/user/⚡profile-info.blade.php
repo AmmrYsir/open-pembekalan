@@ -22,8 +22,6 @@ new class extends Component
 
     public ?int $subagency_id = null;
 
-    public bool $canEditAgency = false;
-
     public function rules(): array
     {
         $userId = $this->user?->id ?? auth()->id();
@@ -51,7 +49,6 @@ new class extends Component
             $this->subagency_id = $officer?->subagency_id;
 
             $currentUser = auth()->user();
-            $this->canEditAgency = $currentUser && ($currentUser->isSuperAdmin() || $currentUser->hasAnyRole(['admin', 'superadmin']));
         } else {
             abort(403, 'Unauthorized');
         }
@@ -81,7 +78,6 @@ new class extends Component
             $nameChanged = $currentName !== $validated['full_name'];
             $usernameChanged = $currentUsername !== ($cleanedUsername ?? '');
             $emailChanged = $currentEmail !== $validated['email'];
-            $agencyChanged = $this->canEditAgency && ($currentAgencyId !== $this->agency_id || $currentSubagencyId !== $this->subagency_id);
 
             if (! $nameChanged && ! $usernameChanged && ! $emailChanged && ! $agencyChanged) {
                 $msg = 'No changes were detected in your profile information.';
@@ -101,16 +97,6 @@ new class extends Component
             }
 
             $targetUser->save();
-
-            if ($this->canEditAgency && ($this->agency_id || $this->subagency_id)) {
-                $targetUser->agencyOfficer()->updateOrCreate(
-                    ['user_id' => $targetUser->id],
-                    [
-                        'agency_id' => $this->agency_id,
-                        'subagency_id' => $this->subagency_id,
-                    ]
-                );
-            }
 
             $this->user = $targetUser->fresh();
 
@@ -179,50 +165,17 @@ new class extends Component
 							<svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01"/></svg>
 							Organization & Department
 						</span>
-						@if(!$canEditAgency)
-							<span class="inline-flex items-center gap-1 text-[11px] text-zinc-400 dark:text-zinc-500">
-								<svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-								Admin Managed
-							</span>
-						@else
-							<span class="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-								Admin Edit Unlocked
-							</span>
-						@endif
 					</div>
 
-					@if(!$canEditAgency)
-						<p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
-							{{ $user->agencyOfficer?->agency?->name ?? 'Acquisitions & Supplier Operations' }}
-							@if($user->agencyOfficer?->subagency?->name)
-								&bull; {{ $user->agencyOfficer->subagency->name }}
-							@endif
-						</p>
-						<p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic">
-							To request a change to your assigned Agency or Department, please contact a System Administrator.
-						</p>
-					@else
-						<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-							<div>
-								<x-ui.label for="agency_id">Agency / Ministry</x-ui.label>
-								<select wire:model="agency_id" id="agency_id" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2 px-3 text-xs">
-									<option value="">Select Agency...</option>
-									@foreach(\App\Models\Agency::where('is_active', true)->get() as $agency)
-										<option value="{{ $agency->id }}">{{ $agency->name }}</option>
-									@endforeach
-								</select>
-							</div>
-							<div>
-								<x-ui.label for="subagency_id">Subagency / Department</x-ui.label>
-								<select wire:model="subagency_id" id="subagency_id" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2 px-3 text-xs">
-									<option value="">Select Department...</option>
-									@foreach(\App\Models\Subagency::where('is_active', true)->get() as $sub)
-										<option value="{{ $sub->id }}">{{ $sub->name }}</option>
-									@endforeach
-								</select>
-							</div>
-						</div>
-					@endif
+					<p class="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+						{{ $user->agencyOfficer?->agency?->name ?? 'Acquisitions & Supplier Operations' }}
+						@if($user->agencyOfficer?->subagency?->name)
+							&bull; {{ $user->agencyOfficer->subagency->name }}
+						@endif
+					</p>
+					<p class="text-[11px] text-zinc-400 dark:text-zinc-500 italic">
+						To request a change to your assigned Agency or Department, please contact a System Administrator.
+					</p>
 				</div>
 			</div>
 
