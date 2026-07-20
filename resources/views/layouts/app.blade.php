@@ -46,12 +46,12 @@
             
             <div class="flex flex-col overflow-y-auto flex-1">
                 <!-- Sidebar Header -->
-                <div class="h-16 flex items-center px-6 border-b border-zinc-100 dark:border-zinc-800/50 justify-between">
+                <div class="py-4 flex items-center px-6 border-b border-zinc-100 dark:border-zinc-800/50 justify-between">
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5">
                         <span class="w-8 h-8 rounded-xl bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">O</span>
                         <span class="font-bold text-zinc-900 dark:text-zinc-100 tracking-tight text-lg">openPembekalan</span>
                     </a>
-                    <button @click="sidebarOpen = false" class="lg:hidden p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <button @click="sidebarOpen = false" class="cursor-pointer lg:hidden p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                         <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </button>
                 </div>
@@ -158,7 +158,7 @@
             <!-- Header Component -->
             <header class="h-16 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
                 <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = true" class="lg:hidden p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                    <button @click="sidebarOpen = true" class="cursor-pointer lg:hidden p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                         <x-heroicon-o-bars-3 class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </button>
                     
