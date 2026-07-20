@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
     Route::view('/acquisition', 'acquisition')->name('acquisition');
     Route::view('/notifications', 'notifications')->name('notifications');
+    Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
     Route::get('/profile', function () {
         $user = auth()->user();
 
@@ -51,7 +52,6 @@ Route::middleware('auth')->group(function () {
 
 Route::view('/register', 'auth.register')->name('register');
 Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
-Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
 Route::view('/403', 'errors.403')->name('403');
 Route::view('/404', 'errors.404')->name('404');
 Route::view('/agency', 'agencies')->name('agency');
