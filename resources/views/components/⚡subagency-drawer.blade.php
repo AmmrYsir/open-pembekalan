@@ -45,11 +45,17 @@ new class extends Component
     public function closePanel(): void
     {
         $this->showPanel = false;
+        $this->resetValidation();
     }
 
     public function switchToEdit(): void
     {
         $this->mode = 'edit';
+    }
+
+    public function switchToView(): void
+    {
+        $this->mode = 'view';
     }
 
     public function save(): void
@@ -76,95 +82,181 @@ new class extends Component
 };
 ?>
 
-<div>
-    <div x-data="{ open: @entangle('showPanel') }" x-show="open" x-cloak class="relative z-50">
-        <div x-show="open" x-transition:enter="ease-in-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in-out duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-             @click="open = false" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-xs transition-opacity"></div>
+<div
+    x-data
+    x-show="$wire.showPanel"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-50 overflow-hidden"
+    style="display: none;"
+    role="dialog"
+    aria-modal="true"
+>
+    <div class="fixed inset-0 bg-zinc-950/50 backdrop-blur-sm" wire:click="closePanel"></div>
 
-        <div class="fixed inset-y-0 right-0 z-50 flex max-w-full pl-10">
-            <div x-show="open" x-transition:enter="transform transition ease-in-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
-                 x-transition:leave="transform transition ease-in-out duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-                 class="w-screen max-w-md bg-white dark:bg-zinc-900 shadow-2xl border-l border-zinc-200 dark:border-zinc-800 flex flex-col justify-between">
-                
-                <div class="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-                    <div>
-                        <h2 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                            {{ $mode === 'create' ? 'Add New Subagency' : ($mode === 'edit' ? 'Edit Subagency' : 'Subagency Details') }}
-                        </h2>
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Department or division level configuration.</p>
+    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+        <div
+            x-show="$wire.showPanel"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="translate-x-full"
+            class="pointer-events-auto w-screen max-w-xl"
+        >
+            <div class="flex h-full flex-col bg-white dark:bg-zinc-900 shadow-2xl border-l border-zinc-200/80 dark:border-zinc-800/80">
+
+                <div class="flex items-center justify-between px-6 py-5 border-b border-zinc-100 dark:border-zinc-800/50">
+                    <div class="flex items-center gap-3 min-w-0">
+                        @if($mode === 'view')
+                            <span class="shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center text-sky-600 dark:text-sky-400">
+                                <x-heroicon-o-eye class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </span>
+                        @elseif($mode === 'edit')
+                            <span class="shrink-0 w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                                <x-heroicon-o-pencil class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </span>
+                        @else
+                            <span class="shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                                <x-heroicon-o-plus class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </span>
+                        @endif
+                        <div class="min-w-0">
+                            <h2 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                                @if($mode === 'view')
+                                    {{ $name ?: 'Subagency Details' }}
+                                @elseif($mode === 'edit')
+                                    Edit — {{ $name ?: 'Subagency' }}
+                                @else
+                                    New Subagency Record
+                                @endif
+                            </h2>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                @if($mode === 'view')
+                                    Read-only view. Click <span class="font-medium text-amber-600 dark:text-amber-400">Edit</span> to make changes.
+                                @elseif($mode === 'edit')
+                                    Editing subagency division details.
+                                @else
+                                    Create a new subagency unit or department.
+                                @endif
+                            </p>
+                        </div>
                     </div>
-                    <button wire:click="closePanel" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                        <x-heroicon-o-x-mark class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    <button
+                        wire:click="closePanel"
+                        class="shrink-0 p-2 rounded-xl cursor-pointer text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                    >
+                        <x-heroicon-o-x-mark class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </button>
                 </div>
 
-                <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                <div class="flex-1 overflow-y-auto px-6 py-6">
                     @if($mode === 'view')
-                        <div class="space-y-4 text-sm">
+                        <div class="space-y-7">
                             <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Parent Agency</label>
-                                <p class="font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5">
-                                    {{ $this->agencies->firstWhere('id', $agency_id)?->name ?? '-' }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Subagency Code</label>
-                                <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $code }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Subagency Name</label>
-                                <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $name }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Status</label>
-                                <div class="mt-1">
-                                    <x-ui.badge variant="{{ $is_active ? 'success' : 'secondary' }}">
-                                        {{ $is_active ? 'Active' : 'Inactive' }}
-                                    </x-ui.badge>
-                                </div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-200 dark:bg-zinc-700"></span>
+                                    Subagency Details
+                                    <span class="flex-1 h-px bg-zinc-200 dark:bg-zinc-700"></span>
+                                </h3>
+                                <dl class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                    <div>
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Subagency Code</dt>
+                                        <dd class="mt-1 text-sm font-mono text-zinc-900 dark:text-zinc-100 font-semibold">{{ $code ?: '—' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Status</dt>
+                                        <dd class="mt-1">
+                                            <x-ui.badge variant="{{ $is_active ? 'success' : 'secondary' }}" pill>
+                                                {{ $is_active ? 'Active' : 'Inactive' }}
+                                            </x-ui.badge>
+                                        </dd>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Parent Agency</dt>
+                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100 font-semibold">
+                                            {{ $this->agencies->firstWhere('id', $agency_id)?->name ?? '—' }}
+                                        </dd>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Subagency Name</dt>
+                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100 font-semibold">{{ $name ?: '—' }}</dd>
+                                    </div>
+                                </dl>
                             </div>
                         </div>
                     @else
-                        <form wire:submit.prevent="save" class="space-y-4">
+                        <form wire:submit.prevent="save" class="space-y-7">
                             <div>
-                                <x-ui.label for="agency_id">Parent Agency *</x-ui.label>
-                                <select id="agency_id" wire:model="agency_id" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100">
-                                    <option value="">Select Parent Agency</option>
-                                    @foreach($this->agencies as $agency)
-                                        <option value="{{ $agency->id }}">{{ $agency->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('agency_id') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                            </div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                                    <span class="w-5 h-px bg-zinc-200 dark:bg-zinc-700"></span>
+                                    Subagency Information
+                                    <span class="flex-1 h-px bg-zinc-200 dark:bg-zinc-700"></span>
+                                </h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <x-ui.label for="agency_id">Parent Agency *</x-ui.label>
+                                        <select id="agency_id" wire:model="agency_id" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                                            <option value="">Select Parent Agency</option>
+                                            @foreach($this->agencies as $agency)
+                                                <option value="{{ $agency->id }}">{{ $agency->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('agency_id') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
 
-                            <div>
-                                <x-ui.label for="subagency_code">Subagency Code *</x-ui.label>
-                                <x-ui.input id="subagency_code" wire:model="code" placeholder="e.g. SUB-201" />
-                                @error('code') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                            </div>
+                                    <div>
+                                        <x-ui.label for="subagency_code">Subagency Code *</x-ui.label>
+                                        <x-ui.input id="subagency_code" wire:model="code" placeholder="e.g. SUB-201" />
+                                        @error('code') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
 
-                            <div>
-                                <x-ui.label for="subagency_name">Subagency Name *</x-ui.label>
-                                <x-ui.input id="subagency_name" wire:model="name" placeholder="e.g. Telecommunications Division" />
-                                @error('name') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                            </div>
+                                    <div>
+                                        <x-ui.label for="subagency_name">Subagency Name *</x-ui.label>
+                                        <x-ui.input id="subagency_name" wire:model="name" placeholder="e.g. Telecommunications Division" />
+                                        @error('name') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
 
-                            <div class="flex items-center gap-3 pt-2">
-                                <input id="sub_active" type="checkbox" wire:model="is_active" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" />
-                                <x-ui.label for="sub_active" class="cursor-pointer mb-0">Active Status</x-ui.label>
+                                    <div class="flex items-center gap-3 pt-2">
+                                        <input id="sub_active" type="checkbox" wire:model="is_active" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" />
+                                        <x-ui.label for="sub_active" class="cursor-pointer mb-0">Active Status</x-ui.label>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     @endif
                 </div>
 
-                <div class="p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex justify-end gap-3">
+                <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
                     @if($mode === 'view')
-                        <x-ui.button variant="outline" size="sm" wire:click="closePanel">Close</x-ui.button>
-                        <x-ui.button variant="primary" size="sm" wire:click="switchToEdit">Edit Subagency</x-ui.button>
+                        <div class="flex items-center justify-end gap-2">
+                            <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                                <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Edit
+                            </x-ui.button>
+                            <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                        </div>
+                    @elseif($mode === 'edit')
+                        <div class="flex items-center justify-end gap-2">
+                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                                <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Back to View
+                            </x-ui.button>
+                            <x-ui.button variant="primary" size="sm" wire:click="save">Save Changes</x-ui.button>
+                        </div>
                     @else
-                        <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                        <x-ui.button variant="primary" size="sm" wire:click="save">Save Subagency</x-ui.button>
+                        <div class="flex items-center justify-end gap-3">
+                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
+                            <x-ui.button variant="primary" size="sm" wire:click="save">
+                                <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Create Subagency
+                            </x-ui.button>
+                        </div>
                     @endif
                 </div>
             </div>
