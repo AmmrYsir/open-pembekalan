@@ -1,0 +1,7 @@
+<svg viewBox="0 0 36 36">
+    <circle cx="18" cy="18" r="15.915" fill="none" stroke="currentColor" stroke-width="3" class="text-zinc-100 dark:text-zinc-800"></circle>
+    <circle cx="18" cy="18" r="15.915" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="42 58" stroke-dashoffset="0" class="text-emerald-500"></circle>
+    <circle cx="18" cy="18" r="15.915" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="28 72" stroke-dashoffset="-42" class="text-sky-400"></circle>
+    <circle cx="18" cy="18" r="15.915" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="20 80" stroke-dashoffset="-70" class="text-amber-400"></circle>
+    <circle cx="18" cy="18" r="15.915" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="10 90" stroke-dashoffset="-90" class="text-rose-500"></circle>
+</svg>
