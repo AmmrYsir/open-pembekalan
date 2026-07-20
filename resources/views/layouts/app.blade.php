@@ -86,6 +86,7 @@
                         </a>
                     </div>
 
+                    @role('superadmin')
                     <div class="space-y-1">
                         <x-ui.label class="px-2 mb-2 text-[10px] text-zinc-400 dark:text-zinc-500">System Management</x-ui.label>
 
@@ -139,6 +140,7 @@
                             Vot Types
                         </a>
                     </div>
+                    @endrole
                 </nav>
             </div>
 
