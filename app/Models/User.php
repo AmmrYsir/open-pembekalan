@@ -6,13 +6,12 @@ namespace App\Models;
 use App\Contracts\HasAvatarColorContract;
 use App\Contracts\HasUuidContract;
 use App\Traits\HasAvatarColor;
+use App\Traits\HasRoles;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
-use Exception;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -37,7 +36,7 @@ use Illuminate\Support\Str;
 class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract
 {
     /** @use HasFactory<UserFactory> */
-    use HasAvatarColor, HasFactory, HasUuid, Notifiable;
+    use HasAvatarColor, HasFactory, HasRoles, HasUuid, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -78,21 +77,6 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
             : $initials;
     }
 
-    public function assignRole(string $roleName): void
-    {
-        $role = Role::where('slug', $roleName)->first();
-
-        // attach roles through userRoles pivot table
-        if ($role) {
-            $this->roles()->attach($role->id, [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } else {
-            throw new Exception("Role '{$roleName}' not found.");
-        }
-    }
-
     public function getAvatarColor(): string
     {
         return $this->avatar_color ?? static::generateAvatarColor($this->email);
@@ -105,13 +89,5 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
         }
 
         return $this->getAvatarColor();
-    }
-
-    /**
-     * @return BelongsToMany<Role, $this>
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id');
     }
 }
