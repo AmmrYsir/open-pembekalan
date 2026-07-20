@@ -50,12 +50,15 @@ new class extends Component
         if ($targetUser) {
             $emailChanged = $targetUser->email !== $validated['email'];
 
-            $targetUser->update([
-                'name' => $validated['full_name'],
-                'username' => $cleanedUsername,
-                'email' => $validated['email'],
-                'email_verified_at' => $emailChanged ? null : $targetUser->email_verified_at,
-            ]);
+            $targetUser->name = $validated['full_name'];
+            $targetUser->username = $cleanedUsername;
+            $targetUser->email = $validated['email'];
+
+            if ($emailChanged) {
+                $targetUser->email_verified_at = null;
+            }
+
+            $targetUser->save();
 
             $this->user = $targetUser->fresh();
 

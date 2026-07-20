@@ -31,7 +31,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'password'])]
+#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'email_verified_at', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract
 {
