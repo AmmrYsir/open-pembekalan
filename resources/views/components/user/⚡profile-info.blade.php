@@ -14,9 +14,9 @@ new class extends Component
 
     public string $email = '';
 
-    public string $successMessage = '';
+    public string $infoMessage = '';
 
-    public string $errorMessage = '';
+    public string $infoVariant = 'success';
 
     public function rules(): array
     {
@@ -44,8 +44,8 @@ new class extends Component
 
     public function updateInformation(): void
     {
-        $this->successMessage = '';
-        $this->errorMessage = '';
+        $this->infoMessage = '';
+        $this->infoVariant = 'success';
 
         $cleanedUsername = $this->username !== '' ? ltrim(trim($this->username), '@') : null;
         $this->username = $cleanedUsername ?? '';
@@ -55,7 +55,22 @@ new class extends Component
         $targetUser = $this->user ?? auth()->user();
 
         if ($targetUser) {
-            $emailChanged = $targetUser->email !== $validated['email'];
+            $currentName = $targetUser->name;
+            $currentUsername = $targetUser->username ?? '';
+            $currentEmail = $targetUser->email;
+
+            $nameChanged = $currentName !== $validated['full_name'];
+            $usernameChanged = $currentUsername !== ($cleanedUsername ?? '');
+            $emailChanged = $currentEmail !== $validated['email'];
+
+            if (! $nameChanged && ! $usernameChanged && ! $emailChanged) {
+                $msg = 'No changes were detected in your profile information.';
+                $this->infoMessage = $msg;
+                $this->infoVariant = 'info';
+                session()->flash('message', $msg);
+
+                return;
+            }
 
             $targetUser->name = $validated['full_name'];
             $targetUser->username = $cleanedUsername;
@@ -73,7 +88,8 @@ new class extends Component
                 ? 'Profile updated successfully. Please verify your new email address.'
                 : 'Profile updated successfully.';
 
-            $this->successMessage = $msg;
+            $this->infoMessage = $msg;
+            $this->infoVariant = 'success';
             session()->flash('message', $msg);
         }
     }
@@ -83,15 +99,15 @@ new class extends Component
 <div class="md:col-span-2">
 	<x-ui.card>
 		<form wire:submit="updateInformation" class="space-y-4">
-			@if ($successMessage || session()->has('message'))
-				<x-ui.alert wire:key="info-success-{{ microtime() }}" variant="success" dismissible>
-					{{ $successMessage ?: session('message') }}
+			@if ($infoMessage || session()->has('message'))
+				<x-ui.alert wire:key="info-alert-{{ microtime() }}" :variant="$infoVariant" dismissible>
+					{{ $infoMessage ?: session('message') }}
 				</x-ui.alert>
 			@endif
 
-			@if ($errorMessage || session()->has('error'))
+			@if (session()->has('error'))
 				<x-ui.alert wire:key="info-error-{{ microtime() }}" variant="error" dismissible>
-					{{ $errorMessage ?: session('error') }}
+					{{ session('error') }}
 				</x-ui.alert>
 			@endif
 
@@ -126,7 +142,7 @@ new class extends Component
 			</x-ui.input>
 
 			<x-slot:footer>
-				<x-ui.button class="cursor-pointer" type="submit">Save Changes</x-ui.button>
+				<x-ui.button class="cursor-pointer" type="submit" loadingTarget="updateInformation">Save Changes</x-ui.button>
 			</x-slot:footer>
 		</form>
 	</x-ui.card>

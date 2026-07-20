@@ -132,3 +132,16 @@ test('profile info component prevents duplicate usernames', function () {
 
     expect($user->fresh()->username)->toBe('my_username');
 });
+
+test('submitting profile info without changes displays no changes info alert', function () {
+    $user = User::factory()->create([
+        'name' => 'John Doe',
+        'username' => 'johndoe',
+        'email' => 'john@example.com',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('user.profile-info', ['user' => $user])
+        ->call('updateInformation')
+        ->assertSee('No changes were detected in your profile information.');
+});

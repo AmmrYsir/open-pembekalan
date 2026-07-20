@@ -82,7 +82,7 @@ new class extends Component
 			<x-ui.input wire:model="new_password_confirmation" id="new_password_confirmation" type="password" label="Confirm New Password" placeholder="••••••••" required :error="$errors->first('new_password_confirmation')" />
 		</div>
 		<x-slot:footer>
-			<x-ui.button class="cursor-pointer" type="submit" variant="primary">Update Password</x-ui.button>
+			<x-ui.button class="cursor-pointer" type="submit" variant="primary" loadingTarget="updatePassword">Update Password</x-ui.button>
 		</x-slot:footer>
 	</form>
 </x-ui.card>
