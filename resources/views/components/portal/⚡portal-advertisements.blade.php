@@ -103,9 +103,7 @@ new class extends Component
         <!-- Stat card 1: Active Tenders -->
         <div class="p-5 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl flex items-center gap-4 shadow-xs">
             <div class="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
-                </svg>
+                <x-heroicon-o-clipboard-document-list class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             </div>
             <div>
                 <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Active Tenders</p>
@@ -116,9 +114,7 @@ new class extends Component
         <!-- Stat card 2: Total Est. Value -->
         <div class="p-5 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl flex items-center gap-4 shadow-xs">
             <div class="p-3 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V5" />
-                </svg>
+                <x-heroicon-o-currency-dollar class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             </div>
             <div>
                 <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Est. Budget Pool</p>
@@ -129,9 +125,7 @@ new class extends Component
         <!-- Stat card 3: Approaching Deadlines -->
         <div class="p-5 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl flex items-center gap-4 shadow-xs">
             <div class="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <x-heroicon-o-clock class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             </div>
             <div>
                 <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Closing Soon</p>
@@ -153,9 +147,7 @@ new class extends Component
                 <x-ui.label for="search_filter">Keywords</x-ui.label>
                 <x-ui.input wire:model.live.debounce.250ms="search" id="search_filter" type="text" placeholder="Search title, ref, agency...">
                     <x-slot:icon>
-                        <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                        <x-heroicon-o-magnifying-glass class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
             </div>
@@ -268,9 +260,7 @@ new class extends Component
                             <!-- Footer Section -->
                             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 pt-4 gap-4">
                                 <div class="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                                    <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16V5" />
-                                    </svg>
+                                    <x-heroicon-o-currency-dollar class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                     <span>Estimated value: <strong class="text-zinc-950 dark:text-white">{{ $ad['estimated_value'] }}</strong></span>
                                 </div>
 
@@ -291,9 +281,7 @@ new class extends Component
                 <!-- Empty State -->
                 <div class="text-center py-16 bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl space-y-4 shadow-xs">
                     <div class="p-3 bg-zinc-50 dark:bg-zinc-850 text-zinc-400 dark:text-zinc-500 rounded-full w-12 h-12 flex items-center justify-center mx-auto">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                        <x-heroicon-o-magnifying-glass class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </div>
                     <div class="space-y-1">
                         <h4 class="text-sm font-bold text-zinc-900 dark:text-white">No Tenders Found</h4>

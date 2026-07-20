@@ -140,9 +140,7 @@ new class extends Component
     @if ($step === 1)
         <div class="space-y-6 text-center py-4">
             <div class="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full w-12 h-12 flex items-center justify-center mx-auto" aria-hidden="true">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
+                <x-heroicon-o-building-office class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             </div>
             <div class="space-y-2">
                 <h3 class="text-lg font-bold text-zinc-950 dark:text-white">Are you already registered with openPembekalan?</h3>
@@ -171,9 +169,7 @@ new class extends Component
             <form wire:submit.prevent="verifySSM" class="space-y-4">
                 <x-ui.input wire:model="ssm_no" id="ssm_no" type="text" label="SSM / Registration Number" placeholder="e.g. 1234567-A" required error="{{ $errors->first('ssm_no') }}">
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                        <x-heroicon-o-document-text class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 
@@ -220,17 +216,13 @@ new class extends Component
             <form wire:submit.prevent="proceedToStep4" class="space-y-4">
                 <x-ui.input wire:model="name" id="name" type="text" label="Full Name" placeholder="e.g. Ammar Yasir" required error="{{ $errors->first('name') }}">
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
+                        <x-heroicon-o-user class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 
                 <x-ui.input wire:model="email" id="email" type="email" label="Work Email Address" placeholder="e.g. name@company.com" required error="{{ $errors->first('email') }}">
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
-                        </svg>
+                        <x-heroicon-o-at-symbol class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 
@@ -257,9 +249,7 @@ new class extends Component
             <form wire:submit.prevent="proceedToStep5" class="space-y-4">
                 <x-ui.input wire:model="company_name" id="company_name" type="text" label="Company Name" placeholder="e.g. Acme Logistics Sdn Bhd" required error="{{ $errors->first('company_name') }}">
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                        <x-heroicon-o-building-office class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 
@@ -278,9 +268,7 @@ new class extends Component
 
                 <x-ui.input wire:model="ssm_no" id="verified_ssm_no" type="text" label="SSM Number (Verified)" disabled>
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                        <x-heroicon-o-document-text class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 
@@ -307,17 +295,13 @@ new class extends Component
             <form wire:submit.prevent="register" class="space-y-4">
                 <x-ui.input wire:model="password" id="password" type="password" label="Account Password" placeholder="Minimum 8 characters" required error="{{ $errors->first('password') }}">
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 
                 <x-ui.input wire:model="password_confirmation" id="password_confirmation" type="password" label="Confirm Password" placeholder="••••••••" required>
                     <x-slot:icon>
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.input>
 

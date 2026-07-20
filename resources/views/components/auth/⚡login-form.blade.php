@@ -32,17 +32,13 @@ new class extends Component
 
     <x-ui.input wire:model="email" id="email" type="email" label="Email Address" placeholder="name@company.com" required error="{{ $errors->first('email') }}">
         <x-slot:icon>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206" />
-            </svg>
+            <x-heroicon-o-at-symbol class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
         </x-slot:icon>
     </x-ui.input>
 
     <x-ui.input wire:model="password" id="password" type="password" label="Password" placeholder="••••••••" required error="{{ $errors->first('password') }}">
         <x-slot:icon>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+            <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
         </x-slot:icon>
     </x-ui.input>
 

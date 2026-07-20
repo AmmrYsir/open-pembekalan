@@ -67,9 +67,7 @@
                 <div class="flex flex-col sm:flex-row gap-4 pt-2">
                     <a href="{{ route('portal') }}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 active:bg-emerald-700 transition-all duration-200 shadow-md shadow-emerald-600/10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50" aria-label="View public tender portal">
                         Access Portal
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 12h14" />
-                        </svg>
+                        <x-heroicon-o-arrow-right class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" />
                     </a>
                     <a href="/register" class="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:text-zinc-950 dark:hover:text-white transition-all duration-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50" aria-label="Join as a supplier or staff">
                         Register as Supplier
@@ -139,33 +137,25 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                 <x-ui.stat-card value="RM 142.8M" label="Total Volume Audited">
                     <x-slot:icon>
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <x-heroicon-o-currency-dollar class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.stat-card>
                 
                 <x-ui.stat-card value="16" label="Connected Partner Agencies">
                     <x-slot:icon>
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                        <x-heroicon-o-building-office class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.stat-card>
                 
                 <x-ui.stat-card value="1,420+" label="Onboarded Active Suppliers">
                     <x-slot:icon>
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
+                        <x-heroicon-o-users class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.stat-card>
                 
                 <x-ui.stat-card value="100%" label="Compliant Tax & SSM Audits">
                     <x-slot:icon>
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
+                        <x-heroicon-o-shield-check class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.stat-card>
             </div>
@@ -185,9 +175,7 @@
                     title="Supplier Onboarding" 
                     description="Simple guided forms to submit company credentials, SSM information, and paid-up capital validation details.">
                     <x-slot:icon>
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                        </svg>
+                        <x-heroicon-o-user-plus class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.feature-card>
                 
@@ -195,9 +183,7 @@
                     title="Transparent Audits" 
                     description="Clear tracking of department allocations, budget methods, and active supply requests with focal point details.">
                     <x-slot:icon>
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
+                        <x-heroicon-o-clipboard class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.feature-card>
 
@@ -205,9 +191,7 @@
                     title="Focal Coordination" 
                     description="Connect directly with verified focal officers. Complete list of partner procurement networks across divisions.">
                     <x-slot:icon>
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                        </svg>
+                        <x-heroicon-o-chat-bubble-left-right class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.feature-card>
 
@@ -215,9 +199,7 @@
                     title="Compliance Engine" 
                     description="Automated tracking of tax references, registration numbers, CIDB certifications, and MOF statuses.">
                     <x-slot:icon>
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622" />
-                        </svg>
+                        <x-heroicon-o-shield-check class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
                 </x-ui.feature-card>
             </div>

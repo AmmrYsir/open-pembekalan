@@ -4,9 +4,7 @@
     <x-ui.card>
         <div class="text-center mb-6">
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 mb-4 shadow-sm">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 19v-8.93a2 2 0 01.89-1.664l8-5.333a2 2 0 012.22 0l8 5.333A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-2.25-1.5a2 2 0 00-2.22 0l-2.25 1.5" />
-                </svg>
+                <x-heroicon-o-envelope class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             </div>
             <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Verify Your Email</h2>
             <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
@@ -16,9 +14,7 @@
 
         <!-- Success Toast Mock -->
         <div class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800/30 text-xs text-emerald-700 dark:text-emerald-400 mb-5 flex items-start gap-2.5">
-            <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <x-heroicon-o-check-circle class="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             <span>A new verification link has been sent to the email address you provided during registration.</span>
         </div>
 

@@ -56,18 +56,14 @@
              and we always show the SVG but it's only "visible" when the bg turns emerald.
              We use opacity + scale transition driven by the parent span's peer-checked state.
         --}}
-        <svg
-            class="w-2.5 h-2.5 text-white opacity-0 scale-50 transition-all duration-150"
+        <x-icon-checkbox-check class="w-2.5 h-2.5 text-white opacity-0 scale-50 transition-all duration-150"
             style="transition-property: opacity, transform;"
             viewBox="0 0 10 10"
             fill="none"
             stroke="currentColor"
             stroke-width="2.2"
             stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-            <polyline points="1.5,5.5 3.5,8 8.5,2" />
-        </svg>
+            stroke-linejoin="round" />
     </span>
 
     @if($label)
