@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Models\User;
 use App\Models\Agency;
 use App\Models\Subagency;
 use App\Models\VotType;
@@ -22,6 +24,7 @@ return new class extends Migration
             $table->string('project_number')->nullable();
             $table->string('project_name')->nullable();
             $table->string('status')->nullable();
+			$table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignIdFor(VotType::class, 'vot_type_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('tender_number', 56)->nullable();
             $table->decimal('siling_price', 12, 2)->nullable();
