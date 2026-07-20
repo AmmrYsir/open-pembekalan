@@ -6,12 +6,14 @@ namespace App\Models;
 use App\Contracts\HasAvatarColorContract;
 use App\Contracts\HasUuidContract;
 use App\Traits\HasAvatarColor;
+use App\Traits\HasLinkedAccounts;
 use App\Traits\HasRoles;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -36,7 +38,7 @@ use Illuminate\Support\Str;
 class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract
 {
     /** @use HasFactory<UserFactory> */
-    use HasAvatarColor, HasFactory, HasRoles, HasUuid, Notifiable;
+    use HasAvatarColor, HasFactory, HasLinkedAccounts, HasRoles, HasUuid, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -89,5 +91,15 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
         }
 
         return $this->getAvatarColor();
+    }
+
+    /**
+     * Get the agency officer profile associated with the user.
+     *
+     * @return HasOne<AgencyOfficer, $this>
+     */
+    public function agencyOfficer(): HasOne
+    {
+        return $this->hasOne(AgencyOfficer::class);
     }
 }

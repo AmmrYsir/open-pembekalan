@@ -56,7 +56,29 @@
                         @endif
                     </div>
 
-                    <p class="text-sm text-zinc-500 dark:text-zinc-400">Department: Acquisitions & Supplier Operations</p>
+                    @php
+                        $agencyName = $user->agencyOfficer?->agency?->name;
+                        $subagencyName = $user->agencyOfficer?->subagency?->name;
+                        $position = $user->agencyOfficer?->position;
+
+                        if ($agencyName && $subagencyName) {
+                            $orgDisplay = $agencyName . ' • ' . $subagencyName;
+                        } elseif ($agencyName) {
+                            $orgDisplay = $agencyName;
+                        } elseif ($subagencyName) {
+                            $orgDisplay = $subagencyName;
+                        } else {
+                            $orgDisplay = 'Acquisitions & Supplier Operations';
+                        }
+                    @endphp
+
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 justify-center md:justify-start flex-wrap">
+                        <svg class="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01"/></svg>
+                        <span>{{ $orgDisplay }}</span>
+                        @if($position)
+                            <span class="text-xs text-zinc-400 dark:text-zinc-500">({{ $position }})</span>
+                        @endif
+                    </p>
 
                     <div class="flex items-center gap-3 text-xs text-zinc-400 dark:text-zinc-500 flex-wrap justify-center md:justify-start">
                         <span>Member since {{ $user->created_at?->diffForHumans() }}</span>
