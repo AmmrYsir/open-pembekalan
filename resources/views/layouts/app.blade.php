@@ -135,6 +135,8 @@
         </div>
     </div>
 
+    @livewire('acquisition-drawer')
+
     @livewireScripts
 </body>
 </html>

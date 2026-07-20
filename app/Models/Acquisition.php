@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property \App\Enums\AcquisitionType|null $type
+ * @property \App\Enums\AcquisitionMethod|null $method
+ */
 class Acquisition extends Model implements HasUuidContract
 {
     /** @use HasFactory<AcquisitionFactory> */
