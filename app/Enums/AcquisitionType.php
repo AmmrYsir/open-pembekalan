@@ -7,9 +7,6 @@ enum AcquisitionType: string
     case SEBUTHARGA = 'SEBUTHARGA';
     case LEMBAGA_TENDER = 'LEMBAGA TENDER';
 
-	/**
-     * @return string
-     */
     public function label(): string
     {
         return match ($this) {

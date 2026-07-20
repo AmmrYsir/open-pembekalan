@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Forms;
 
+use App\Enums\AcquisitionCommitteeType;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
-use App\Enums\AcquisitionCommitteeType;
 use App\Models\Acquisition;
 use App\Models\Sequence;
 use Livewire\Form;

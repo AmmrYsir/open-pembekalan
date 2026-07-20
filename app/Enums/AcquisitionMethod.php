@@ -8,10 +8,7 @@ enum AcquisitionMethod: string
     case PERKHIDMATAN = 'PERKHIDMATAN';
     case BEKALAN_DAN_PERKHIDMATAN = 'BEKALAN DAN PERKHIDMATAN';
 
-	/**
-     * @return string
-     */
-	public function label(): string
+    public function label(): string
     {
         return match ($this) {
             self::BEKALAN => 'Bekalan',

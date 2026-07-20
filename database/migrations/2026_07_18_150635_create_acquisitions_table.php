@@ -1,9 +1,8 @@
 <?php
 
-
-use App\Models\User;
 use App\Models\Agency;
 use App\Models\Subagency;
+use App\Models\User;
 use App\Models\VotType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -24,7 +23,7 @@ return new class extends Migration
             $table->string('project_number')->nullable();
             $table->string('project_name')->nullable();
             $table->string('status')->nullable();
-			$table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignIdFor(VotType::class, 'vot_type_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('tender_number', 56)->nullable();
             $table->decimal('siling_price', 12, 2)->nullable();

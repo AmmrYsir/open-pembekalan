@@ -3,24 +3,24 @@
 namespace App\Models;
 
 use App\Contracts\HasUuidContract;
+use App\Enums\AcquisitionCommitteeType;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
-use App\Enums\AcquisitionCommitteeType;
 use App\Traits\HasUuid;
-use Spatie\ModelStates\HasStates;
 use Database\Factories\AcquisitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\ModelStates\HasStates;
 
 /**
- * @property \App\Enums\AcquisitionType|null $type
- * @property \App\Enums\AcquisitionMethod|null $method
+ * @property AcquisitionType|null $type
+ * @property AcquisitionMethod|null $method
  */
 class Acquisition extends Model implements HasUuidContract
 {
     /** @use HasFactory<AcquisitionFactory> */
-    use HasFactory, HasUuid, HasStates;
+    use HasFactory, HasStates, HasUuid;
 
     protected $fillable = [
         'uuid',
@@ -47,7 +47,7 @@ class Acquisition extends Model implements HasUuidContract
         return [
             'type' => AcquisitionType::class,
             'method' => AcquisitionMethod::class,
-			'committee_type' => AcquisitionCommitteeType::class,
+            'committee_type' => AcquisitionCommitteeType::class,
             'is_required_kbp' => 'boolean',
             'mof_required' => 'boolean',
             'cidb_required' => 'boolean',
