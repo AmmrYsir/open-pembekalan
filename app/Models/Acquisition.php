@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\HasUuidContract;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
+use App\Enums\AcquisitionCommitteeType;
 use App\Traits\HasUuid;
 use Database\Factories\AcquisitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,8 +28,7 @@ class Acquisition extends Model implements HasUuidContract
         'project_number',
         'project_name',
         'status',
-        'provision_type',
-        'submission_type',
+        'user_id',
         'vot_type_id',
         'tender_number',
         'siling_price',
@@ -46,6 +46,7 @@ class Acquisition extends Model implements HasUuidContract
         return [
             'type' => AcquisitionType::class,
             'method' => AcquisitionMethod::class,
+			'committee_type' => AcquisitionCommitteeType::class,
             'is_required_kbp' => 'boolean',
             'mof_required' => 'boolean',
             'cidb_required' => 'boolean',

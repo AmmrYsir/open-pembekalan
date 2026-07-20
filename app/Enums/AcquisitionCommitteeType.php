@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CommitteeType: string
+enum AcquisitionCommitteeType: string
 {
     case PENILAIAN_SATU_PERINGKAT = 'PENILAIAN SATU PERINGKAT';
     case PENILAIAN_DUA_PERINGKAT = 'PENILAIAN DUA PERINGKAT';
