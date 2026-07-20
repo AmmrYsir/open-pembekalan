@@ -77,7 +77,7 @@ test('profile page displays stacked badge when user has multiple roles', functio
         ->get(route('profile'))
         ->assertOk()
         ->assertSee('Procurement Officer')
-        ->assertSee('translate-x-1.5 translate-y-0.5', false);
+        ->assertSee('translate-x-1.5 translate-y-1', false);
 });
 
 test('profile info component updates user name, email, and username with leading @ stripped', function () {

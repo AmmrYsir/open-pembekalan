@@ -24,8 +24,8 @@
 
                         @if($hasMultipleRoles)
                             <div class="relative inline-flex items-center" title="Assigned Roles: {{ $roles->pluck('name')->join(', ') }}">
-                                <span class="absolute inset-0 translate-x-1.5 translate-y-0.5 rounded-full bg-indigo-200/70 dark:bg-indigo-900/50 border border-indigo-300 dark:border-indigo-700/50 -z-0"></span>
-                                <x-ui.badge variant="primary" pill class="relative z-10 shadow-xs">
+                                <span class="absolute inset-0 translate-x-1.5 translate-y-1 rounded-full bg-indigo-200 dark:bg-indigo-950 border border-indigo-300 dark:border-indigo-800 shadow-2xs"></span>
+                                <x-ui.badge variant="primary" pill class="relative z-10 !bg-indigo-50 dark:!bg-zinc-900 border border-indigo-200 dark:border-indigo-700/80 shadow-xs">
                                     {{ $primaryRole }}
                                 </x-ui.badge>
                             </div>
