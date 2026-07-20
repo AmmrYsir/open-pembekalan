@@ -6,6 +6,7 @@ use App\Models\Subagency;
 use App\Models\VotType;
 use App\Models\AgencyOfficer;
 use App\Models\User;
+use App\Models\Sequence;
 use App\Enums\AcquisitionType;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionCommitteeType;
@@ -114,6 +115,7 @@ new class extends Component
         } else {
             $record = $this->form->store();
             $this->activeId = $record->id;
+			Sequence::where('slug', 'acquisition-number')->increment('value');
             session()->flash('success', 'Acquisition created successfully.');
             
             $this->form->fillFromModel($record);

@@ -7,6 +7,7 @@ use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
 use App\Enums\AcquisitionCommitteeType;
 use App\Traits\HasUuid;
+use Spatie\ModelStates\HasStates;
 use Database\Factories\AcquisitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Acquisition extends Model implements HasUuidContract
 {
     /** @use HasFactory<AcquisitionFactory> */
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, HasStates;
 
     protected $fillable = [
         'uuid',
