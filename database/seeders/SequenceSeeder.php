@@ -10,9 +10,9 @@ class SequenceSeeder extends Seeder
     /** @var list<array{slug: string, name: string, format: string}> */
     private array $sequences = [
         [
-            'slug' => 'acquisition-number',
-            'name' => 'Acquisition Number',
-            'format' => 'A{YEAR}XXXXXX',
+            'slug' => 'project-number',
+            'name' => 'Project Number',
+            'format' => 'PN{Y}XXXXXX',
         ],
     ];
 

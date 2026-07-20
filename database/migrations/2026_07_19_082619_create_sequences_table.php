@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name', 64);
             $table->string('format', 128);
             $table->integer('value')->default(0);
+            $table->integer('total')->default(0);
             $table->boolean('daily_reset')->default(false);
             $table->boolean('monthly_reset')->default(false);
             $table->boolean('yearly_reset')->default(false);

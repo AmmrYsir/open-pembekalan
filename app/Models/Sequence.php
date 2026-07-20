@@ -12,6 +12,7 @@ class Sequence extends Model
         'name',
         'format',
         'value',
+        'total',
         'daily_reset',
         'monthly_reset',
         'yearly_reset',
