@@ -18,36 +18,19 @@
 
                         @php
                             $roles = $user->roles ?? collect();
-                            $primaryRole = $roles->first()?->name ?? 'Procurement Officer';
-                            $hasMultipleRoles = $roles->count() > 1;
                         @endphp
 
-                        @if($hasMultipleRoles)
-                            <div class="relative inline-flex items-center" title="Assigned Roles: {{ $roles->pluck('name')->join(', ') }}">
-                                <span class="absolute inset-0 translate-x-1.5 translate-y-1 rounded-full bg-indigo-200 dark:bg-indigo-950 border border-indigo-300 dark:border-indigo-800 shadow-2xs"></span>
-                                <x-ui.badge variant="primary" pill class="relative z-10 !bg-indigo-50 dark:!bg-zinc-900 border border-indigo-200 dark:border-indigo-700/80 shadow-xs">
-                                    {{ $primaryRole }}
-                                </x-ui.badge>
+                        @if($roles->isNotEmpty())
+                            <div class="inline-flex items-center gap-1.5 flex-wrap">
+                                @foreach($roles as $role)
+                                    <x-ui.badge variant="primary" pill>
+                                        {{ $role->name }}
+                                    </x-ui.badge>
+                                @endforeach
                             </div>
                         @else
                             <x-ui.badge variant="primary" pill>
-                                {{ $primaryRole }}
-                            </x-ui.badge>
-                        @endif
-
-                        @if($user->hasVerifiedEmail())
-                            <x-ui.badge variant="success" pill class="gap-1">
-                                <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                Verified Email
-                            </x-ui.badge>
-                        @else
-                            <x-ui.badge variant="warning" pill class="gap-1">
-                                <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                                Unverified Email
+                                Procurement Officer
                             </x-ui.badge>
                         @endif
                     </div>

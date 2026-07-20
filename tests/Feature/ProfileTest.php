@@ -7,26 +7,24 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-test('profile page displays verified email badge for verified user', function () {
+test('profile info component displays verified email badge in email suffix for verified user', function () {
     $user = User::factory()->create([
         'email_verified_at' => now(),
     ]);
 
-    $this->actingAs($user)
-        ->get(route('profile'))
-        ->assertOk()
-        ->assertSee('Verified Email');
+    Livewire::actingAs($user)
+        ->test('user.profile-info', ['user' => $user])
+        ->assertSee('Verified');
 });
 
-test('profile page displays unverified email badge for unverified user', function () {
+test('profile info component displays unverified email badge in email suffix for unverified user', function () {
     $user = User::factory()->create([
         'email_verified_at' => null,
     ]);
 
-    $this->actingAs($user)
-        ->get(route('profile'))
-        ->assertOk()
-        ->assertSee('Unverified Email');
+    Livewire::actingAs($user)
+        ->test('user.profile-info', ['user' => $user])
+        ->assertSee('Unverified');
 });
 
 test('profile page displays fallback Procurement Officer badge when user has no assigned roles', function () {
@@ -56,7 +54,7 @@ test('profile page displays single role badge when user has 1 role', function ()
         ->assertSee('Department Manager');
 });
 
-test('profile page displays stacked badge when user has multiple roles', function () {
+test('profile page displays group of role badges when user has multiple roles', function () {
     $role1 = Role::create([
         'slug' => 'officer',
         'name' => 'Procurement Officer',
@@ -77,7 +75,7 @@ test('profile page displays stacked badge when user has multiple roles', functio
         ->get(route('profile'))
         ->assertOk()
         ->assertSee('Procurement Officer')
-        ->assertSee('translate-x-1.5 translate-y-1', false);
+        ->assertSee('Financial Approver');
 });
 
 test('profile info component updates user name, email, and username with leading @ stripped', function () {
@@ -85,6 +83,7 @@ test('profile info component updates user name, email, and username with leading
         'name' => 'Old Name',
         'username' => 'olduser',
         'email' => 'old@example.com',
+        'email_verified_at' => now(),
     ]);
 
     Livewire::actingAs($user)
@@ -94,14 +93,31 @@ test('profile info component updates user name, email, and username with leading
         ->assertSet('email', 'old@example.com')
         ->set('full_name', 'New Name')
         ->set('username', '@newjohn_doe')
-        ->set('email', 'newjohn@example.com')
+        ->set('email', 'old@example.com') // unchanged email
         ->call('updateInformation')
         ->assertHasNoErrors();
 
     $user->refresh();
     expect($user->name)->toBe('New Name')
         ->and($user->username)->toBe('newjohn_doe')
-        ->and($user->email)->toBe('newjohn@example.com');
+        ->and($user->email_verified_at)->not->toBeNull();
+});
+
+test('changing email unverifies user email and sets email_verified_at to null', function () {
+    $user = User::factory()->create([
+        'email' => 'verified@example.com',
+        'email_verified_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('user.profile-info', ['user' => $user])
+        ->set('email', 'new_email@example.com')
+        ->call('updateInformation')
+        ->assertHasNoErrors();
+
+    $user->refresh();
+    expect($user->email)->toBe('new_email@example.com')
+        ->and($user->email_verified_at)->toBeNull();
 });
 
 test('profile info component prevents duplicate usernames', function () {
