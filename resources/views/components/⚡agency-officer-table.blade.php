@@ -35,7 +35,7 @@ new class extends Component
             ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('position', 'like', "%{$this->search}%")
                     ->orWhere('nric', 'like', "%{$this->search}%")
-                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'like', "%{$this->search}%"));
+                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'like', "%{$this->search}%")->orWhere('email', 'like', "%{$this->search}%"));
             }))
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate(10);
@@ -68,7 +68,12 @@ new class extends Component
     public function delete(): void
     {
         if ($this->deletingId) {
-            AgencyOfficer::findOrFail($this->deletingId)->delete();
+            $officer = AgencyOfficer::findOrFail($this->deletingId);
+            $user = $officer->user;
+            $officer->delete();
+            if ($user) {
+                $user->delete();
+            }
             session()->flash('success', 'Agency Officer deleted successfully.');
         }
 
@@ -87,7 +92,7 @@ new class extends Component
 
 <div class="space-y-6">
     @if(session('success'))
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 4000)" x-show="show"
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show"
              class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 text-sm font-medium shadow-xs">
             <x-heroicon-o-check class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" />
             {{ session('success') }}
@@ -112,22 +117,22 @@ new class extends Component
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
             <div class="relative flex-1 max-w-md">
                 <x-heroicon-o-magnifying-glass class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search officer name, IC, position..."
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search officer name, email, position..."
                        class="w-full pl-10 pr-4 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" />
             </div>
 
             <x-ui.button variant="primary" size="sm" @click="$dispatch('open-agency-officer-drawer', { mode: 'create' })">
                 <x-heroicon-o-plus class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Add New Officer
+                Add New Officer Account
             </x-ui.button>
         </div>
 
-        <x-ui.table :headers="['Officer Name', 'Position / Title', 'Agency / Subagency', 'Mobile No.', 'Actions']">
+        <x-ui.table :headers="['Officer Account', 'Position', 'Agency / Subagency', 'Verification Status', 'Actions']">
             @forelse($this->officers as $officer)
                 <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="font-semibold text-zinc-900 dark:text-zinc-100">{{ $officer->user?->name ?? 'Focal Officer' }}</div>
-                        <div class="text-xs text-zinc-500">IC: {{ $officer->nric ?? '-' }}</div>
+                        <div class="text-xs text-zinc-500 font-mono">{{ $officer->user?->email ?? '-' }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">
                         <div>{{ $officer->position ?? '-' }}</div>
@@ -137,8 +142,12 @@ new class extends Component
                         <div>{{ $officer->agency?->name ?? '-' }}</div>
                         <div class="text-xs text-zinc-500">{{ $officer->subagency?->name ?? '' }}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">
-                        {{ $officer->mobile_number ?? '-' }}
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if($officer->user?->email_verified_at)
+                            <x-ui.badge variant="success">Verified</x-ui.badge>
+                        @else
+                            <x-ui.badge variant="warning">Unverified</x-ui.badge>
+                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center gap-2">
@@ -172,7 +181,7 @@ new class extends Component
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-xs">
             <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
                 <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 text-lg">Confirm Delete</h3>
-                <p class="text-sm text-zinc-600 dark:text-zinc-400">Are you sure you want to delete this agency officer?</p>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400">Are you sure you want to delete this agency officer account?</p>
                 <div class="flex justify-end gap-3 pt-2">
                     <x-ui.button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-ui.button>
                     <x-ui.button variant="primary" size="sm" class="bg-rose-600 hover:bg-rose-700 text-white border-transparent" wire:click="delete">Delete Officer</x-ui.button>

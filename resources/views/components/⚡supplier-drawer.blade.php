@@ -6,11 +6,11 @@ use Livewire\Component;
 
 new class extends Component
 {
-    public string $mode = 'create'; // 'create' | 'view' | 'edit'
+    public string $mode = 'view';
     public bool $showPanel = false;
     public ?int $activeId = null;
 
-    // Form fields
+    // View details
     public string $company_name = '';
     public string $ssm_number = '';
     public string $mobile_no = '';
@@ -20,14 +20,12 @@ new class extends Component
     public string $application_status = 'APPROVED';
 
     #[On('open-supplier-drawer')]
-    public function open(string $mode = 'create', ?int $id = null): void
+    public function open(string $mode = 'view', ?int $id = null): void
     {
-        $this->resetValidation();
-        $this->reset(['company_name', 'ssm_number', 'mobile_no', 'telephone_no', 'mof_registration_no', 'paid_up_capital', 'application_status']);
         $this->activeId = $id;
-        $this->mode = $mode;
+        $this->mode = 'view';
 
-        if ($id && in_array($mode, ['view', 'edit'])) {
+        if ($id) {
             $supplier = Supplier::findOrFail($id);
             $this->company_name = $supplier->company_name ?? '';
             $this->ssm_number = $supplier->ssm_number ?? '';
@@ -43,36 +41,6 @@ new class extends Component
 
     public function closePanel(): void
     {
-        $this->showPanel = false;
-    }
-
-    public function switchToEdit(): void
-    {
-        $this->mode = 'edit';
-    }
-
-    public function save(): void
-    {
-        $validated = $this->validate([
-            'company_name' => 'required|string|max:255',
-            'ssm_number' => 'nullable|string|max:50',
-            'mobile_no' => 'nullable|string|max:50',
-            'telephone_no' => 'nullable|string|max:50',
-            'mof_registration_no' => 'nullable|string|max:100',
-            'paid_up_capital' => 'nullable|numeric',
-            'application_status' => 'required|string',
-        ]);
-
-        if ($this->mode === 'edit' && $this->activeId) {
-            $supplier = Supplier::findOrFail($this->activeId);
-            $supplier->update($validated);
-            session()->flash('success', 'Supplier details updated successfully.');
-        } else {
-            Supplier::create($validated);
-            session()->flash('success', 'New supplier created successfully.');
-        }
-
-        $this->dispatch('supplier-saved');
         $this->showPanel = false;
     }
 };
@@ -92,10 +60,8 @@ new class extends Component
                 {{-- Header --}}
                 <div class="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
                     <div>
-                        <h2 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                            {{ $mode === 'create' ? 'Add New Supplier' : ($mode === 'edit' ? 'Edit Supplier' : 'Supplier Details') }}
-                        </h2>
-                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Manage vendor registration information.</p>
+                        <h2 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Supplier Profile Details</h2>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">View-only supplier registration information.</p>
                     </div>
                     <button wire:click="closePanel" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
                         <x-heroicon-o-x-mark class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
@@ -104,91 +70,39 @@ new class extends Component
 
                 {{-- Content --}}
                 <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                    @if($mode === 'view')
-                        <div class="space-y-4 text-sm">
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Company Name</label>
-                                <p class="font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5">{{ $company_name }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">SSM Number</label>
-                                <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $ssm_number ?: '-' }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Mobile / Telephone</label>
-                                <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $mobile_no ?: ($telephone_no ?: '-') }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">MOF Registration No.</label>
-                                <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $mof_registration_no ?: '-' }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Paid-Up Capital (MYR)</label>
-                                <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $paid_up_capital ? number_format((float)$paid_up_capital, 2) : '-' }}</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Status</label>
-                                <div class="mt-1">
-                                    <x-ui.badge variant="success">{{ $application_status }}</x-ui.badge>
-                                </div>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Company Name</label>
+                            <p class="font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5">{{ $company_name }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">SSM Number</label>
+                            <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $ssm_number ?: '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Mobile / Telephone</label>
+                            <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $mobile_no ?: ($telephone_no ?: '-') }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">MOF Registration No.</label>
+                            <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $mof_registration_no ?: '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Paid-Up Capital (MYR)</label>
+                            <p class="text-zinc-800 dark:text-zinc-200 mt-0.5">{{ $paid_up_capital ? number_format((float)$paid_up_capital, 2) : '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Status</label>
+                            <div class="mt-1">
+                                <x-ui.badge variant="success">{{ $application_status }}</x-ui.badge>
                             </div>
                         </div>
-                    @else
-                        <form wire:submit.prevent="save" class="space-y-4">
-                            <div>
-                                <x-ui.label for="company_name">Company Name *</x-ui.label>
-                                <x-ui.input id="company_name" wire:model="company_name" placeholder="e.g. Pembekalan Maju Sdn Bhd" />
-                                @error('company_name') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <x-ui.label for="ssm_number">SSM Registration Number</x-ui.label>
-                                <x-ui.input id="ssm_number" wire:model="ssm_number" placeholder="e.g. 202401019876" />
-                                @error('ssm_number') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <x-ui.label for="mobile_no">Mobile No.</x-ui.label>
-                                    <x-ui.input id="mobile_no" wire:model="mobile_no" placeholder="012-3456789" />
-                                </div>
-                                <div>
-                                    <x-ui.label for="telephone_no">Office Telephone</x-ui.label>
-                                    <x-ui.input id="telephone_no" wire:model="telephone_no" placeholder="03-88889999" />
-                                </div>
-                            </div>
-
-                            <div>
-                                <x-ui.label for="mof_registration_no">MOF Registration No.</x-ui.label>
-                                <x-ui.input id="mof_registration_no" wire:model="mof_registration_no" placeholder="MOF-357-123456" />
-                            </div>
-
-                            <div>
-                                <x-ui.label for="paid_up_capital">Paid-Up Capital (MYR)</x-ui.label>
-                                <x-ui.input id="paid_up_capital" type="number" step="0.01" wire:model="paid_up_capital" placeholder="50000.00" />
-                            </div>
-
-                            <div>
-                                <x-ui.label for="application_status">Application Status</x-ui.label>
-                                <select id="application_status" wire:model="application_status" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100">
-                                    <option value="APPROVED">APPROVED</option>
-                                    <option value="PENDING">PENDING</option>
-                                    <option value="REJECTED">REJECTED</option>
-                                </select>
-                            </div>
-                        </form>
-                    @endif
+                    </div>
                 </div>
 
                 {{-- Footer --}}
                 <div class="p-6 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex justify-end gap-3">
-                    @if($mode === 'view')
-                        <x-ui.button variant="outline" size="sm" wire:click="closePanel">Close</x-ui.button>
-                        <x-ui.button variant="primary" size="sm" wire:click="switchToEdit">Edit Supplier</x-ui.button>
-                    @else
-                        <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                        <x-ui.button variant="primary" size="sm" wire:click="save">Save Supplier</x-ui.button>
-                    @endif
+                    <x-ui.button variant="outline" size="sm" wire:click="closePanel">Close</x-ui.button>
                 </div>
             </div>
         </div>

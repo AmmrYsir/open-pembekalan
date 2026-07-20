@@ -25,7 +25,6 @@ new class extends Component
     #[On('supplier-saved')]
     public function refreshTable(): void
     {
-        // Livewire re-renders computed properties
     }
 
     #[Computed]
@@ -134,11 +133,6 @@ new class extends Component
                 <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search supplier name, SSM, MOF..."
                        class="w-full pl-10 pr-4 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" />
             </div>
-
-            <x-ui.button variant="primary" size="sm" @click="$dispatch('open-supplier-drawer', { mode: 'create' })">
-                <x-heroicon-o-plus class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Add New Supplier
-            </x-ui.button>
         </div>
 
         <x-ui.table :headers="['Company Name', 'SSM Number', 'MOF Reg No.', 'Bumi Status', 'Status', 'Actions']">
@@ -170,9 +164,6 @@ new class extends Component
                         <div class="flex items-center gap-2">
                             <x-ui.button variant="outline" size="sm" @click="$dispatch('open-supplier-drawer', { mode: 'view', id: {{ $supplier->id }} })">
                                 View
-                            </x-ui.button>
-                            <x-ui.button variant="outline" size="sm" @click="$dispatch('open-supplier-drawer', { mode: 'edit', id: {{ $supplier->id }} })">
-                                Edit
                             </x-ui.button>
                             <x-ui.button variant="outline" size="sm" class="text-rose-600 dark:text-rose-400 hover:border-rose-300" wire:click="confirmDelete({{ $supplier->id }})">
                                 Delete

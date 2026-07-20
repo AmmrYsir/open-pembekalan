@@ -56,8 +56,6 @@ class AcquisitionForm extends Form
             'project_number' => ['required', 'string', 'max:100'],
             'project_name' => ['required', 'string', 'max:255'],
             'status' => ['nullable', 'string'],
-            'provision_type' => ['nullable', 'string', 'max:100'],
-            'submission_type' => ['nullable', 'string', 'max:100'],
             'vot_type_id' => ['nullable', 'integer', 'exists:vot_types,id'],
             'tender_number' => ['nullable', 'string', 'max:100'],
             'siling_price' => ['nullable', 'numeric', 'min:0'],
@@ -83,8 +81,6 @@ class AcquisitionForm extends Form
             'project_number' => 'Project Number',
             'project_name' => 'Project Name',
             'status' => 'Status',
-            'provision_type' => 'Provision Type',
-            'submission_type' => 'Submission Type',
             'vot_type_id' => 'VOT Type',
             'tender_number' => 'Tender Number',
             'siling_price' => 'Ceiling Price',
@@ -105,8 +101,6 @@ class AcquisitionForm extends Form
         $this->project_number = $a->project_number ?? '';
         $this->project_name = $a->project_name ?? '';
         $this->status = $a->status ?? '';
-        $this->provision_type = $a->provision_type ?? '';
-        $this->submission_type = $a->submission_type ?? '';
         $this->vot_type_id = $a->vot_type_id;
         $this->tender_number = $a->tender_number ?? '';
         $this->siling_price = $a->siling_price !== null ? (string) $a->siling_price : '';
@@ -131,8 +125,6 @@ class AcquisitionForm extends Form
             'project_number' => $this->project_number,
             'project_name' => $this->project_name,
             'status' => $this->status,
-            'provision_type' => $this->provision_type ?: null,
-            'submission_type' => $this->submission_type ?: null,
             'vot_type_id' => $this->vot_type_id,
             'tender_number' => $this->tender_number ?: null,
             'siling_price' => $this->siling_price !== '' ? (float) $this->siling_price : null,
@@ -173,8 +165,6 @@ class AcquisitionForm extends Form
         $this->project_number = Sequence::where('slug', 'project-number')->first()->next_sequence ?? '';
         $this->project_name = '';
         $this->status = null;
-        $this->provision_type = '';
-        $this->submission_type = '';
         $this->vot_type_id = null;
         $this->tender_number = '';
         $this->siling_price = '';
