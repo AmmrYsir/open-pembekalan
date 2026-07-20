@@ -2,6 +2,27 @@
     <x-slot:title>My Profile</x-slot:title>
 
     <div class="space-y-8 max-w-4xl">
+        @if(session('status') || session('message'))
+            <x-ui.alert variant="success" dismissible>
+                {{ session('status') ?? session('message') }}
+            </x-ui.alert>
+        @endif
+
+        @if(session('error'))
+            <x-ui.alert variant="error" dismissible>
+                {{ session('error') }}
+            </x-ui.alert>
+        @endif
+
+        @if($errors->any())
+            <x-ui.alert variant="error" dismissible title="Please check the form for errors">
+                <ul class="list-disc list-inside space-y-0.5 mt-1">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </x-ui.alert>
+        @endif
         <!-- Profile Banner Card -->
         <x-ui.card>
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6">

@@ -17,6 +17,10 @@ new class extends Component
 
 	public ?int $userId = null;
 
+	public string $successMessage = '';
+
+	public string $errorMessage = '';
+
 	public function mount(?User $user): void
 	{
 		$resolvedUser = $user ?? auth()->user();
@@ -66,6 +70,9 @@ new class extends Component
 	 */
 	public function updatedAvatar(): void
 	{
+		$this->successMessage = '';
+		$this->errorMessage = '';
+
 		$this->validate([
 			'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 		]);
@@ -93,12 +100,17 @@ new class extends Component
 
 		$this->avatar = null;
 
-		session()->flash('message', 'Avatar updated successfully.');
+		$msg = 'Avatar updated successfully.';
+		$this->successMessage = $msg;
+		session()->flash('message', $msg);
 		$this->dispatch('avatar-updated');
 	}
 
 	public function removeAvatar(): void
 	{
+		$this->successMessage = '';
+		$this->errorMessage = '';
+
 		$user = $this->resolvedUser;
 
 		if (! $user) {
@@ -110,7 +122,9 @@ new class extends Component
 			$user->update(['avatar_url' => null]);
 		}
 
-		session()->flash('message', 'Avatar removed.');
+		$msg = 'Avatar removed.';
+		$this->successMessage = $msg;
+		session()->flash('message', $msg);
 		$this->dispatch('avatar-updated');
 	}
 };
@@ -184,13 +198,28 @@ new class extends Component
 		>
 	</label>
 
-	{{-- ── Validation error tooltip ──────────────────────────────────────── --}}
+	{{-- ── Session & Validation Alerts ───────────────────────────────────── --}}
+	@if ($successMessage || session()->has('message'))
+		<div class="absolute left-0 top-full z-20 mt-2 w-56">
+			<x-ui.alert wire:key="avatar-success-{{ microtime() }}" variant="success" dismissible>
+				{{ $successMessage ?: session('message') }}
+			</x-ui.alert>
+		</div>
+	@endif
+
+	@if ($errorMessage || session()->has('error'))
+		<div class="absolute left-0 top-full z-20 mt-2 w-56">
+			<x-ui.alert wire:key="avatar-error-{{ microtime() }}" variant="error" dismissible>
+				{{ $errorMessage ?: session('error') }}
+			</x-ui.alert>
+		</div>
+	@endif
+
 	@error('avatar')
-		<div class="absolute left-0 top-full z-20 mt-2 w-52 rounded-xl border border-rose-100 bg-white p-2.5 shadow-lg dark:border-rose-900/30 dark:bg-zinc-900">
-			<p class="flex items-start gap-1.5 text-xs text-rose-600 dark:text-rose-400">
-				<x-heroicon-s-exclamation-circle class="mt-0.5 h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" />
+		<div class="absolute left-0 top-full z-20 mt-2 w-56">
+			<x-ui.alert wire:key="avatar-validation-{{ microtime() }}" variant="error" dismissible>
 				{{ $message }}
-			</p>
+			</x-ui.alert>
 		</div>
 	@enderror
 

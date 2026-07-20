@@ -14,6 +14,10 @@ new class extends Component
 
     public string $email = '';
 
+    public string $successMessage = '';
+
+    public string $errorMessage = '';
+
     public function rules(): array
     {
         $userId = $this->user?->id ?? auth()->id();
@@ -40,6 +44,9 @@ new class extends Component
 
     public function updateInformation(): void
     {
+        $this->successMessage = '';
+        $this->errorMessage = '';
+
         $cleanedUsername = $this->username !== '' ? ltrim(trim($this->username), '@') : null;
         $this->username = $cleanedUsername ?? '';
 
@@ -62,11 +69,12 @@ new class extends Component
 
             $this->user = $targetUser->fresh();
 
-            if ($emailChanged) {
-                session()->flash('message', 'Profile updated successfully. Please verify your new email address.');
-            } else {
-                session()->flash('message', 'Profile updated successfully.');
-            }
+            $msg = $emailChanged
+                ? 'Profile updated successfully. Please verify your new email address.'
+                : 'Profile updated successfully.';
+
+            $this->successMessage = $msg;
+            session()->flash('message', $msg);
         }
     }
 };
@@ -74,11 +82,17 @@ new class extends Component
 
 <div class="md:col-span-2">
 	<x-ui.card>
-		<form wire:submit.prevent="updateInformation" class="space-y-4">
-			@if (session()->has('message'))
-				<div class="p-3 text-xs font-medium text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800">
-					{{ session('message') }}
-				</div>
+		<form wire:submit="updateInformation" class="space-y-4">
+			@if ($successMessage || session()->has('message'))
+				<x-ui.alert wire:key="info-success-{{ microtime() }}" variant="success" dismissible>
+					{{ $successMessage ?: session('message') }}
+				</x-ui.alert>
+			@endif
+
+			@if ($errorMessage || session()->has('error'))
+				<x-ui.alert wire:key="info-error-{{ microtime() }}" variant="error" dismissible>
+					{{ $errorMessage ?: session('error') }}
+				</x-ui.alert>
 			@endif
 
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
