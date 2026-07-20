@@ -22,8 +22,6 @@ return new class extends Migration
             $table->string('project_number')->nullable();
             $table->string('project_name')->nullable();
             $table->string('status')->nullable();
-            $table->string('provision_type', 24)->nullable();
-            $table->string('submission_type')->nullable();
             $table->foreignIdFor(VotType::class, 'vot_type_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('tender_number', 56)->nullable();
             $table->decimal('siling_price', 12, 2)->nullable();
