@@ -283,7 +283,7 @@ new class extends Component
                                         <dd class="mt-1">
                                             @if($form->type)
                                                 @php $typeEnum = \App\Enums\AcquisitionType::tryFrom($form->type); @endphp
-                                                <x-ui.badge variant="primary">{{ $typeEnum ? $typeEnum->label() : $form->type }}</x-ui.badge>
+                                                <x-ui.badge variant="primary">{{ $typeEnum ? $typeEnum->value : $form->type }}</x-ui.badge>
                                             @else
                                                 <span class="text-sm text-zinc-400 dark:text-zinc-650">—</span>
                                             @endif
