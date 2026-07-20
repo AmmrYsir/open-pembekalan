@@ -44,7 +44,9 @@ new class extends Component
             if ($actionUrl) {
                 return redirect()->to($actionUrl);
             }
+			return null;
         }
+		return null;
     }
 };
 ?>

@@ -2,6 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::prefix('test')->name('test.')->middleware('auth')->group(function() {
+
+	Route::get('/notification/hello-world', function() {
+		$user = auth()->user();
+		
+		$systemNotification = new \App\Notifications\SystemNotification('Hello World', 'This is a test notification.');
+
+		$user->notify($systemNotification);
+		
+		return 'Notification sent!';
+	})->name('notification.hello-world');
+
+});
+
 Route::middleware('guest')->group(function () {
     Route::view('/', 'landing-page')->name('home');
     Route::view('/login', 'auth.login')->name('login');
