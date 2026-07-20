@@ -120,11 +120,8 @@
 
                 <!-- Right Header Actions -->
                 <div class="flex items-center gap-4">
-                    <!-- Notifications Mock -->
-                    <button class="relative p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                        <span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500"></span>
-                        <x-heroicon-o-bell class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </button>
+                    <!-- Notifications Bell Component -->
+                    @livewire('notification-bell')
 
                     <!-- Theme Toggle -->
                     <x-ui.theme-toggle />
