@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('boilerplate preview routes return successful response', function (string $route) {
-    if (in_array($route, ['/dashboard', '/profile', '/agency'])) {
+    if (in_array($route, ['/dashboard', '/profile', '/agency', '/verify-email'])) {
         $user = User::factory()->create();
         $this->actingAs($user);
     }
