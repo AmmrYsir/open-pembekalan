@@ -15,45 +15,49 @@ new class extends Component
 	 */
 	public $avatar = null;
 
-	public ?User $user;
+	public ?int $userId = null;
 
 	public function mount(?User $user): void
 	{
-		if ($user) {
-			$this->user = $user;
-		} else {
-			$this->user = auth()->user();
-		}
+		$resolvedUser = $user ?? auth()->user();
 
-		if (! $this->user) {
+		if (! $resolvedUser) {
 			abort(403, 'Unauthorized');
 		}
+
+		$this->userId = $resolvedUser->id;
+	}
+
+	#[Computed]
+	public function resolvedUser(): ?User
+	{
+		return ($this->userId ? User::find($this->userId) : null) ?? auth()->user();
 	}
 
 	#[Computed]
 	public function hasAvatar(): bool
 	{
-		return (bool) $this->user?->avatar_url;
+		return (bool) $this->resolvedUser?->avatar_url;
 	}
 
 	#[Computed]
 	public function avatarSrc(): string
 	{
 		return $this->hasAvatar
-			? Storage::url($this->user->avatar_url)
+			? Storage::url($this->resolvedUser->avatar_url)
 			: '';
 	}
 
 	#[Computed]
 	public function initials(): string
 	{
-		return $this->user?->initials() ?? '';
+		return $this->resolvedUser?->initials() ?? '';
 	}
 
 	#[Computed]
 	public function avatarColor(): string
 	{
-		return $this->user?->avatar_color ?? '#6b7280';
+		return $this->resolvedUser?->avatar_color ?? '#6b7280';
 	}
 
 	/**
@@ -66,7 +70,7 @@ new class extends Component
 			'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 		]);
 
-		$user = $this->user;
+		$user = $this->resolvedUser;
 
 		if (! $user) {
 			return;
@@ -95,7 +99,7 @@ new class extends Component
 
 	public function removeAvatar(): void
 	{
-		$user = $this->user;
+		$user = $this->resolvedUser;
 
 		if (! $user) {
 			return;
