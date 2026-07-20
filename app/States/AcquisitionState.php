@@ -2,9 +2,13 @@
 
 namespace App\States;
 
+use App\Models\Acquisition;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
 
+/**
+ * @extends State<Acquisition>
+ */
 abstract class AcquisitionState extends State
 {
     abstract public function color(): string;

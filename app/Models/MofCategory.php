@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MofCategory extends Model
 {
@@ -11,7 +12,10 @@ class MofCategory extends Model
         'name',
     ];
 
-    public function subcategories()
+    /**
+     * @return HasMany<MofSubcategory, $this>
+     */
+    public function subcategories(): HasMany
     {
         return $this->hasMany(MofSubcategory::class);
     }

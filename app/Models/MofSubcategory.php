@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MofSubcategory extends Model
 {
@@ -12,12 +14,18 @@ class MofSubcategory extends Model
         'mof_category_id',
     ];
 
-    public function category()
+    /**
+     * @return BelongsTo<MofCategory, $this>
+     */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(MofCategory::class, 'mof_category_id');
     }
 
-    public function mofCodes()
+    /**
+     * @return HasMany<MofCode, $this>
+     */
+    public function mofCodes(): HasMany
     {
         return $this->hasMany(MofCode::class);
     }

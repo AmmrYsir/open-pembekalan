@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Forms;
 
-use App\Enums\AcquisitionCommitteeType;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
 use App\Models\Acquisition;
@@ -110,7 +109,7 @@ class AcquisitionForm extends Form
         $this->is_required_kbp = (bool) $a->is_required_kbp;
         $this->mof_required = (bool) $a->mof_required;
         $this->cidb_required = (bool) $a->cidb_required;
-        $this->committee_type = $a->committee_type instanceof AcquisitionCommitteeType ? $a->committee_type->value : '';
+        $this->committee_type = $a->committee_type->value ?? '';
         $this->user_id = $a->user_id;
     }
 

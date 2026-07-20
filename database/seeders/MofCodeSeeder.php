@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 class MofCodeSeeder extends Seeder
 {
+    /**
+     * @var array<int, array{code: string, name: string, subcategories: array<int, array{code: string, name: string, mof_codes: array<int, array{code: string, name: string}>}>}>
+     */
     private array $mof_codes = [
         [
             'code' => '01',

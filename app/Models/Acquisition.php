@@ -16,6 +16,7 @@ use Spatie\ModelStates\HasStates;
 /**
  * @property AcquisitionType|null $type
  * @property AcquisitionMethod|null $method
+ * @property AcquisitionCommitteeType|null $committee_type
  */
 class Acquisition extends Model implements HasUuidContract
 {

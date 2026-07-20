@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class MofCode extends Model
 {
@@ -12,7 +14,10 @@ class MofCode extends Model
         'mof_subcategory_id',
     ];
 
-    public function category()
+    /**
+     * @return HasOneThrough<MofCategory, MofSubcategory, $this>
+     */
+    public function category(): HasOneThrough
     {
         return $this->hasOneThrough(
             MofCategory::class,
@@ -24,7 +29,10 @@ class MofCode extends Model
         );
     }
 
-    public function subcategory()
+    /**
+     * @return BelongsTo<MofSubcategory, $this>
+     */
+    public function subcategory(): BelongsTo
     {
         return $this->belongsTo(MofSubcategory::class, 'mof_subcategory_id');
     }
