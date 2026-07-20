@@ -8,3 +8,51 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Custom Scrollbar Styles */
+@layer base {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #d4d4d8 transparent;
+    }
+
+    .dark * {
+        scrollbar-color: #3f3f46 transparent;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+        border-radius: 9999px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #d4d4d8;
+        border-radius: 9999px;
+        transition: background-color 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a1a1aa;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: #52525b;
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+        background: #059669;
+    }
+
+    .dark ::-webkit-scrollbar-thumb:active {
+        background: #10b981;
+    }
+}

@@ -27,7 +27,7 @@
           }
       ">
 
-    <div class="min-h-full flex">
+    <div class="min-h-screen flex">
         <!-- Sidebar Backdrop (Mobile Only) -->
         <div x-show="sidebarOpen" 
              x-transition:enter="transition-opacity ease-linear duration-300"
@@ -42,7 +42,7 @@
 
         <!-- Sidebar Component -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-               class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200/80 dark:border-zinc-800/80 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:static lg:h-screen lg:shrink-0">
+               class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200/80 dark:border-zinc-800/80 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:shrink-0">
             
             <div class="flex flex-col overflow-y-auto flex-1">
                 <!-- Sidebar Header -->
@@ -154,7 +154,7 @@
         </aside>
 
         <!-- Main Body Wrapper -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <div class="flex-1 flex flex-col min-w-0 min-h-screen">
             <!-- Header Component -->
             <header class="h-16 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
                 <div class="flex items-center gap-4">
