@@ -229,7 +229,7 @@ new class extends Component
                     <select wire:model.live="filterType" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
                         <option value="">All Types</option>
                         @foreach($this->acquisitionTypes as $t)
-                            <option value="{{ $t->value }}">{{ $t->label() }}</option>
+                            <option value="{{ $t->value }}">{{ $t->value }}</option>
                         @endforeach
                     </select>
 
