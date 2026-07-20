@@ -440,7 +440,7 @@ new class extends Component
                                         <select id="type" wire:model="form.type" class="block w-full rounded-xl border {{ $errors->has('form.type') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                             <option value="">Select type...</option>
                                             @foreach($this->acquisitionTypes as $t)
-                                                <option value="{{ $t->value }}">{{ $t->label() }}</option>
+                                                <option value="{{ $t->value }}">{{ $t->value }}</option>
                                             @endforeach
                                         </select>
                                         @error('form.type') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
@@ -455,19 +455,6 @@ new class extends Component
                                             @endforeach
                                         </select>
                                         @error('form.method') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
-                                    </div>
-
-                                    <div class="space-y-1.5">
-                                        <x-ui.label for="status" :required="true">Status</x-ui.label>
-                                        <select id="status" wire:model="form.status" class="block w-full rounded-xl border {{ $errors->has('form.status') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
-                                            <option value="">Select status...</option>
-                                            <option value="DRAF">Draf</option>
-                                            <option value="DIKEMUKAKAN">Dikemukakan</option>
-                                            <option value="DILULUSKAN">Diluluskan</option>
-                                            <option value="DITOLAK">Ditolak</option>
-                                            <option value="DIBATALKAN">Dibatalkan</option>
-                                        </select>
-                                        @error('form.status') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div class="space-y-1.5">
