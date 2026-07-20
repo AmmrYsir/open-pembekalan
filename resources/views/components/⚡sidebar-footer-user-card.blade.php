@@ -22,6 +22,18 @@ new class extends Component
         $this->user = auth()->user();
     }
 
+    public function openLinkModal(): void
+    {
+        $this->link_error = '';
+        $this->reset(['link_email', 'link_password']);
+        $this->showLinkModal = true;
+    }
+
+    public function closeLinkModal(): void
+    {
+        $this->showLinkModal = false;
+    }
+
     public function switchAccount(int $targetUserId): void
     {
         if ($this->user && $this->user->switchAccount($targetUserId)) {
@@ -167,7 +179,7 @@ new class extends Component
 
 		<!-- Action Options -->
 		<div class="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 space-y-1">
-			<button @click="$wire.showLinkModal = true; open = false" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors cursor-pointer">
+			<button wire:click="openLinkModal" @click="open = false" type="button" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors cursor-pointer">
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
 				<span>Link Another Account</span>
 			</button>
@@ -206,14 +218,14 @@ new class extends Component
 
 	{{-- ── Link Another Account Modal ────────────────────────────────────── --}}
 	@if($showLinkModal)
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4" x-data @keydown.escape.window="$wire.showLinkModal = false">
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4" x-data @keydown.escape.window="$wire.closeLinkModal()">
 			<div class="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 p-6 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-4">
 				<div class="flex items-center justify-between">
 					<h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
 						<svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
 						Link Another Account
 					</h3>
-					<button wire:click="$set('showLinkModal', false)" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer">
+					<button wire:click="closeLinkModal" type="button" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 					</button>
 				</div>
@@ -233,7 +245,7 @@ new class extends Component
 					<x-ui.input wire:model="link_password" id="link_password" type="password" label="Account Password" placeholder="••••••••" required :error="$errors->first('link_password')" />
 
 					<div class="pt-2 flex items-center justify-end gap-2">
-						<x-ui.button type="button" variant="outline" wire:click="$set('showLinkModal', false)">Cancel</x-ui.button>
+						<x-ui.button type="button" variant="outline" wire:click="closeLinkModal">Cancel</x-ui.button>
 						<x-ui.button type="submit" loadingTarget="linkNewAccount">Link & Verify Account</x-ui.button>
 					</div>
 				</form>
