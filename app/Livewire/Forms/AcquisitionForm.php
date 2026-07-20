@@ -19,7 +19,7 @@ class AcquisitionForm extends Form
 
     public string $project_name = '';
 
-    public string $status = '';
+    public ?string $status = null;
 
     public string $provision_type = '';
 
@@ -36,6 +36,8 @@ class AcquisitionForm extends Form
     public ?int $agency_id = null;
 
     public ?int $subagency_id = null;
+
+    public ?int $user_id = null;
 
     public bool $is_required_kbp = false;
 
@@ -55,7 +57,7 @@ class AcquisitionForm extends Form
             'method' => ['required', 'string'],
             'project_number' => ['required', 'string', 'max:100'],
             'project_name' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'string'],
+            'status' => ['nullable', 'string'],
             'provision_type' => ['nullable', 'string', 'max:100'],
             'submission_type' => ['nullable', 'string', 'max:100'],
             'vot_type_id' => ['nullable', 'integer', 'exists:vot_types,id'],
@@ -64,6 +66,7 @@ class AcquisitionForm extends Form
             'no_allocation_warrant' => ['nullable', 'string', 'max:100'],
             'agency_id' => ['nullable', 'integer', 'exists:agencies,id'],
             'subagency_id' => ['nullable', 'integer', 'exists:subagencies,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
             'is_required_kbp' => ['boolean'],
             'mof_required' => ['boolean'],
             'cidb_required' => ['boolean'],
@@ -90,6 +93,7 @@ class AcquisitionForm extends Form
             'no_allocation_warrant' => 'Allocation Warrant No.',
             'agency_id' => 'Agency',
             'subagency_id' => 'Sub-Agency',
+            'user_id' => 'Officer',
             'committee_type' => 'Committee Type',
         ];
     }
@@ -115,6 +119,7 @@ class AcquisitionForm extends Form
         $this->mof_required = (bool) $a->mof_required;
         $this->cidb_required = (bool) $a->cidb_required;
         $this->committee_type = $a->committee_type ?? '';
+        $this->user_id = $a->user_id;
     }
 
     /**
@@ -136,6 +141,7 @@ class AcquisitionForm extends Form
             'no_allocation_warrant' => $this->no_allocation_warrant ?: null,
             'agency_id' => $this->agency_id,
             'subagency_id' => $this->subagency_id,
+            'user_id' => $this->user_id,
             'is_required_kbp' => $this->is_required_kbp,
             'mof_required' => $this->mof_required,
             'cidb_required' => $this->cidb_required,
@@ -147,7 +153,12 @@ class AcquisitionForm extends Form
     {
         $this->validate();
 
-        return Acquisition::create($this->getMappedData());
+        $data = $this->getMappedData();
+        if (empty($data['status'])) {
+            $data['status'] = 'DRAF';
+        }
+
+        return Acquisition::create($data);
     }
 
     public function update(Acquisition $a): void
@@ -163,7 +174,7 @@ class AcquisitionForm extends Form
         $this->method = '';
         $this->project_number = '';
         $this->project_name = '';
-        $this->status = '';
+        $this->status = null;
         $this->provision_type = '';
         $this->submission_type = '';
         $this->vot_type_id = null;
@@ -172,6 +183,7 @@ class AcquisitionForm extends Form
         $this->no_allocation_warrant = '';
         $this->agency_id = null;
         $this->subagency_id = null;
+        $this->user_id = null;
         $this->is_required_kbp = false;
         $this->mof_required = false;
         $this->cidb_required = false;

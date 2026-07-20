@@ -4,8 +4,11 @@ use App\Models\Acquisition;
 use App\Models\Agency;
 use App\Models\Subagency;
 use App\Models\VotType;
+use App\Models\AgencyOfficer;
+use App\Models\User;
 use App\Enums\AcquisitionType;
 use App\Enums\AcquisitionMethod;
+use App\Enums\AcquisitionCommitteeType;
 use App\Livewire\Forms\AcquisitionForm;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
@@ -35,6 +38,17 @@ new class extends Component
         $this->showPanel = true;
     }
 
+    public function updatedFormAgencyId(): void
+    {
+        $this->form->subagency_id = null;
+        $this->form->user_id = null;
+    }
+
+    public function updatedFormSubagencyId(): void
+    {
+        $this->form->user_id = null;
+    }
+
     #[Computed]
     public function agencies(): \Illuminate\Database\Eloquent\Collection
     {
@@ -47,6 +61,20 @@ new class extends Component
         return Subagency::when($this->form->agency_id, fn ($q) => $q->where('agency_id', $this->form->agency_id))
             ->orderBy('name')
             ->get(['id', 'name']);
+    }
+
+    #[Computed]
+    public function officers(): \Illuminate\Database\Eloquent\Collection
+    {
+        if (!$this->form->agency_id) {
+            return new \Illuminate\Database\Eloquent\Collection();
+        }
+
+        return User::whereIn('id',
+            AgencyOfficer::where('agency_id', $this->form->agency_id)
+                ->when($this->form->subagency_id, fn ($q) => $q->where('subagency_id', $this->form->subagency_id))
+                ->pluck('user_id')
+        )->orderBy('name')->get(['id', 'name']);
     }
 
     #[Computed]
@@ -65,6 +93,12 @@ new class extends Component
     public function acquisitionMethods(): array
     {
         return AcquisitionMethod::cases();
+    }
+
+    #[Computed]
+    public function committeeTypes(): array
+    {
+        return AcquisitionCommitteeType::cases();
     }
 
     public function save(): void
@@ -251,7 +285,7 @@ new class extends Component
                                                 @php $typeEnum = \App\Enums\AcquisitionType::tryFrom($form->type); @endphp
                                                 <x-ui.badge variant="primary">{{ $typeEnum ? $typeEnum->label() : $form->type }}</x-ui.badge>
                                             @else
-                                                <span class="text-sm text-zinc-400 dark:text-zinc-600">—</span>
+                                                <span class="text-sm text-zinc-400 dark:text-zinc-650">—</span>
                                             @endif
                                         </dd>
                                     </div>
@@ -261,7 +295,29 @@ new class extends Component
                                             @if($form->method)
                                                 <x-ui.badge variant="secondary">{{ $form->method }}</x-ui.badge>
                                             @else
-                                                <span class="text-sm text-zinc-400 dark:text-zinc-600">—</span>
+                                                <span class="text-sm text-zinc-400 dark:text-zinc-650">—</span>
+                                            @endif
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">VOT Type</dt>
+                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100 font-mono">
+                                            @if($form->vot_type_id)
+                                                @php $vot = $this->votTypes->firstWhere('id', $form->vot_type_id); @endphp
+                                                {{ $vot ? "{$vot->code} — {$vot->name}" : '—' }}
+                                            @else
+                                                <span class="text-zinc-400 dark:text-zinc-650">—</span>
+                                            @endif
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Committee Type</dt>
+                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100 font-sans">
+                                            @if($form->committee_type)
+                                                @php $commEnum = \App\Enums\AcquisitionCommitteeType::tryFrom($form->committee_type); @endphp
+                                                {{ $commEnum ? $commEnum->label() : $form->committee_type }}
+                                            @else
+                                                <span class="text-zinc-400 dark:text-zinc-650">—</span>
                                             @endif
                                         </dd>
                                     </div>
@@ -292,17 +348,6 @@ new class extends Component
                                             @endif
                                         </dd>
                                     </div>
-                                    <div>
-                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">VOT Type</dt>
-                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
-                                            @if($form->vot_type_id)
-                                                @php $vot = $this->votTypes->firstWhere('id', $form->vot_type_id); @endphp
-                                                {{ $vot ? "{$vot->code} — {$vot->name}" : '—' }}
-                                            @else
-                                                <span class="text-zinc-400 dark:text-zinc-600">—</span>
-                                            @endif
-                                        </dd>
-                                    </div>
                                 </dl>
                             </div>
 
@@ -327,17 +372,17 @@ new class extends Component
                                 </dl>
                             </div>
 
-                            {{-- Section: Agency --}}
+                            {{-- Section: Agency & Officer --}}
                             <div>
                                 <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
                                     <span class="w-5 h-px bg-zinc-200 dark:bg-zinc-700"></span>
-                                    Agency
+                                    Agency & Officer
                                     <span class="flex-1 h-px bg-zinc-200 dark:bg-zinc-700"></span>
                                 </h3>
                                 <dl class="grid grid-cols-2 gap-x-6 gap-y-4">
                                     <div>
                                         <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Agency</dt>
-                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
+                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100 font-medium">
                                             @if($form->agency_id)
                                                 @php $ag = $this->agencies->firstWhere('id', $form->agency_id); @endphp
                                                 {{ $ag?->name ?? '—' }}
@@ -357,30 +402,27 @@ new class extends Component
                                             @endif
                                         </dd>
                                     </div>
+                                    <div class="col-span-2">
+                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Officer</dt>
+                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
+                                            @if($form->user_id)
+                                                @php $usr = \App\Models\User::find($form->user_id); @endphp
+                                                {{ $usr?->name ?? '—' }}
+                                            @else
+                                                <span class="text-zinc-400 dark:text-zinc-650">—</span>
+                                            @endif
+                                        </dd>
+                                    </div>
                                 </dl>
                             </div>
 
-                            {{-- Section: Additional --}}
+                            {{-- Section: Requirements --}}
                             <div>
                                 <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
                                     <span class="w-5 h-px bg-zinc-200 dark:bg-zinc-700"></span>
-                                    Additional Details
+                                    Requirements
                                     <span class="flex-1 h-px bg-zinc-200 dark:bg-zinc-700"></span>
                                 </h3>
-                                <dl class="grid grid-cols-2 gap-x-6 gap-y-4">
-                                    <div>
-                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Provision Type</dt>
-                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100">{{ $form->provision_type ?: '—' }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Submission Type</dt>
-                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100">{{ $form->submission_type ?: '—' }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Committee Type</dt>
-                                        <dd class="mt-1 text-sm text-zinc-900 dark:text-zinc-100">{{ $form->committee_type ?: '—' }}</dd>
-                                    </div>
-                                </dl>
 
                                 {{-- Boolean flags --}}
                                 <div class="mt-4 grid grid-cols-3 gap-3">
@@ -466,6 +508,17 @@ new class extends Component
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    <div class="space-y-1.5">
+                                        <x-ui.label for="committee_type">Committee Type</x-ui.label>
+                                        <select id="committee_type" wire:model="form.committee_type" class="block w-full rounded-xl border {{ $errors->has('form.committee_type') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
+                                            <option value="">Select committee type...</option>
+                                            @foreach($this->committeeTypes as $comm)
+                                                <option value="{{ $comm->value }}">{{ $comm->value }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('form.committee_type') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
                                 </div>
                             </div>
 
@@ -493,7 +546,7 @@ new class extends Component
                             <div>
                                 <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
                                     <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
-                                    Agency
+                                    Agency & Officer
                                     <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -508,31 +561,36 @@ new class extends Component
                                     </div>
                                     <div class="space-y-1.5">
                                         <x-ui.label for="subagency_id">Sub-Agency</x-ui.label>
-                                        <select id="subagency_id" wire:model="form.subagency_id" @if(!$form->agency_id) disabled @endif class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <select id="subagency_id" wire:model.live="form.subagency_id" @if(!$form->agency_id) disabled @endif class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
                                             <option value="">No sub-agency</option>
                                             @foreach($this->subagencies as $sub)
                                                 <option value="{{ $sub->id }}">{{ $sub->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="space-y-1.5 col-span-1 sm:col-span-2">
+                                        <x-ui.label for="user_id">Officer</x-ui.label>
+                                        <select id="user_id" wire:model="form.user_id" @if(!$form->agency_id) disabled @endif class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <option value="">Select officer...</option>
+                                            @foreach($this->officers as $officer)
+                                                <option value="{{ $officer->id }}">{{ $officer->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('form.user_id') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
+                                    </div>
                                 </div>
                             </div>
 
-                            {{-- Section: Additional --}}
+                            {{-- Section: Requirements --}}
                             <div>
                                 <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
                                     <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
-                                    Additional Details
+                                    Requirements
                                     <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
                                 </h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <x-ui.input id="provision_type" label="Provision Type" placeholder="e.g. Pusat" wire:model="form.provision_type" :error="$errors->first('form.provision_type')" />
-                                    <x-ui.input id="submission_type" label="Submission Type" placeholder="e.g. Baharu" wire:model="form.submission_type" :error="$errors->first('form.submission_type')" />
-                                    <x-ui.input id="committee_type" label="Committee Type" placeholder="e.g. JK Teknikal" wire:model="form.committee_type" :error="$errors->first('form.committee_type')" />
-                                </div>
 
                                 {{-- Toggle switches --}}
-                                <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     @foreach([
                                         ['is_required_kbp', 'KBP Required', 'Kontraktor Bumiputera'],
                                         ['mof_required',    'MOF Required', 'Ministry of Finance'],
@@ -546,7 +604,7 @@ new class extends Component
                                             </div>
                                             <div>
                                                 <div class="text-xs font-semibold text-zinc-700 dark:text-zinc-200">{{ $label }}</div>
-                                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $desc }}</div>
+                                                <div class="text-xs text-zinc-550 dark:text-zinc-400 mt-0.5">{{ $desc }}</div>
                                             </div>
                                         </label>
                                     @endforeach
