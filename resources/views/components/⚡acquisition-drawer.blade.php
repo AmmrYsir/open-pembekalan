@@ -321,33 +321,6 @@ new class extends Component
                                             @endif
                                         </dd>
                                     </div>
-                                    <div>
-                                        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Status</dt>
-                                        <dd class="mt-1">
-                                            @if($form->status)
-                                                @php
-                                                    $sv = match($form->status) {
-                                                        'DILULUSKAN'  => 'success',
-                                                        'DIKEMUKAKAN' => 'info',
-                                                        'DRAF'        => 'warning',
-                                                        'DITOLAK'     => 'danger',
-                                                        default       => 'secondary',
-                                                    };
-                                                    $sl = match($form->status) {
-                                                        'DILULUSKAN'  => 'Diluluskan',
-                                                        'DIKEMUKAKAN' => 'Dikemukakan',
-                                                        'DRAF'        => 'Draf',
-                                                        'DITOLAK'     => 'Ditolak',
-                                                        'DIBATALKAN'  => 'Dibatalkan',
-                                                        default       => $form->status,
-                                                    };
-                                                @endphp
-                                                <x-ui.badge :variant="$sv" pill>{{ $sl }}</x-ui.badge>
-                                            @else
-                                                <span class="text-sm text-zinc-400 dark:text-zinc-600">—</span>
-                                            @endif
-                                        </dd>
-                                    </div>
                                 </dl>
                             </div>
 
@@ -461,7 +434,7 @@ new class extends Component
                                     <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <x-ui.input id="project_number" label="Project Number" placeholder="e.g. PRJ-2026-001" wire:model="form.project_number" :required="true" :error="$errors->first('form.project_number')" />
+                                    <x-ui.input id="project_number" disabled label="Project Number" placeholder="e.g. PRJ-2026-001" wire:model="form.project_number" :required="true" :error="$errors->first('form.project_number')" />
                                     <x-ui.input id="tender_number" label="Tender Number" placeholder="e.g. TND-2026-001" wire:model="form.tender_number" :error="$errors->first('form.tender_number')" />
                                     <div class="sm:col-span-2">
                                         <x-ui.input id="project_name" label="Project Name" placeholder="Full name of the acquisition project" wire:model="form.project_name" :required="true" :error="$errors->first('form.project_name')" />
