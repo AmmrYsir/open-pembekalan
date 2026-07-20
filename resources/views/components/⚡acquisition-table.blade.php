@@ -311,7 +311,7 @@ new class extends Component
                                 <div class="flex flex-col gap-1.5">
                                     @if($acquisition->type)
                                         <x-ui.badge variant="primary">
-                                            {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->label() : $acquisition->type }}
+                                            {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->value : $acquisition->type }}
                                         </x-ui.badge>
                                     @endif
                                     @if($acquisition->method)

@@ -137,15 +137,15 @@ new class extends Component
 
         <x-ui.table :headers="['Company Name', 'SSM Number', 'MOF Reg No.', 'Bumi Status', 'Status', 'Actions']">
             @forelse($this->suppliers as $supplier)
-                <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="font-semibold text-zinc-900 dark:text-zinc-100">{{ $supplier->company_name }}</div>
-                        <div class="text-xs text-zinc-500">{{ $supplier->mobile_no ?? $supplier->telephone_no ?? 'No contact' }}</div>
+                        <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $supplier->company_name }}</div>
+                        <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $supplier->mobile_no ?? $supplier->telephone_no ?? 'No contact' }}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-700 dark:text-zinc-300 font-mono">
                         {{ $supplier->ssm_number ?? '-' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-700 dark:text-zinc-300 font-mono">
                         {{ $supplier->mof_registration_no ?? '-' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -156,25 +156,41 @@ new class extends Component
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <x-ui.badge variant="{{ $supplier->application_status === 'APPROVED' ? 'success' : 'info' }}">
+                        <x-ui.badge variant="{{ $supplier->application_status === 'APPROVED' ? 'success' : 'info' }}" pill>
                             {{ $supplier->application_status ?? 'ACTIVE' }}
                         </x-ui.badge>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center gap-2">
-                            <x-ui.button variant="outline" size="sm" @click="$dispatch('open-supplier-drawer', { mode: 'view', id: {{ $supplier->id }} })">
-                                View
-                            </x-ui.button>
-                            <x-ui.button variant="outline" size="sm" class="text-rose-600 dark:text-rose-400 hover:border-rose-300" wire:click="confirmDelete({{ $supplier->id }})">
-                                Delete
-                            </x-ui.button>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <button
+                                wire:click="$dispatch('open-supplier-drawer', { mode: 'view', id: {{ $supplier->id }} })"
+                                title="View"
+                                class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/30 dark:hover:text-sky-400 transition-all"
+                            >
+                                <x-heroicon-o-eye class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </button>
+                            <button
+                                wire:click="confirmDelete({{ $supplier->id }})"
+                                title="Delete"
+                                class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 transition-all"
+                            >
+                                <x-heroicon-o-trash class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </button>
                         </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
-                        No suppliers found matching your query.
+                    <td colspan="6" class="px-5 py-16 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <span class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <x-heroicon-o-clipboard class="w-7 h-7 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" />
+                            </span>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No suppliers found</p>
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Try adjusting your search query.</p>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             @endforelse
@@ -185,17 +201,45 @@ new class extends Component
         </div>
     </x-ui.card>
 
-    {{-- Delete Modal --}}
-    @if($showDeleteConfirm)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-xs">
-            <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-xl">
-                <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 text-lg">Confirm Delete</h3>
-                <p class="text-sm text-zinc-600 dark:text-zinc-400">Are you sure you want to delete this supplier? This action cannot be undone.</p>
-                <div class="flex justify-end gap-3 pt-2">
-                    <x-ui.button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-ui.button>
-                    <x-ui.button variant="primary" size="sm" class="bg-rose-600 hover:bg-rose-700 text-white border-transparent" wire:click="delete">Delete Supplier</x-ui.button>
+    {{-- Delete Confirmation Modal --}}
+    <div
+        x-data
+        x-show="$wire.showDeleteConfirm"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="display: none;"
+        role="dialog"
+        aria-modal="true"
+    >
+        <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="cancelDelete"></div>
+        <div
+            x-show="$wire.showDeleteConfirm"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/80 dark:border-zinc-800/80 p-6 w-full max-w-sm"
+        >
+            <div class="flex items-start gap-4">
+                <span class="shrink-0 w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center">
+                    <x-heroicon-o-exclamation-triangle class="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                </span>
+                <div>
+                    <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Delete Supplier</h3>
+                    <p class="text-xs text-zinc-550 dark:text-zinc-400 mt-1">Are you sure you want to delete this supplier? This action cannot be undone.</p>
                 </div>
             </div>
+            <div class="mt-5 flex gap-3 justify-end">
+                <x-ui.button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-ui.button>
+                <x-ui.button variant="primary" size="sm" class="bg-rose-600 hover:bg-rose-700 text-white border-transparent" wire:click="delete">Delete</x-ui.button>
+            </div>
         </div>
-    @endif
+    </div>
 </div>
