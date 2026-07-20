@@ -9,6 +9,7 @@ test('system management routes render successfully for authenticated users', fun
 
     $response->assertStatus(200);
 })->with([
+    '/features',
     '/suppliers',
     '/agencies',
     '/subagencies',
@@ -26,6 +27,7 @@ test('system management routes redirect guest users to login', function (string 
 
     $response->assertRedirect('/login');
 })->with([
+    '/features',
     '/suppliers',
     '/agencies',
     '/subagencies',

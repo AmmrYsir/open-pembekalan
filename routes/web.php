@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     })->name('profile');
 
     // System Management Routes
+    Route::view('/features', 'features')->name('features.index');
     Route::view('/suppliers', 'suppliers')->name('suppliers.index');
     Route::view('/agencies', 'agencies')->name('agencies.index');
     Route::view('/subagencies', 'subagencies')->name('subagencies.index');

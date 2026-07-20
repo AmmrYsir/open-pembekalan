@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Support\FeatureRegistry;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
@@ -9,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Pennant\Feature;
 use Livewire\Blaze\Blaze;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +40,23 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->registerRoleDirectives();
+        $this->registerFeatureDefinitions();
+    }
+
+    /**
+     * Register Pennant feature definitions and scope checks.
+     */
+    protected function registerFeatureDefinitions(): void
+    {
+        Feature::define('experimental-features', fn (?User $user = null): bool => (bool) $user?->is_experimental_user);
+
+        foreach (FeatureRegistry::all() as $feature) {
+            if ($feature['key'] === 'experimental-features') {
+                continue;
+            }
+
+            Feature::define($feature['key'], fn (): bool => $feature['default_active']);
+        }
     }
 
     /**

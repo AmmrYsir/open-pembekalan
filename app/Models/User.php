@@ -33,7 +33,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'email_verified_at', 'password'])]
+#[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'email_verified_at', 'password', 'is_active', 'is_experimental_user'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract
 {
@@ -51,6 +51,8 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'created_by' => 'date',
+            'is_active' => 'boolean',
+            'is_experimental_user' => 'boolean',
         ];
     }
 
