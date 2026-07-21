@@ -89,9 +89,70 @@ trait HasLinkedAccounts
     }
 
     /**
-     * Switch authenticated user to target user account.
+     * Check if switch to target user is verified and within activity timeout window.
      */
-    public function switchAccount(User|int $target): bool
+    public function isSwitchVerified(User|int $target, int $timeoutMinutes = 15): bool
+    {
+        $targetId = $target instanceof User ? $target->id : (int) $target;
+
+        if ($targetId === $this->id) {
+            return true;
+        }
+
+        if (! app()->bound('session')) {
+            return false;
+        }
+
+        $lastActivity = session('account_switch_verified_'.$targetId);
+
+        if (! $lastActivity) {
+            return false;
+        }
+
+        $elapsedSeconds = now()->timestamp - (int) $lastActivity;
+        $maxSeconds = $timeoutMinutes * 60;
+
+        if ($elapsedSeconds <= $maxSeconds) {
+            // Touch / auto-renew the activity timestamp for sliding session
+            session(['account_switch_verified_'.$targetId => now()->timestamp]);
+
+            return true;
+        }
+
+        // Expired - flush session key
+        session()->forget('account_switch_verified_'.$targetId);
+
+        return false;
+    }
+
+    /**
+     * Mark switch to target account as verified with current timestamp.
+     */
+    public function markSwitchVerified(User|int $target): void
+    {
+        $targetId = $target instanceof User ? $target->id : (int) $target;
+
+        if (app()->bound('session')) {
+            session(['account_switch_verified_'.$targetId => now()->timestamp]);
+        }
+    }
+
+    /**
+     * Clear verification status for a target account.
+     */
+    public function clearSwitchVerification(User|int $target): void
+    {
+        $targetId = $target instanceof User ? $target->id : (int) $target;
+
+        if (app()->bound('session')) {
+            session()->forget('account_switch_verified_'.$targetId);
+        }
+    }
+
+    /**
+     * Switch authenticated user to target user account with sliding activity verification.
+     */
+    public function switchAccount(User|int $target, bool $bypassVerification = false, int $timeoutMinutes = 15): bool
     {
         $targetUser = $target instanceof User ? $target : User::find((int) $target);
 
@@ -99,10 +160,36 @@ trait HasLinkedAccounts
             return false;
         }
 
+        if (! $bypassVerification && ! $this->isSwitchVerified($targetUser, $timeoutMinutes)) {
+            return false;
+        }
+
+        // Backup current verified sessions before session regeneration
+        $verifiedSessions = [];
+        if (app()->bound('session')) {
+            foreach (session()->all() as $key => $val) {
+                if (str_starts_with($key, 'account_switch_verified_')) {
+                    $verifiedSessions[$key] = $val;
+                }
+            }
+        }
+
         Auth::login($targetUser);
 
-        if (request()->hasSession()) {
-            request()->session()->regenerate();
+        if (app()->bound('session')) {
+            if (request()->hasSession()) {
+                request()->session()->regenerate();
+            }
+
+            // Restore verified sessions after regeneration and mark current & previous user verified
+            foreach ($verifiedSessions as $key => $val) {
+                session([$key => $val]);
+            }
+
+            session([
+                'account_switch_verified_'.$this->id => now()->timestamp,
+                'account_switch_verified_'.$targetUser->id => now()->timestamp,
+            ]);
         }
 
         return true;

@@ -19,6 +19,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 
 /**
  * @property string $uuid
@@ -39,6 +40,18 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
 {
     /** @use HasFactory<UserFactory> */
     use HasAvatarColor, HasFactory, HasLinkedAccounts, HasRoles, HasUuid, Notifiable;
+
+    protected static function booted(): void
+    {
+        static::saved(function (User $user) {
+            if ($user->wasChanged('is_experimental_user') && $user->is_experimental_user) {
+                if (class_exists(Feature::class)) {
+                    Feature::for($user)->forget('experimental-features');
+                    Feature::for($user)->forget('linked-accounts');
+                }
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.

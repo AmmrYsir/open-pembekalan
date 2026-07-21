@@ -49,9 +49,10 @@ class AppServiceProvider extends ServiceProvider
     protected function registerFeatureDefinitions(): void
     {
         Feature::define('experimental-features', fn (?User $user = null): bool => (bool) $user?->is_experimental_user);
+        Feature::define('linked-accounts', fn (?User $user = null): bool => (bool) $user?->is_experimental_user);
 
         foreach (FeatureRegistry::all() as $feature) {
-            if ($feature['key'] === 'experimental-features') {
+            if (in_array($feature['key'], ['experimental-features', 'linked-accounts'])) {
                 continue;
             }
 

@@ -78,6 +78,7 @@ new class extends Component
             $nameChanged = $currentName !== $validated['full_name'];
             $usernameChanged = $currentUsername !== ($cleanedUsername ?? '');
             $emailChanged = $currentEmail !== $validated['email'];
+            $agencyChanged = $currentAgencyId !== $validated['agency_id'] || $currentSubagencyId !== $validated['subagency_id'];
 
             if (! $nameChanged && ! $usernameChanged && ! $emailChanged && ! $agencyChanged) {
                 $msg = 'No changes were detected in your profile information.';

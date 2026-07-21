@@ -14,6 +14,10 @@ class FeatureSeeder extends Seeder
     public function run(): void
     {
         foreach (FeatureRegistry::all() as $feature) {
+            if (in_array($feature['key'], ['experimental-features', 'linked-accounts'])) {
+                continue;
+            }
+
             if ($feature['default_active']) {
                 Feature::activateForEveryone($feature['key']);
             } else {

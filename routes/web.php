@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::view('/acquisition', 'acquisition')->name('acquisition');
     Route::view('/notifications', 'notifications')->name('notifications');
     Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
+    Route::view('/link-account', 'auth.link-account')->name('accounts.link');
     Route::get('/profile', function () {
         $user = auth()->user();
 

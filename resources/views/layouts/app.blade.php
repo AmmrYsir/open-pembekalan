@@ -149,8 +149,12 @@
                 </nav>
             </div>
 
-            <!-- Sidebar Footer User Card -->
-            @livewire('sidebar-footer-user-card')
+            <!-- Sidebar Footer User Card / Experimental Account Switcher -->
+            @feature('experimental-features')
+                @livewire('account-switcher')
+            @else
+                @livewire('sidebar-footer-user-card')
+            @endfeature
         </aside>
 
         <!-- Main Body Wrapper -->

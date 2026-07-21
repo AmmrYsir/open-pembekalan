@@ -102,6 +102,18 @@
 
         <hr class="border-zinc-200 dark:border-zinc-800">
 
+        <!-- Linked Accounts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="space-y-1">
+                <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">Linked Accounts</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400">Manage connected profiles for fast multi-account switching.</p>
+            </div>
+
+            @livewire('user.linked-accounts', ['user' => $user])
+        </div>
+
+        <hr class="border-zinc-200 dark:border-zinc-800">
+
         <!-- Security Section -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="space-y-1">
