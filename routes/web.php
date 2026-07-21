@@ -1,10 +1,14 @@
 <?php
 
 use App\Notifications\SystemNotification;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Laravel\Pennant\Middleware\EnsureFeaturesAreActive;
 
 Route::prefix('test')->name('test.')->middleware('auth')->group(function () {
@@ -24,6 +28,49 @@ Route::prefix('test')->name('test.')->middleware('auth')->group(function () {
 Route::middleware('guest')->group(function () {
     Route::view('/', 'pages.landing-page')->name('home');
     Route::view('/login', 'auth.login')->name('login');
+
+    // Password Reset Routes
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password', function (Request $request) {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    })->name('password.email');
+
+    Route::get('/reset-password/{token}', function (Request $request, string $token) {
+        return view('auth.reset-password', ['token' => $token, 'email' => $request->email]);
+    })->name('password.reset');
+
+    Route::post('/reset-password', function (Request $request) {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (object $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    })->name('password.update');
 });
 
 // Auth Routes (Email Verification & Logout)
@@ -86,7 +133,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::view('/register', 'auth.register')->name('register');
-Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
 Route::view('/403', 'errors.403')->name('403');
 Route::view('/404', 'errors.404')->name('404');
 Route::view('/agency', 'pages.agency')->name('agency');

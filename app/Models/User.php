@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\HasAvatarColorContract;
 use App\Contracts\HasUuidContract;
+use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
 use App\Traits\HasAvatarColor;
 use App\Traits\HasLinkedAccounts;
@@ -45,6 +46,11 @@ class User extends Authenticatable implements HasAvatarColorContract, HasUuidCon
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmailNotification);
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     protected static function booted(): void

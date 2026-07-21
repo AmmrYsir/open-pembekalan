@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Notifications\SystemNotification;
 use App\Support\FeatureRegistry;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
@@ -53,6 +54,17 @@ class AppServiceProvider extends ServiceProvider
                 message: 'Your email address has been verified successfully.',
                 action_url: route('dashboard'),
                 icon: 'check-circle'
+            ));
+        });
+
+        Event::listen(PasswordReset::class, function (PasswordReset $event): void {
+            /** @var User $user */
+            $user = $event->user;
+            $user->notify(new SystemNotification(
+                title: 'Password Reset Successful',
+                message: 'Your account password was updated successfully.',
+                action_url: route('login'),
+                icon: 'key'
             ));
         });
     }
