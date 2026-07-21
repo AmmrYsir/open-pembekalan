@@ -3,11 +3,14 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use App\Support\FeatureRegistry;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -41,6 +44,17 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerRoleDirectives();
         $this->registerFeatureDefinitions();
+
+        Event::listen(Verified::class, function (Verified $event): void {
+            /** @var User $user */
+            $user = $event->user;
+            $user->notify(new SystemNotification(
+                title: 'Email Verified',
+                message: 'Your email address has been verified successfully.',
+                action_url: route('dashboard'),
+                icon: 'check-circle'
+            ));
+        });
     }
 
     /**

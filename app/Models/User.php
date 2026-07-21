@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Contracts\HasAvatarColorContract;
 use App\Contracts\HasUuidContract;
+use App\Notifications\VerifyEmailNotification;
 use App\Traits\HasAvatarColor;
 use App\Traits\HasLinkedAccounts;
 use App\Traits\HasRoles;
 use App\Traits\HasUuid;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,10 +37,15 @@ use Laravel\Pennant\Feature;
  */
 #[Fillable(['uuid', 'username', 'name', 'email', 'avatar_url', 'avatar_color', 'email_verified_at', 'password', 'is_active', 'is_experimental_user'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract
+class User extends Authenticatable implements HasAvatarColorContract, HasUuidContract, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasAvatarColor, HasFactory, HasLinkedAccounts, HasRoles, HasUuid, Notifiable;
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
 
     protected static function booted(): void
     {

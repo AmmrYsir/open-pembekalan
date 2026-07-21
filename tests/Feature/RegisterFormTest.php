@@ -111,7 +111,7 @@ it('successfully registers supplier user and creates records in step 5', functio
         ->set('password', 'password123')
         ->set('password_confirmation', 'password123')
         ->call('register')
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('verification.notice'));
 
     // Check database entries
     $user = User::where('email', 'johndoe@example.com')->first();

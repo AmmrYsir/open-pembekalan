@@ -128,6 +128,8 @@ new class extends Component
                 'mobile_number' => $validated['mobile_number'],
             ]);
 
+            $user->sendEmailVerificationNotification();
+
             session()->flash('success', "Agency Officer created. Default Password: {$passwordToSave}");
         } elseif ($this->mode === 'edit' && $this->activeId) {
             $officer = AgencyOfficer::with('user')->findOrFail($this->activeId);

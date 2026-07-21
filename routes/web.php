@@ -1,6 +1,9 @@
 <?php
 
 use App\Notifications\SystemNotification;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Pennant\Middleware\EnsureFeaturesAreActive;
 
@@ -23,11 +26,38 @@ Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
 });
 
+// Auth Routes (Email Verification & Logout)
 Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect()->route('dashboard')->with('verified', true);
+    })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('status', 'verification-link-sent');
+    })->middleware('throttle:6,1')->name('verification.send');
+
+    Route::post('/logout', function (Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    })->name('logout');
+});
+
+// Authenticated & Verified Protected Routes
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
     Route::view('/acquisition', 'pages.acquisition')->name('acquisition');
     Route::view('/notifications', 'pages.notifications')->middleware(EnsureFeaturesAreActive::using('system-notifications'))->name('notifications');
-    Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
     Route::view('/link-account', 'auth.link-account')->name('accounts.link');
     Route::get('/profile', function () {
         $user = auth()->user();

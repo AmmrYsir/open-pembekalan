@@ -101,8 +101,11 @@ new class extends Component
         // Log in
         auth()->login($user);
 
+        // Send Email Verification Notification
+        $user->sendEmailVerificationNotification();
+
         // Redirect
-        return redirect()->route('dashboard');
+        return redirect()->route('verification.notice');
     }
 };
 ?>
