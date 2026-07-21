@@ -122,26 +122,26 @@ test('eloquent query scopes withRole and withoutRole work', function () {
         ->and($nonAdminUsers->pluck('id'))->not->toContain($userAdmin->id);
 });
 
-test('blade directives @hasRole, @hasAnyRole, @hasAllRoles, @unlessRole work correctly', function () {
+test('blade directives @hasrole, @hasanyrole, @hasallroles, @unlessrole work correctly', function () {
     $user = User::factory()->create();
     $user->assignRole('admin');
 
     $this->actingAs($user);
 
-    $hasRoleBlade = Blade::render('@hasRole("admin") YES @else NO @endhasRole');
-    expect(trim($hasRoleBlade))->toBe('YES');
+    $hasroleBlade = Blade::render('@hasrole("admin") YES @else NO @endhasrole');
+    expect(trim($hasroleBlade))->toBe('YES');
 
     $roleDirectiveBlade = Blade::render('@role("admin") YES @else NO @endrole');
     expect(trim($roleDirectiveBlade))->toBe('YES');
 
-    $hasAnyRoleBlade = Blade::render('@hasAnyRole(["editor", "admin"]) YES @else NO @endhasAnyRole');
-    expect(trim($hasAnyRoleBlade))->toBe('YES');
+    $hasanyroleBlade = Blade::render('@hasanyrole(["editor", "admin"]) YES @else NO @endhasanyrole');
+    expect(trim($hasanyroleBlade))->toBe('YES');
 
-    $hasAllRolesBlade = Blade::render('@hasAllRoles(["admin", "editor"]) YES @else NO @endhasAllRoles');
-    expect(trim($hasAllRolesBlade))->toBe('NO');
+    $hasallrolesBlade = Blade::render('@hasallroles(["admin", "editor"]) YES @else NO @endhasallroles');
+    expect(trim($hasallrolesBlade))->toBe('NO');
 
-    $unlessRoleBlade = Blade::render('@unlessRole("editor") YES @else NO @endunlessRole');
-    expect(trim($unlessRoleBlade))->toBe('YES');
+    $unlessroleBlade = Blade::render('@unlessrole("editor") YES @else NO @endunlessrole');
+    expect(trim($unlessroleBlade))->toBe('YES');
 });
 
 test('gate allows role checking with role: prefix', function () {
