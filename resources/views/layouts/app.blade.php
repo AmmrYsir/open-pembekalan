@@ -90,57 +90,57 @@
                     <div class="space-y-1">
                         <x-label class="px-2 mb-2 text-[10px] text-zinc-400 dark:text-zinc-500">System Management</x-label>
 
-                        <a href="{{ route('features.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('features.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.features.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.features.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-adjustments-horizontal class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Feature Management
                         </a>
 
-                        <a href="{{ route('suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('suppliers.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.suppliers.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-building-storefront class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Suppliers
                         </a>
 
-                        <a href="{{ route('agencies.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('agencies.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.agencies.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.agencies.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-building-office-2 class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Agencies
                         </a>
 
-                        <a href="{{ route('subagencies.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('subagencies.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.subagencies.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.subagencies.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-building-office class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Subagencies
                         </a>
 
-                        <a href="{{ route('agency-officers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('agency-officers.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.agency-officers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.agency-officers.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-user-group class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Agency Officers
                         </a>
 
-                        <a href="{{ route('committees.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('committees.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.committees.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.committees.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-academic-cap class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Committees
                         </a>
 
-                        <a href="{{ route('mof-categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('mof-categories.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.mof-categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.mof-categories.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-folder class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             MOF Categories
                         </a>
 
-                        <a href="{{ route('mof-subcategories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('mof-subcategories.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.mof-subcategories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.mof-subcategories.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-folder-open class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             MOF Subcategories
                         </a>
 
-                        <a href="{{ route('mof-codes.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('mof-codes.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.mof-codes.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.mof-codes.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-tag class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             MOF Codes
                         </a>
 
-                        <a href="{{ route('states.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('states.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.states.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.states.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-map-pin class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             States
                         </a>
 
-                        <a href="{{ route('vot-types.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('vot-types.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                        <a href="{{ route('admin.vot-types.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.vot-types.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-banknotes class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Vot Types
                         </a>
@@ -151,9 +151,9 @@
 
             <!-- Sidebar Footer User Card / Experimental Account Switcher -->
             @feature('linked-accounts')
-                @livewire('account-switcher')
+                @livewire('layout.account-switcher')
             @else
-                @livewire('sidebar-footer-user-card')
+                @livewire('layout.sidebar-footer-user-card')
             @endfeature
         </aside>
 
@@ -177,7 +177,7 @@
                 <div class="flex items-center gap-4">
                     <!-- Notifications Bell Component -->
                     @feature('system-notifications')
-						@livewire('notification-bell')
+						@livewire('notification.bell')
 					@endfeature
 
                     <!-- Theme Toggle -->
@@ -192,17 +192,17 @@
         </div>
     </div>
 
-    @livewire('acquisition-drawer')
-    @livewire('supplier-drawer')
-    @livewire('agency-drawer')
-    @livewire('subagency-drawer')
-    @livewire('agency-officer-drawer')
-    @livewire('committee-drawer')
-    @livewire('mof-category-drawer')
-    @livewire('mof-subcategory-drawer')
-    @livewire('mof-code-drawer')
-    @livewire('state-drawer')
-    @livewire('vot-type-drawer')
+    @livewire('acquisition.drawer')
+    @livewire('supplier.drawer')
+    @livewire('agency.drawer')
+    @livewire('subagency.drawer')
+    @livewire('agency-officer.drawer')
+    @livewire('committee.drawer')
+    @livewire('mof-category.drawer')
+    @livewire('mof-subcategory.drawer')
+    @livewire('mof-code.drawer')
+    @livewire('state.drawer')
+    @livewire('vot-type.drawer')
 
     @livewireScripts
 </body>

@@ -6,5 +6,5 @@
         subtitle="Control and toggle application features, experimental feature flags, and module visibility."
     />
 
-    @livewire('feature-table')
+    @livewire('feature.table')
 </x-layouts.app>

@@ -9,17 +9,17 @@ test('system management routes render successfully for authenticated users', fun
 
     $response->assertStatus(200);
 })->with([
-    '/features',
-    '/suppliers',
-    '/agencies',
-    '/subagencies',
-    '/agency-officers',
-    '/committees',
-    '/mof-categories',
-    '/mof-subcategories',
-    '/mof-codes',
-    '/states',
-    '/vot-types',
+    '/admin/features',
+    '/admin/suppliers',
+    '/admin/agencies',
+    '/admin/subagencies',
+    '/admin/agency-officers',
+    '/admin/committees',
+    '/admin/mof-categories',
+    '/admin/mof-subcategories',
+    '/admin/mof-codes',
+    '/admin/states',
+    '/admin/vot-types',
 ]);
 
 test('system management routes redirect guest users to login', function (string $url) {
@@ -27,15 +27,15 @@ test('system management routes redirect guest users to login', function (string 
 
     $response->assertRedirect('/login');
 })->with([
-    '/features',
-    '/suppliers',
-    '/agencies',
-    '/subagencies',
-    '/agency-officers',
-    '/committees',
-    '/mof-categories',
-    '/mof-subcategories',
-    '/mof-codes',
-    '/states',
-    '/vot-types',
+    '/admin/features',
+    '/admin/suppliers',
+    '/admin/agencies',
+    '/admin/subagencies',
+    '/admin/agency-officers',
+    '/admin/committees',
+    '/admin/mof-categories',
+    '/admin/mof-subcategories',
+    '/admin/mof-codes',
+    '/admin/states',
+    '/admin/vot-types',
 ]);

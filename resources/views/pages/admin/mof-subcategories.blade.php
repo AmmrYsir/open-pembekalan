@@ -6,5 +6,5 @@
         subtitle="Manage Ministry of Finance subcategories grouped under main categories."
     />
 
-    @livewire('mof-subcategory-table')
+    @livewire('mof-subcategory.table')
 </x-layouts.app>

@@ -6,5 +6,5 @@
         subtitle="Manage vendor registrations, SSM records, MOF/CIDB certifications, and company details."
     />
 
-    @livewire('supplier-table')
+    @livewire('supplier.table')
 </x-layouts.app>

@@ -6,5 +6,5 @@
         subtitle="Manage department divisions, state branches, and subsidiary agency units."
     />
 
-    @livewire('subagency-table')
+    @livewire('subagency.table')
 </x-layouts.app>

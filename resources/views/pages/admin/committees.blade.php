@@ -6,5 +6,5 @@
         subtitle="Manage procurement evaluation committees, secretariats, and role positions."
     />
 
-    @livewire('committee-table')
+    @livewire('committee.table')
 </x-layouts.app>

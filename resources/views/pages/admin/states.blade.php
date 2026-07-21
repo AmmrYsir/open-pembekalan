@@ -6,5 +6,5 @@
         subtitle="Manage state master data, state codes, full names, and capitals."
     />
 
-    @livewire('state-table')
+    @livewire('state.table')
 </x-layouts.app>

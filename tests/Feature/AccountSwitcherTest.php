@@ -85,7 +85,7 @@ test('switching to unverified account opens 2nd security confirmation modal', fu
     $primaryUser->clearSwitchVerification($secondaryUser);
 
     Livewire::actingAs($primaryUser)
-        ->test('account-switcher')
+        ->test('layout.account-switcher')
         ->call('initiateSwitch', $secondaryUser->id)
         ->assertSet('showConfirmModal', true)
         ->assertSet('pendingSwitchUserId', $secondaryUser->id);
@@ -102,7 +102,7 @@ test('confirming with invalid password fails security confirmation', function ()
     $primaryUser->clearSwitchVerification($secondaryUser);
 
     Livewire::actingAs($primaryUser)
-        ->test('account-switcher')
+        ->test('layout.account-switcher')
         ->call('initiateSwitch', $secondaryUser->id)
         ->set('confirm_password', 'wrongpassword')
         ->call('confirmAndSwitch')
@@ -123,7 +123,7 @@ test('confirming with correct password verifies ownership and switches account',
     $primaryUser->clearSwitchVerification($secondaryUser);
 
     Livewire::actingAs($primaryUser)
-        ->test('account-switcher')
+        ->test('layout.account-switcher')
         ->call('initiateSwitch', $secondaryUser->id)
         ->set('confirm_password', 'correctpassword')
         ->call('confirmAndSwitch')
@@ -144,7 +144,7 @@ test('verified account permits direct switching with sliding activity session re
     expect($primaryUser->isSwitchVerified($secondaryUser))->toBeTrue();
 
     Livewire::actingAs($primaryUser)
-        ->test('account-switcher')
+        ->test('layout.account-switcher')
         ->call('initiateSwitch', $secondaryUser->id)
         ->assertSet('showConfirmModal', false);
 
@@ -164,7 +164,7 @@ test('inactivity beyond timeout flushes verification session and requires 2nd co
         ->and(session('account_switch_verified_'.$secondaryUser->id))->toBeNull();
 
     Livewire::actingAs($primaryUser)
-        ->test('account-switcher')
+        ->test('layout.account-switcher')
         ->call('initiateSwitch', $secondaryUser->id)
         ->assertSet('showConfirmModal', true);
 });
@@ -177,7 +177,7 @@ test('user can unlink an account from switcher component', function () {
     $user1->markSwitchVerified($user2);
 
     Livewire::actingAs($user1)
-        ->test('account-switcher')
+        ->test('layout.account-switcher')
         ->call('unlinkAccount', $user2->id);
 
     expect($user1->canSwitchTo($user2))->toBeFalse()

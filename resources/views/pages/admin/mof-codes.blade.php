@@ -6,5 +6,5 @@
         subtitle="Manage detailed Ministry of Finance specialized field codes for vendor eligibility."
     />
 
-    @livewire('mof-code-table')
+    @livewire('mof-code.table')
 </x-layouts.app>

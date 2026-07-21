@@ -12,14 +12,14 @@ uses(RefreshDatabase::class);
 test('features page renders successfully for authenticated user', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/features');
+    $response = $this->actingAs($user)->get('/admin/features');
 
     $response->assertStatus(200);
     $response->assertSee('Feature Management');
 });
 
 test('features page redirects guest user to login', function () {
-    $response = $this->get('/features');
+    $response = $this->get('/admin/features');
 
     $response->assertRedirect('/login');
 });
@@ -43,13 +43,13 @@ test('feature table component can toggle feature status', function () {
     $this->actingAs($user);
 
     // Toggle OFF system-notifications (initially true)
-    Livewire::test('feature-table')
+    Livewire::test('feature.table')
         ->call('toggleFeature', 'system-notifications');
 
     expect(Feature::active('system-notifications'))->toBeFalse();
 
     // Toggle ON system-notifications
-    Livewire::test('feature-table')
+    Livewire::test('feature.table')
         ->call('toggleFeature', 'system-notifications');
 
     expect(Feature::active('system-notifications'))->toBeTrue();

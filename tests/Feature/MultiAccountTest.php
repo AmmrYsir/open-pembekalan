@@ -19,7 +19,7 @@ test('user can link and switch between multiple accounts', function () {
 
     $this->actingAs($primaryUser);
 
-    Livewire::test('account-switcher')
+    Livewire::test('layout.account-switcher')
         ->call('initiateSwitch', $secondaryUser->id);
 
     expect(auth()->id())->toBe($secondaryUser->id);

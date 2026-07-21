@@ -7,6 +7,6 @@
             <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage and view your system alerts and notifications.</p>
         </div>
 
-        @livewire('notification-list')
+        @livewire('notification.list')
     </div>
 </x-layouts.app>

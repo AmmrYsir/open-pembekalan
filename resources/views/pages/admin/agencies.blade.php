@@ -6,5 +6,5 @@
         subtitle="Manage government agencies, ministries, and procurement bodies."
     />
 
-    @livewire('agency-table')
+    @livewire('agency.table')
 </x-layouts.app>

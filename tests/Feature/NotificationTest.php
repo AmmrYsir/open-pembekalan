@@ -37,7 +37,7 @@ test('notification bell displays correct unread counts and lists notifications',
 
     $this->actingAs($this->user);
 
-    Livewire::test('notification-bell')
+    Livewire::test('notification.bell')
         ->assertSet('unreadCount', 2)
         ->assertSee('Alert 1')
         ->assertSee('Alert 2');
@@ -51,7 +51,7 @@ test('notification bell can mark all notifications as read', function () {
 
     expect($this->user->unreadNotifications()->count())->toBe(2);
 
-    Livewire::test('notification-bell')
+    Livewire::test('notification.bell')
         ->call('markAllAsRead')
         ->assertSet('unreadCount', 0);
 
@@ -64,7 +64,7 @@ test('notification bell can read and redirect', function () {
 
     $this->actingAs($this->user);
 
-    Livewire::test('notification-bell')
+    Livewire::test('notification.bell')
         ->call('readAndRedirect', $notification->id)
         ->assertRedirect('/custom-target-route');
 
@@ -83,7 +83,7 @@ test('notification list displays, filters, and deletes notifications', function 
     $this->actingAs($this->user);
 
     // Initial load defaults to 'unread' filter
-    Livewire::test('notification-list')
+    Livewire::test('notification.list')
         ->assertSet('filter', 'unread')
         ->assertSee('Unread Alert')
         ->assertDontSee('Read Alert')
@@ -122,7 +122,7 @@ test('notification list can clear all notifications', function () {
 
     expect($this->user->notifications()->count())->toBe(2);
 
-    Livewire::test('notification-list')
+    Livewire::test('notification.list')
         ->call('clearAll')
         ->assertSee('No unread notifications');
 
@@ -134,7 +134,7 @@ test('notification list can simulate alerts', function () {
 
     expect($this->user->notifications()->count())->toBe(0);
 
-    Livewire::test('notification-list')
+    Livewire::test('notification.list')
         ->call('simulateNotification');
 
     expect($this->user->notifications()->count())->toBe(4);

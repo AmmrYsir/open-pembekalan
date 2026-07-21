@@ -6,5 +6,5 @@
         subtitle="Manage procurement acquisition projects — create, review, and track all procurement records."
     />
 
-    @livewire('acquisition-table')
+    @livewire('acquisition.table')
 </x-layouts.app>
