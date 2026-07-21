@@ -41,7 +41,7 @@
                             $roles = $user->roles ?? collect();
                         @endphp
 
-                        @if($roles->isNotEmpty())
+                        @if($roles->isNotEmpty() && $user->unlessRole('supplier'))
                             <div class="inline-flex items-center gap-1.5 flex-wrap">
                                 @foreach($roles as $role)
                                     <x-badge variant="primary" pill>
@@ -49,10 +49,6 @@
                                     </x-badge>
                                 @endforeach
                             </div>
-                        @else
-                            <x-badge variant="primary" pill>
-                                Procurement Officer
-                            </x-badge>
                         @endif
                     </div>
 
