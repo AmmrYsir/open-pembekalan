@@ -119,6 +119,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // System Management Routes (Admin)
     Route::name('admin.')->group(function () {
         Route::view('/features', 'pages.admin.features')->name('features.index');
+        Route::view('/queues', 'pages.admin.queues')->name('queues.index');
+        Route::view('/email-tracker', 'pages.admin.email-tracker')->name('email-tracker.index');
         Route::view('/suppliers', 'pages.admin.suppliers')->name('suppliers.index');
         Route::view('/agencies', 'pages.admin.agencies')->name('agencies.index');
         Route::view('/subagencies', 'pages.admin.subagencies')->name('subagencies.index');

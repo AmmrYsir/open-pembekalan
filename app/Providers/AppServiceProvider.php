@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\EmailLog;
 use App\Models\User;
 use App\Notifications\SystemNotification;
 use App\Support\FeatureRegistry;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Mail\Events\MessageFailed;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +20,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Pennant\Feature;
 use Livewire\Blaze\Blaze;
+use Symfony\Component\Mime\Email;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -66,6 +70,47 @@ class AppServiceProvider extends ServiceProvider
                 action_url: route('login'),
                 icon: 'key'
             ));
+        });
+
+        Event::listen(MessageSent::class, function (MessageSent $event): void {
+            /** @var Email $message */
+            $message = $event->message;
+
+            $recipients = array_map(fn ($address) => $address->getAddress(), $message->getTo());
+            $recipientNames = array_map(fn ($address) => $address->getName(), $message->getTo());
+
+            $recipientEmail = implode(', ', $recipients);
+            $recipientName = implode(', ', array_filter($recipientNames)) ?: null;
+
+            EmailLog::create([
+                'recipient_email' => $recipientEmail,
+                'recipient_name' => $recipientName,
+                'subject' => $message->getSubject() ?? '(No Subject)',
+                'mailable_class' => $event->data['__laravel_notification'] ?? null,
+                'status' => 'sent',
+                'body_html' => $message->getHtmlBody(),
+                'body_text' => $message->getTextBody(),
+                'sent_at' => now(),
+            ]);
+        });
+
+        Event::listen(MessageFailed::class, function (MessageFailed $event): void {
+            /** @var Email $message */
+            $message = $event->message;
+
+            $recipients = array_map(fn ($address) => $address->getAddress(), $message->getTo());
+            $recipientNames = array_map(fn ($address) => $address->getName(), $message->getTo());
+
+            EmailLog::create([
+                'recipient_email' => implode(', ', $recipients),
+                'recipient_name' => implode(', ', array_filter($recipientNames)) ?: null,
+                'subject' => $message->getSubject() ?? '(No Subject)',
+                'mailable_class' => $event->data['__laravel_notification'] ?? null,
+                'status' => 'failed',
+                'body_html' => $message->getHtmlBody(),
+                'body_text' => $message->getTextBody(),
+                'error_message' => 'Message sending failed.',
+            ]);
         });
     }
 

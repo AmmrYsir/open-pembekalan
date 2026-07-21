@@ -95,6 +95,16 @@
                             Feature Management
                         </a>
 
+                        <a href="{{ route('admin.queues.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.queues.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                            <x-heroicon-o-cpu-chip class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Queue Management
+                        </a>
+
+                        <a href="{{ route('admin.email-tracker.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.email-tracker.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
+                            <x-heroicon-o-envelope-open class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Email Tracker
+                        </a>
+
                         <a href="{{ route('admin.suppliers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ Request::routeIs('admin.suppliers.index') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-200' }}">
                             <x-heroicon-o-building-storefront class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             Suppliers
