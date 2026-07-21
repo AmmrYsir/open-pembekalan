@@ -150,7 +150,7 @@
             </div>
 
             <!-- Sidebar Footer User Card / Experimental Account Switcher -->
-            @feature('experimental-features')
+            @feature('linked-accounts')
                 @livewire('account-switcher')
             @else
                 @livewire('sidebar-footer-user-card')

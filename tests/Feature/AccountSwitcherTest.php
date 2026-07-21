@@ -17,8 +17,8 @@ test('experimental user renders account switcher feature while regular user gets
         'is_experimental_user' => false,
     ]);
 
-    expect(Feature::for($experimentalUser)->active('experimental-features'))->toBeTrue()
-        ->and(Feature::for($regularUser)->active('experimental-features'))->toBeFalse();
+    expect(Feature::for($experimentalUser)->active('linked-accounts'))->toBeTrue()
+        ->and(Feature::for($regularUser)->active('linked-accounts'))->toBeFalse();
 });
 
 test('link account page is accessible for authenticated users and renders link account form', function () {
