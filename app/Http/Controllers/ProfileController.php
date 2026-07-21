@@ -14,6 +14,6 @@ class ProfileController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        return view('profile', compact('user'));
+        return view('pages.profile', compact('user'));
     }
 }

@@ -103,18 +103,18 @@ trait HasLinkedAccounts
             return false;
         }
 
-        $lastActivity = session('account_switch_verified_'.$targetId);
+        $lastActivityTimestamp = (int) session('account_switch_verified_'.$targetId);
 
-        if (! $lastActivity) {
+        if ($lastActivityTimestamp <= 0) {
             return false;
         }
 
-        $elapsedSeconds = now()->timestamp - (int) $lastActivity;
+        $elapsedSeconds = now()->getTimestamp() - $lastActivityTimestamp;
         $maxSeconds = $timeoutMinutes * 60;
 
         if ($elapsedSeconds <= $maxSeconds) {
             // Touch / auto-renew the activity timestamp for sliding session
-            session(['account_switch_verified_'.$targetId => now()->timestamp]);
+            session(['account_switch_verified_'.$targetId => now()->getTimestamp()]);
 
             return true;
         }
@@ -133,7 +133,7 @@ trait HasLinkedAccounts
         $targetId = $target instanceof User ? $target->id : (int) $target;
 
         if (app()->bound('session')) {
-            session(['account_switch_verified_'.$targetId => now()->timestamp]);
+            session(['account_switch_verified_'.$targetId => now()->getTimestamp()]);
         }
     }
 
@@ -187,8 +187,8 @@ trait HasLinkedAccounts
             }
 
             session([
-                'account_switch_verified_'.$this->id => now()->timestamp,
-                'account_switch_verified_'.$targetUser->id => now()->timestamp,
+                'account_switch_verified_'.$this->id => now()->getTimestamp(),
+                'account_switch_verified_'.$targetUser->id => now()->getTimestamp(),
             ]);
         }
 
