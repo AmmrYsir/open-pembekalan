@@ -169,7 +169,6 @@ new class extends Component
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-1.5">
                 <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{{ $user?->name ?? 'Guest User' }}</p>
-                <span class="px-1.5 py-0.25 text-[9px] font-medium tracking-wide bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 rounded-md border border-emerald-200/50 dark:border-emerald-800/50">Multi</span>
             </div>
             <p class="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">{{ $user?->email }}</p>
         </div>
