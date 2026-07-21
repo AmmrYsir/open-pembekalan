@@ -1,5 +1,6 @@
 <?php
 
+use Laravel\Pennant\Middleware\EnsureFeaturesAreActive;
 use App\Notifications\SystemNotification;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
     Route::view('/acquisition', 'acquisition')->name('acquisition');
-    Route::view('/notifications', 'notifications')->name('notifications');
+    Route::view('/notifications', 'notifications')->middleware(EnsureFeaturesAreActive::using('system-notifications'))->name('notifications');
     Route::view('/verify-email', 'auth.verify-email')->name('verify-email');
     Route::view('/link-account', 'auth.link-account')->name('accounts.link');
     Route::get('/profile', function () {

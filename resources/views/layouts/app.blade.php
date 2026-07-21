@@ -176,7 +176,9 @@
                 <!-- Right Header Actions -->
                 <div class="flex items-center gap-4">
                     <!-- Notifications Bell Component -->
-                    @livewire('notification-bell')
+                    @feature('system-notifications')
+						@livewire('notification-bell')
+					@endfeature
 
                     <!-- Theme Toggle -->
                     <x-ui.theme-toggle />
