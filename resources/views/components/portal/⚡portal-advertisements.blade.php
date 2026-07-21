@@ -144,17 +144,17 @@ new class extends Component
 
             <!-- Search input -->
             <div class="space-y-1.5">
-                <x-ui.label for="search_filter">Keywords</x-ui.label>
-                <x-ui.input wire:model.live.debounce.250ms="search" id="search_filter" type="text" placeholder="Search title, ref, agency...">
+                <x-label for="search_filter">Keywords</x-label>
+                <x-input wire:model.live.debounce.250ms="search" id="search_filter" type="text" placeholder="Search title, ref, agency...">
                     <x-slot:icon>
                         <x-heroicon-o-magnifying-glass class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
             </div>
 
             <!-- Category Radio Group Cards -->
             <div class="space-y-3">
-                <x-ui.label>Category</x-ui.label>
+                <x-label>Category</x-label>
                 <div class="grid grid-cols-1 gap-2">
                     @foreach(['all' => 'All Categories', 'Supplies' => 'Supplies & Materials', 'Services' => 'Services & Consulting', 'Works' => 'Civil Works & Construction'] as $val => $label)
                         <label class="relative flex items-center justify-between p-3 border rounded-xl cursor-pointer select-none transition-all duration-150
@@ -170,7 +170,7 @@ new class extends Component
 
             <!-- Status Checkboxes / Buttons -->
             <div class="space-y-3">
-                <x-ui.label>Tender Status</x-ui.label>
+                <x-label>Tender Status</x-label>
                 <div class="grid grid-cols-1 gap-2">
                     @foreach(['all' => 'All Opportunities', 'Open' => 'Open Tenders Only', 'Closing Soon' => 'Closing Soon Only'] as $val => $label)
                         <label class="relative flex items-center justify-between p-3 border rounded-xl cursor-pointer select-none transition-all duration-150

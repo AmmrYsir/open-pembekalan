@@ -115,49 +115,49 @@ new class extends Component
 
 <div class="md:col-span-2">
 	<form wire:submit="updateInformation">
-		<x-ui.card>
+		<x-card>
 			<div class="space-y-4">
 				@if ($infoMessage || session()->has('message'))
-					<x-ui.alert wire:key="info-alert-{{ microtime() }}" :variant="$infoVariant" dismissible>
+					<x-alert wire:key="info-alert-{{ microtime() }}" :variant="$infoVariant" dismissible>
 						{{ $infoMessage ?: session('message') }}
-					</x-ui.alert>
+					</x-alert>
 				@endif
 
 				@if (session()->has('error'))
-					<x-ui.alert wire:key="info-error-{{ microtime() }}" variant="error" dismissible>
+					<x-alert wire:key="info-error-{{ microtime() }}" variant="error" dismissible>
 						{{ session('error') }}
-					</x-ui.alert>
+					</x-alert>
 				@endif
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<x-ui.input wire:model="full_name" id="full_name" type="text" label="Full Name" required :error="$errors->first('full_name')" />
+					<x-input wire:model="full_name" id="full_name" type="text" label="Full Name" required :error="$errors->first('full_name')" />
 					
-					<x-ui.input wire:model="username" id="username" type="text" label="Username" placeholder="username" :error="$errors->first('username')">
+					<x-input wire:model="username" id="username" type="text" label="Username" placeholder="username" :error="$errors->first('username')">
 						<x-slot:icon>
 							<span class="font-semibold text-zinc-500 dark:text-zinc-400 select-none">@</span>
 						</x-slot:icon>
-					</x-ui.input>
+					</x-input>
 				</div>
 
-				<x-ui.input wire:model="email" id="email" type="email" label="Email Address" required :error="$errors->first('email')">
+				<x-input wire:model="email" id="email" type="email" label="Email Address" required :error="$errors->first('email')">
 					<x-slot:suffix>
 						@if($user?->hasVerifiedEmail())
-							<x-ui.badge variant="success" pill class="gap-1 text-[11px] py-0.5 px-2">
+							<x-badge variant="success" pill class="gap-1 text-[11px] py-0.5 px-2">
 								<svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
 								</svg>
 								Verified
-							</x-ui.badge>
+							</x-badge>
 						@else
-							<x-ui.badge variant="warning" pill class="gap-1 text-[11px] py-0.5 px-2">
+							<x-badge variant="warning" pill class="gap-1 text-[11px] py-0.5 px-2">
 								<svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
 								</svg>
 								Unverified
-							</x-ui.badge>
+							</x-badge>
 						@endif
 					</x-slot:suffix>
-				</x-ui.input>
+				</x-input>
 
 				<!-- Organization & Department Info -->
 				<div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-2">
@@ -181,8 +181,8 @@ new class extends Component
 			</div>
 
 			<x-slot:footer>
-				<x-ui.button class="cursor-pointer" type="submit" loadingTarget="updateInformation">Save Changes</x-ui.button>
+				<x-button class="cursor-pointer" type="submit" loadingTarget="updateInformation">Save Changes</x-button>
 			</x-slot:footer>
-		</x-ui.card>
+		</x-card>
 	</form>
 </div>

@@ -152,7 +152,7 @@ new class extends Component
         </div>
     @endif
 
-    <x-ui.card>
+    <x-card>
         <!-- Top Toolbar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800/60">
             <!-- Filter Tabs -->
@@ -325,13 +325,13 @@ new class extends Component
                         @endif
                     </p>
                     <div class="mt-6 flex justify-center">
-                        <x-ui.button wire:click="simulateNotification" variant="primary" size="sm">
+                        <x-button wire:click="simulateNotification" variant="primary" size="sm">
                             <x-heroicon-o-bolt class="w-4 h-4 mr-2" />
                             Simulate Notifications
-                        </x-ui.button>
+                        </x-button>
                     </div>
                 </div>
             @endforelse
         </div>
-    </x-ui.card>
+    </x-card>
 </div>

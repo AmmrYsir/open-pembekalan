@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-slot:title>Vot Types</x-slot:title>
 
-    <x-ui.page-header
+    <x-page-header
         title="Vot Types"
         subtitle="Manage government budget vot codes, fund classification categories, and financial accounts."
     />

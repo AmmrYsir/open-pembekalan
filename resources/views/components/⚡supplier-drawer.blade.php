@@ -130,7 +130,7 @@ new class extends Component
                                 <div>
                                     <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Status</dt>
                                     <dd class="mt-1">
-                                        <x-ui.badge variant="success" pill>{{ $application_status }}</x-ui.badge>
+                                        <x-badge variant="success" pill>{{ $application_status }}</x-badge>
                                     </dd>
                                 </div>
                             </dl>
@@ -139,7 +139,7 @@ new class extends Component
                 </div>
 
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60 flex justify-end">
-                    <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                    <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                 </div>
             </div>
         </div>

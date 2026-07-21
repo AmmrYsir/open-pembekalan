@@ -3,28 +3,28 @@
 
     <div class="space-y-8 max-w-4xl">
         @if(session('status') || session('message'))
-            <x-ui.alert variant="success" dismissible>
+            <x-alert variant="success" dismissible>
                 {{ session('status') ?? session('message') }}
-            </x-ui.alert>
+            </x-alert>
         @endif
 
         @if(session('error'))
-            <x-ui.alert variant="error" dismissible>
+            <x-alert variant="error" dismissible>
                 {{ session('error') }}
-            </x-ui.alert>
+            </x-alert>
         @endif
 
         @if($errors->any())
-            <x-ui.alert variant="error" dismissible title="Please check the form for errors">
+            <x-alert variant="error" dismissible title="Please check the form for errors">
                 <ul class="list-disc list-inside space-y-0.5 mt-1">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </x-ui.alert>
+            </x-alert>
         @endif
         <!-- Profile Banner Card -->
-        <x-ui.card>
+        <x-card>
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
                 <!-- Avatar Setup -->
                 @livewire('user.profile-avatar', ['user' => $user])
@@ -44,11 +44,15 @@
                         @if($roles->isNotEmpty())
                             <div class="inline-flex items-center gap-1.5 flex-wrap">
                                 @foreach($roles as $role)
-                                    <x-ui.badge variant="primary" pill>
+                                    <x-badge variant="primary" pill>
                                         {{ $role->name }}
-                                    </x-ui.badge>
+                                    </x-badge>
                                 @endforeach
                             </div>
+                        @else
+                            <x-badge variant="primary" pill>
+                                Procurement Officer
+                            </x-badge>
                         @endif
                     </div>
 
@@ -88,7 +92,7 @@
                     </div>
                 </div>
             </div>
-        </x-ui.card>
+        </x-card>
 
         <!-- Personal Information Section -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

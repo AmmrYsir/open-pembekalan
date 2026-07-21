@@ -201,25 +201,25 @@ new class extends Component
 	{{-- ── Session & Validation Alerts ───────────────────────────────────── --}}
 	@if ($successMessage || session()->has('message'))
 		<div class="absolute left-0 top-full z-20 mt-2 w-56">
-			<x-ui.alert wire:key="avatar-success-{{ microtime() }}" variant="success" dismissible>
+			<x-alert wire:key="avatar-success-{{ microtime() }}" variant="success" dismissible>
 				{{ $successMessage ?: session('message') }}
-			</x-ui.alert>
+			</x-alert>
 		</div>
 	@endif
 
 	@if ($errorMessage || session()->has('error'))
 		<div class="absolute left-0 top-full z-20 mt-2 w-56">
-			<x-ui.alert wire:key="avatar-error-{{ microtime() }}" variant="error" dismissible>
+			<x-alert wire:key="avatar-error-{{ microtime() }}" variant="error" dismissible>
 				{{ $errorMessage ?: session('error') }}
-			</x-ui.alert>
+			</x-alert>
 		</div>
 	@endif
 
 	@error('avatar')
 		<div class="absolute left-0 top-full z-20 mt-2 w-56">
-			<x-ui.alert wire:key="avatar-validation-{{ microtime() }}" variant="error" dismissible>
+			<x-alert wire:key="avatar-validation-{{ microtime() }}" variant="error" dismissible>
 				{{ $message }}
-			</x-ui.alert>
+			</x-alert>
 		</div>
 	@enderror
 

@@ -1,7 +1,7 @@
 <x-layouts.guest>
     <x-slot:title>Page Not Found - 404</x-slot:title>
 
-    <x-ui.card>
+    <x-card>
         <div class="text-center py-6">
             <!-- 404 Visual element -->
             <div class="relative w-32 h-32 mx-auto mb-6 flex items-center justify-center">
@@ -16,16 +16,16 @@
 
             <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <a href="/dashboard">
-                    <x-ui.button variant="primary" class="w-full sm:w-auto">
+                    <x-button variant="primary" class="w-full sm:w-auto">
                         Return to Dashboard
-                    </x-ui.button>
+                    </x-button>
                 </a>
                 <button onclick="history.back()" type="button">
-                    <x-ui.button variant="outline" class="w-full sm:w-auto">
+                    <x-button variant="outline" class="w-full sm:w-auto">
                         Go Back
-                    </x-ui.button>
+                    </x-button>
                 </button>
             </div>
         </div>
-    </x-ui.card>
+    </x-card>
 </x-layouts.guest>

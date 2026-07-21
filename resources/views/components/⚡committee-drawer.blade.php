@@ -195,20 +195,20 @@ new class extends Component
                                 </h3>
                                 <div class="space-y-4">
                                     <div>
-                                        <x-ui.label for="comm_name">Committee Name *</x-ui.label>
-                                        <x-ui.input id="comm_name" wire:model.live="name" placeholder="e.g. Jawatankuasa Penilaian Teknis" />
+                                        <x-label for="comm_name">Committee Name *</x-label>
+                                        <x-input id="comm_name" wire:model.live="name" placeholder="e.g. Jawatankuasa Penilaian Teknis" />
                                         @error('name') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="comm_slug">Slug *</x-ui.label>
-                                        <x-ui.input id="comm_slug" wire:model="slug" placeholder="e.g. jawatankuasa-penilaian-teknis" />
+                                        <x-label for="comm_slug">Slug *</x-label>
+                                        <x-input id="comm_slug" wire:model="slug" placeholder="e.g. jawatankuasa-penilaian-teknis" />
                                         @error('slug') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="comm_positions">Committee Roles / Positions (Comma-separated)</x-ui.label>
-                                        <x-ui.input id="comm_positions" wire:model="positionsInput" placeholder="Pengerusi, Ahli, Urusetia" />
+                                        <x-label for="comm_positions">Committee Roles / Positions (Comma-separated)</x-label>
+                                        <x-input id="comm_positions" wire:model="positionsInput" placeholder="Pengerusi, Ahli, Urusetia" />
                                         <p class="text-xs text-zinc-400 mt-1">Separate multiple roles with commas.</p>
                                     </div>
                                 </div>
@@ -220,27 +220,27 @@ new class extends Component
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
                     @if($mode === 'view')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                            <x-button variant="outline" size="sm" wire:click="switchToEdit">
                                 <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Edit
-                            </x-ui.button>
-                            <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                            </x-button>
+                            <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                         </div>
                     @elseif($mode === 'edit')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                            <x-button variant="outline" size="sm" wire:click="switchToView">
                                 <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Back to View
-                            </x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">Save Changes</x-ui.button>
+                            </x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">Save Changes</x-button>
                         </div>
                     @else
                         <div class="flex items-center justify-end gap-3">
-                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">
+                            <x-button variant="outline" size="sm" wire:click="closePanel">Cancel</x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">
                                 <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Create Committee
-                            </x-ui.button>
+                            </x-button>
                         </div>
                     @endif
                 </div>

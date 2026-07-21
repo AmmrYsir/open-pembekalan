@@ -167,19 +167,19 @@ new class extends Component
             </div>
 
             <form wire:submit.prevent="verifySSM" class="space-y-4">
-                <x-ui.input wire:model="ssm_no" id="ssm_no" type="text" label="SSM / Registration Number" placeholder="e.g. 1234567-A" required error="{{ $errors->first('ssm_no') }}">
+                <x-input wire:model="ssm_no" id="ssm_no" type="text" label="SSM / Registration Number" placeholder="e.g. 1234567-A" required error="{{ $errors->first('ssm_no') }}">
                     <x-slot:icon>
                         <x-heroicon-o-document-text class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
                 <div class="flex items-center gap-3">
                     <button wire:click="setStep(1)" type="button" class="w-1/3 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white rounded-xl text-xs font-bold transition-all focus:outline-none">
                         Back
                     </button>
-                    <x-ui.button type="submit" class="w-2/3">
+                    <x-button type="submit" class="w-2/3">
                         Verify SSM Status
-                    </x-ui.button>
+                    </x-button>
                 </div>
             </form>
 
@@ -214,25 +214,25 @@ new class extends Component
             </div>
 
             <form wire:submit.prevent="proceedToStep4" class="space-y-4">
-                <x-ui.input wire:model="name" id="name" type="text" label="Full Name" placeholder="e.g. Ammar Yasir" required error="{{ $errors->first('name') }}">
+                <x-input wire:model="name" id="name" type="text" label="Full Name" placeholder="e.g. Ammar Yasir" required error="{{ $errors->first('name') }}">
                     <x-slot:icon>
                         <x-heroicon-o-user class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
-                <x-ui.input wire:model="email" id="email" type="email" label="Work Email Address" placeholder="e.g. name@company.com" required error="{{ $errors->first('email') }}">
+                <x-input wire:model="email" id="email" type="email" label="Work Email Address" placeholder="e.g. name@company.com" required error="{{ $errors->first('email') }}">
                     <x-slot:icon>
                         <x-heroicon-o-at-symbol class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
                 <div class="flex items-center gap-3">
                     <button wire:click="setStep(2)" type="button" class="w-1/3 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white rounded-xl text-xs font-bold transition-all focus:outline-none">
                         Back
                     </button>
-                    <x-ui.button type="submit" class="w-2/3">
+                    <x-button type="submit" class="w-2/3">
                         Continue to Company Info &rarr;
-                    </x-ui.button>
+                    </x-button>
                 </div>
             </form>
         </div>
@@ -247,14 +247,14 @@ new class extends Component
             </div>
 
             <form wire:submit.prevent="proceedToStep5" class="space-y-4">
-                <x-ui.input wire:model="company_name" id="company_name" type="text" label="Company Name" placeholder="e.g. Acme Logistics Sdn Bhd" required error="{{ $errors->first('company_name') }}">
+                <x-input wire:model="company_name" id="company_name" type="text" label="Company Name" placeholder="e.g. Acme Logistics Sdn Bhd" required error="{{ $errors->first('company_name') }}">
                     <x-slot:icon>
                         <x-heroicon-o-building-office class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
                 <div class="space-y-1.5 w-full">
-                    <x-ui.label for="ssm_type">SSM Type</x-ui.label>
+                    <x-label for="ssm_type">SSM Type</x-label>
                     <div class="relative rounded-xl shadow-xs">
                         <select wire:model="ssm_type" id="ssm_type" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm transition-all focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:outline-none">
                             <option value="ROC: SENDIRIAN BERHAD">Sdn Bhd (Sendirian Berhad)</option>
@@ -266,19 +266,19 @@ new class extends Component
                     </div>
                 </div>
 
-                <x-ui.input wire:model="ssm_no" id="verified_ssm_no" type="text" label="SSM Number (Verified)" disabled>
+                <x-input wire:model="ssm_no" id="verified_ssm_no" type="text" label="SSM Number (Verified)" disabled>
                     <x-slot:icon>
                         <x-heroicon-o-document-text class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
                 <div class="flex items-center gap-3">
                     <button wire:click="setStep(3)" type="button" class="w-1/3 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white rounded-xl text-xs font-bold transition-all focus:outline-none">
                         Back
                     </button>
-                    <x-ui.button type="submit" class="w-2/3">
+                    <x-button type="submit" class="w-2/3">
                         Continue to Password &rarr;
-                    </x-ui.button>
+                    </x-button>
                 </div>
             </form>
         </div>
@@ -293,25 +293,25 @@ new class extends Component
             </div>
 
             <form wire:submit.prevent="register" class="space-y-4">
-                <x-ui.input wire:model="password" id="password" type="password" label="Account Password" placeholder="Minimum 8 characters" required error="{{ $errors->first('password') }}">
+                <x-input wire:model="password" id="password" type="password" label="Account Password" placeholder="Minimum 8 characters" required error="{{ $errors->first('password') }}">
                     <x-slot:icon>
                         <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
-                <x-ui.input wire:model="password_confirmation" id="password_confirmation" type="password" label="Confirm Password" placeholder="••••••••" required>
+                <x-input wire:model="password_confirmation" id="password_confirmation" type="password" label="Confirm Password" placeholder="••••••••" required>
                     <x-slot:icon>
                         <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.input>
+                </x-input>
 
                 <div class="flex items-center gap-3">
                     <button wire:click="setStep(4)" type="button" class="w-1/3 py-2.5 border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white rounded-xl text-xs font-bold transition-all focus:outline-none">
                         Back
                     </button>
-                    <x-ui.button type="submit" class="w-2/3">
+                    <x-button type="submit" class="w-2/3">
                         Complete Onboarding
-                    </x-ui.button>
+                    </x-button>
                 </div>
             </form>
         </div>

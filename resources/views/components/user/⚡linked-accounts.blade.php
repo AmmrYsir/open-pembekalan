@@ -99,7 +99,7 @@ new class extends Component
 ?>
 
 <div class="md:col-span-2">
-    <x-ui.card>
+    <x-card>
         <div class="space-y-4">
             <div class="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-zinc-100 dark:border-zinc-800">
                 <div>
@@ -189,7 +189,7 @@ new class extends Component
                 @endif
             @endif
         </div>
-    </x-ui.card>
+    </x-card>
 
     <!-- Security Confirmation Modal -->
     @if($showConfirmModal)

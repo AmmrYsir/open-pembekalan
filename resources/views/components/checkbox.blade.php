@@ -9,11 +9,11 @@
 @endphp
 
 {{--
-    Custom Checkbox Component — x-ui.checkbox
+    Custom Checkbox Component — x-checkbox
     ==========================================
     Usage:
-        <x-ui.checkbox id="remember" name="remember" label="Remember me" />
-        <x-ui.checkbox id="agree" wire:model="agreed">I agree to the terms</x-ui.checkbox>
+        <x-checkbox id="remember" name="remember" label="Remember me" />
+        <x-checkbox id="agree" wire:model="agreed">I agree to the terms</x-checkbox>
 
     Props:
         id      — HTML id (auto-generated if omitted)

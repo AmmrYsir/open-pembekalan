@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-slot:title>Supplier Management</x-slot:title>
 
-    <x-ui.page-header
+    <x-page-header
         title="Supplier Management"
         subtitle="Manage vendor registrations, SSM records, MOF/CIDB certifications, and company details."
     />

@@ -65,25 +65,25 @@ new class extends Component
         </div>
     @endif
 
-    <x-ui.input wire:model="email" id="link_email" type="email" label="Account Email Address" placeholder="name@company.com" required error="{{ $errors->first('email') }}">
+    <x-input wire:model="email" id="link_email" type="email" label="Account Email Address" placeholder="name@company.com" required error="{{ $errors->first('email') }}">
         <x-slot:icon>
             <x-heroicon-o-at-symbol class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
         </x-slot:icon>
-    </x-ui.input>
+    </x-input>
 
-    <x-ui.input wire:model="password" id="link_password" type="password" label="Account Password" placeholder="••••••••" required error="{{ $errors->first('password') }}">
+    <x-input wire:model="password" id="link_password" type="password" label="Account Password" placeholder="••••••••" required error="{{ $errors->first('password') }}">
         <x-slot:icon>
             <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
         </x-slot:icon>
-    </x-ui.input>
+    </x-input>
 
     <div class="pt-2 flex items-center justify-between gap-3">
         <a href="/dashboard" class="px-4 py-2.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors">
             Cancel
         </a>
-        <x-ui.button type="submit" class="flex-1">
+        <x-button type="submit" class="flex-1">
             <x-heroicon-o-link class="w-4 h-4 mr-1.5" />
             Link Account
-        </x-ui.button>
+        </x-button>
     </div>
 </form>

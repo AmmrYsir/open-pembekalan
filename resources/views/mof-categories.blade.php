@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-slot:title>MOF Categories</x-slot:title>
 
-    <x-ui.page-header
+    <x-page-header
         title="MOF Categories"
         subtitle="Manage primary Ministry of Finance classification categories."
     />

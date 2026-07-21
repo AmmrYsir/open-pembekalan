@@ -94,7 +94,7 @@ new class extends Component
     @endif
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Total Subagencies</p>
@@ -104,10 +104,10 @@ new class extends Component
                     <x-heroicon-o-building-office class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 </div>
             </div>
-        </x-ui.card>
+        </x-card>
     </div>
 
-    <x-ui.card>
+    <x-card>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
             <div class="relative flex-1 max-w-md">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
@@ -117,13 +117,13 @@ new class extends Component
                        class="w-full pl-10 pr-4 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" />
             </div>
 
-            <x-ui.button variant="primary" size="sm" @click="$dispatch('open-subagency-drawer', { mode: 'create' })">
+            <x-button variant="primary" size="sm" @click="$dispatch('open-subagency-drawer', { mode: 'create' })">
                 <x-heroicon-o-plus class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 Add New Subagency
-            </x-ui.button>
+            </x-button>
         </div>
 
-        <x-ui.table :headers="['Subagency Code', 'Subagency Name', 'Parent Agency', 'Status', 'Actions']">
+        <x-table :headers="['Subagency Code', 'Subagency Name', 'Parent Agency', 'Status', 'Actions']">
             @forelse($this->subagencies as $subagency)
                 <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap font-mono text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -136,9 +136,9 @@ new class extends Component
                         {{ $subagency->agency?->name ?? '-' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <x-ui.badge variant="{{ $subagency->is_active ? 'success' : 'secondary' }}" pill>
+                        <x-badge variant="{{ $subagency->is_active ? 'success' : 'secondary' }}" pill>
                             {{ $subagency->is_active ? 'Active' : 'Inactive' }}
-                        </x-ui.badge>
+                        </x-badge>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right">
                         <div class="flex items-center justify-end gap-1">
@@ -181,12 +181,12 @@ new class extends Component
                     </td>
                 </tr>
             @endforelse
-        </x-ui.table>
+        </x-table>
 
         <div class="mt-4">
             {{ $this->subagencies->links() }}
         </div>
-    </x-ui.card>
+    </x-card>
 
     <div
         x-data
@@ -223,8 +223,8 @@ new class extends Component
                 </div>
             </div>
             <div class="mt-5 flex gap-3 justify-end">
-                <x-ui.button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-ui.button>
-                <x-ui.button variant="primary" size="sm" class="bg-rose-600 hover:bg-rose-700 text-white border-transparent" wire:click="delete">Delete</x-ui.button>
+                <x-button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-button>
+                <x-button variant="primary" size="sm" class="bg-rose-600 hover:bg-rose-700 text-white border-transparent" wire:click="delete">Delete</x-button>
             </div>
         </div>
     </div>

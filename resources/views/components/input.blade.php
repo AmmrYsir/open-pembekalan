@@ -9,9 +9,9 @@
 
 <div class="space-y-1.5 w-full">
     @if($label)
-        <x-ui.label :for="$id" :required="$required">
+        <x-label :for="$id" :required="$required">
             {{ $label }}
-        </x-ui.label>
+        </x-label>
     @endif
 
     <div class="relative rounded-xl shadow-xs">

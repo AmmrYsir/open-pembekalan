@@ -275,9 +275,9 @@ new class extends Component
                                         <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Verification Status</dt>
                                         <dd class="mt-1">
                                             @if($isEmailVerified)
-                                                <x-ui.badge variant="success" pill>Verified</x-ui.badge>
+                                                <x-badge variant="success" pill>Verified</x-badge>
                                             @else
-                                                <x-ui.badge variant="warning" pill>Awaiting Verification</x-ui.badge>
+                                                <x-badge variant="warning" pill>Awaiting Verification</x-badge>
                                             @endif
                                         </dd>
                                     </div>
@@ -327,24 +327,24 @@ new class extends Component
 
                                 <div class="space-y-4">
                                     <div>
-                                        <x-ui.label for="off_name">Full Name *</x-ui.label>
-                                        <x-ui.input id="off_name" wire:model="name" placeholder="e.g. Ir. Dr. Hafiz Basri" />
+                                        <x-label for="off_name">Full Name *</x-label>
+                                        <x-input id="off_name" wire:model="name" placeholder="e.g. Ir. Dr. Hafiz Basri" />
                                         @error('name') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="off_email">Login Email Address *</x-ui.label>
-                                        <x-ui.input id="off_email" type="email" wire:model="email" placeholder="officer@agency.gov.my" />
+                                        <x-label for="off_email">Login Email Address *</x-label>
+                                        <x-input id="off_email" type="email" wire:model="email" placeholder="officer@agency.gov.my" />
                                         @error('email') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                         <p class="text-xs text-zinc-400 mt-1">Officer must verify this email address upon initial login.</p>
                                     </div>
 
                                     <div>
                                         <div class="flex items-center justify-between mb-1.5">
-                                            <x-ui.label for="generatedPassword" class="mb-0">Auto-Generated Password</x-ui.label>
+                                            <x-label for="generatedPassword" class="mb-0">Auto-Generated Password</x-label>
                                             <button type="button" wire:click="generateNewPassword" class="text-xs text-emerald-600 hover:text-emerald-700 font-medium">Regenerate</button>
                                         </div>
-                                        <x-ui.input id="generatedPassword" wire:model="generatedPassword" readonly class="font-mono text-xs text-emerald-700 dark:text-emerald-400 font-bold bg-zinc-50 dark:bg-zinc-800/60" />
+                                        <x-input id="generatedPassword" wire:model="generatedPassword" readonly class="font-mono text-xs text-emerald-700 dark:text-emerald-400 font-bold bg-zinc-50 dark:bg-zinc-800/60" />
                                         <p class="text-xs text-zinc-400 mt-1">Provide this temporary password directly to the officer.</p>
                                     </div>
                                 </div>
@@ -361,7 +361,7 @@ new class extends Component
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <x-ui.label for="agency_id">Assigned Agency *</x-ui.label>
+                                            <x-label for="agency_id">Assigned Agency *</x-label>
                                             <select id="agency_id" wire:model.live="agency_id" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
                                                 <option value="">Select Agency</option>
                                                 @foreach($this->agencies as $agency)
@@ -372,7 +372,7 @@ new class extends Component
                                         </div>
 
                                         <div>
-                                            <x-ui.label for="subagency_id">Subagency</x-ui.label>
+                                            <x-label for="subagency_id">Subagency</x-label>
                                             <select id="subagency_id" wire:model="subagency_id" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
                                                 <option value="">Select Subagency (Optional)</option>
                                                 @foreach($this->subagencies as $sub)
@@ -384,23 +384,23 @@ new class extends Component
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <x-ui.label for="title">Title</x-ui.label>
-                                            <x-ui.input id="title" wire:model="title" placeholder="e.g. Encik / Ir." />
+                                            <x-label for="title">Title</x-label>
+                                            <x-input id="title" wire:model="title" placeholder="e.g. Encik / Ir." />
                                         </div>
                                         <div>
-                                            <x-ui.label for="position">Position</x-ui.label>
-                                            <x-ui.input id="position" wire:model="position" placeholder="e.g. Senior Officer" />
+                                            <x-label for="position">Position</x-label>
+                                            <x-input id="position" wire:model="position" placeholder="e.g. Senior Officer" />
                                         </div>
                                     </div>
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <x-ui.label for="nric">NRIC / MyKad No.</x-ui.label>
-                                            <x-ui.input id="nric" wire:model="nric" placeholder="e.g. 880101-14-5555" />
+                                            <x-label for="nric">NRIC / MyKad No.</x-label>
+                                            <x-input id="nric" wire:model="nric" placeholder="e.g. 880101-14-5555" />
                                         </div>
                                         <div>
-                                            <x-ui.label for="mobile_number">Mobile Number</x-ui.label>
-                                            <x-ui.input id="mobile_number" wire:model="mobile_number" placeholder="012-3456789" />
+                                            <x-label for="mobile_number">Mobile Number</x-label>
+                                            <x-input id="mobile_number" wire:model="mobile_number" placeholder="012-3456789" />
                                         </div>
                                     </div>
                                 </div>
@@ -414,27 +414,27 @@ new class extends Component
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
                     @if($mode === 'view')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                            <x-button variant="outline" size="sm" wire:click="switchToEdit">
                                 <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Edit
-                            </x-ui.button>
-                            <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                            </x-button>
+                            <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                         </div>
                     @elseif($mode === 'edit')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                            <x-button variant="outline" size="sm" wire:click="switchToView">
                                 <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Back to View
-                            </x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">Save Changes</x-ui.button>
+                            </x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">Save Changes</x-button>
                         </div>
                     @else
                         <div class="flex items-center justify-end gap-3">
-                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">
+                            <x-button variant="outline" size="sm" wire:click="closePanel">Cancel</x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">
                                 <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Create Officer Account
-                            </x-ui.button>
+                            </x-button>
                         </div>
                     @endif
                 </div>

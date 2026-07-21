@@ -285,7 +285,7 @@ new class extends Component
                                         <dd class="mt-1">
                                             @if($form->type)
                                                 @php $typeEnum = \App\Enums\AcquisitionType::tryFrom($form->type); @endphp
-                                                <x-ui.badge variant="primary">{{ $typeEnum ? $typeEnum->value : $form->type }}</x-ui.badge>
+                                                <x-badge variant="primary">{{ $typeEnum ? $typeEnum->value : $form->type }}</x-badge>
                                             @else
                                                 <span class="text-sm text-zinc-400 dark:text-zinc-650">—</span>
                                             @endif
@@ -295,7 +295,7 @@ new class extends Component
                                         <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Acquisition Method</dt>
                                         <dd class="mt-1">
                                             @if($form->method)
-                                                <x-ui.badge variant="secondary">{{ $form->method }}</x-ui.badge>
+                                                <x-badge variant="secondary">{{ $form->method }}</x-badge>
                                             @else
                                                 <span class="text-sm text-zinc-400 dark:text-zinc-650">—</span>
                                             @endif
@@ -436,10 +436,10 @@ new class extends Component
                                     <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <x-ui.input id="project_number" disabled label="Project Number" placeholder="e.g. PRJ-2026-001" wire:model="form.project_number" :required="true" :error="$errors->first('form.project_number')" />
-                                    <x-ui.input id="tender_number" label="Tender Number" placeholder="e.g. TND-2026-001" wire:model="form.tender_number" :error="$errors->first('form.tender_number')" />
+                                    <x-input id="project_number" disabled label="Project Number" placeholder="e.g. PRJ-2026-001" wire:model="form.project_number" :required="true" :error="$errors->first('form.project_number')" />
+                                    <x-input id="tender_number" label="Tender Number" placeholder="e.g. TND-2026-001" wire:model="form.tender_number" :error="$errors->first('form.tender_number')" />
                                     <div class="sm:col-span-2">
-                                        <x-ui.input id="project_name" label="Project Name" placeholder="Full name of the acquisition project" wire:model="form.project_name" :required="true" :error="$errors->first('form.project_name')" />
+                                        <x-input id="project_name" label="Project Name" placeholder="Full name of the acquisition project" wire:model="form.project_name" :required="true" :error="$errors->first('form.project_name')" />
                                     </div>
                                 </div>
                             </div>
@@ -453,7 +453,7 @@ new class extends Component
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="type" :required="true">Acquisition Type</x-ui.label>
+                                        <x-label for="type" :required="true">Acquisition Type</x-label>
                                         <select id="type" wire:model="form.type" class="block w-full rounded-xl border {{ $errors->has('form.type') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                             <option value="">Select type...</option>
                                             @foreach($this->acquisitionTypes as $t)
@@ -464,7 +464,7 @@ new class extends Component
                                     </div>
 
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="method" :required="true">Acquisition Method</x-ui.label>
+                                        <x-label for="method" :required="true">Acquisition Method</x-label>
                                         <select id="method" wire:model="form.method" class="block w-full rounded-xl border {{ $errors->has('form.method') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                             <option value="">Select method...</option>
                                             @foreach($this->acquisitionMethods as $m)
@@ -475,7 +475,7 @@ new class extends Component
                                     </div>
 
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="vot_type_id">VOT Type</x-ui.label>
+                                        <x-label for="vot_type_id">VOT Type</x-label>
                                         <select id="vot_type_id" wire:model="form.vot_type_id" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                             <option value="">None</option>
                                             @foreach($this->votTypes as $vot)
@@ -485,7 +485,7 @@ new class extends Component
                                     </div>
 
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="committee_type">Committee Type</x-ui.label>
+                                        <x-label for="committee_type">Committee Type</x-label>
                                         <select id="committee_type" wire:model="form.committee_type" class="block w-full rounded-xl border {{ $errors->has('form.committee_type') ? 'border-rose-500' : 'border-zinc-200 dark:border-zinc-700/80' }} bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                             <option value="">Select committee type...</option>
                                             @foreach($this->committeeTypes as $comm)
@@ -506,14 +506,14 @@ new class extends Component
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="siling_price">Ceiling Price (RM)</x-ui.label>
+                                        <x-label for="siling_price">Ceiling Price (RM)</x-label>
                                         <div class="relative rounded-xl shadow-xs">
                                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 text-sm font-medium">RM</div>
                                             <input id="siling_price" type="number" step="0.01" min="0" wire:model="form.siling_price" placeholder="0.00" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 py-2.5 pl-10 pr-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                         </div>
                                         @error('form.siling_price') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
-                                    <x-ui.input id="no_allocation_warrant" label="Allocation Warrant No." placeholder="e.g. WP-2026-0012" wire:model="form.no_allocation_warrant" :error="$errors->first('form.no_allocation_warrant')" />
+                                    <x-input id="no_allocation_warrant" label="Allocation Warrant No." placeholder="e.g. WP-2026-0012" wire:model="form.no_allocation_warrant" :error="$errors->first('form.no_allocation_warrant')" />
                                 </div>
                             </div>
 
@@ -526,7 +526,7 @@ new class extends Component
                                 </h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="agency_id">Agency</x-ui.label>
+                                        <x-label for="agency_id">Agency</x-label>
                                         <select id="agency_id" wire:model.live="form.agency_id" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500">
                                             <option value="">No agency</option>
                                             @foreach($this->agencies as $agency)
@@ -535,7 +535,7 @@ new class extends Component
                                         </select>
                                     </div>
                                     <div class="space-y-1.5">
-                                        <x-ui.label for="subagency_id">Sub-Agency</x-ui.label>
+                                        <x-label for="subagency_id">Sub-Agency</x-label>
                                         <select id="subagency_id" wire:model.live="form.subagency_id" @if(!$form->agency_id) disabled @endif class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
                                             <option value="">No sub-agency</option>
                                             @foreach($this->subagencies as $sub)
@@ -544,7 +544,7 @@ new class extends Component
                                         </select>
                                     </div>
                                     <div class="space-y-1.5 col-span-1 sm:col-span-2">
-                                        <x-ui.label for="user_id">Officer</x-ui.label>
+                                        <x-label for="user_id">Officer</x-label>
                                         <select id="user_id" wire:model="form.user_id" @if(!$form->agency_id) disabled @endif class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 py-2.5 px-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
                                             <option value="">Select officer...</option>
                                             @foreach($this->officers as $officer)
@@ -601,38 +601,38 @@ new class extends Component
 
                             {{-- Left — workflow state actions --}}
                             <div class="flex items-center gap-2">
-                                <x-ui.button variant="secondary" size="sm" wire:click="sendForConfirmation" wire:loading.attr="disabled" wire:target="sendForConfirmation">
+                                <x-button variant="secondary" size="sm" wire:click="sendForConfirmation" wire:loading.attr="disabled" wire:target="sendForConfirmation">
                                     <x-heroicon-o-paper-airplane class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                     <span wire:loading.remove wire:target="sendForConfirmation">Send for Confirmation</span>
                                     <span wire:loading wire:target="sendForConfirmation">Sending...</span>
-                                </x-ui.button>
+                                </x-button>
 
-                                <x-ui.button variant="secondary" size="sm" wire:click="verify" wire:loading.attr="disabled" wire:target="verify">
+                                <x-button variant="secondary" size="sm" wire:click="verify" wire:loading.attr="disabled" wire:target="verify">
                                     <x-heroicon-o-shield-check class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                     <span wire:loading.remove wire:target="verify">Verify</span>
                                     <span wire:loading wire:target="verify">Verifying...</span>
-                                </x-ui.button>
+                                </x-button>
                             </div>
 
                             {{-- Right — Edit + Close --}}
                             <div class="flex items-center gap-2">
-                                <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                                <x-button variant="outline" size="sm" wire:click="switchToEdit">
                                     <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                     Edit
-                                </x-ui.button>
-                                <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                                </x-button>
+                                <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                             </div>
                         </div>
 
                     @elseif($mode === 'edit')
                         {{-- EDIT footer: right side only — [Back to View] [Save Changes] --}}
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                            <x-button variant="outline" size="sm" wire:click="switchToView">
                                 <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Back to View
-                            </x-ui.button>
+                            </x-button>
 
-                            <x-ui.button variant="primary" size="sm" wire:click="save" wire:loading.attr="disabled" wire:target="save">
+                            <x-button variant="primary" size="sm" wire:click="save" wire:loading.attr="disabled" wire:target="save">
                                 <span wire:loading.remove wire:target="save">
                                     <x-heroicon-o-arrow-down-tray class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                     Save Changes
@@ -641,14 +641,14 @@ new class extends Component
                                     <x-icon-spinner class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" />
                                     Saving...
                                 </span>
-                            </x-ui.button>
+                            </x-button>
                         </div>
 
                     @else
                         {{-- CREATE footer: Cancel (left) | Create (right) --}}
                         <div class="flex items-center justify-end gap-3">
-                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save" wire:loading.attr="disabled" wire:target="save">
+                            <x-button variant="outline" size="sm" wire:click="closePanel">Cancel</x-button>
+                            <x-button variant="primary" size="sm" wire:click="save" wire:loading.attr="disabled" wire:target="save">
                                 <span wire:loading.remove wire:target="save">
                                     <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                     Create Acquisition
@@ -657,7 +657,7 @@ new class extends Component
                                     <x-icon-spinner class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" />
                                     Creating...
                                 </span>
-                            </x-ui.button>
+                            </x-button>
                         </div>
                     @endif
 

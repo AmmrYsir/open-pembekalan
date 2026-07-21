@@ -30,24 +30,24 @@ new class extends Component
         </div>
     @endif
 
-    <x-ui.input wire:model="email" id="email" type="email" label="Email Address" placeholder="name@company.com" required error="{{ $errors->first('email') }}">
+    <x-input wire:model="email" id="email" type="email" label="Email Address" placeholder="name@company.com" required error="{{ $errors->first('email') }}">
         <x-slot:icon>
             <x-heroicon-o-at-symbol class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
         </x-slot:icon>
-    </x-ui.input>
+    </x-input>
 
-    <x-ui.input wire:model="password" id="password" type="password" label="Password" placeholder="••••••••" required error="{{ $errors->first('password') }}">
+    <x-input wire:model="password" id="password" type="password" label="Password" placeholder="••••••••" required error="{{ $errors->first('password') }}">
         <x-slot:icon>
             <x-heroicon-o-lock-closed class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
         </x-slot:icon>
-    </x-ui.input>
+    </x-input>
 
     <div class="flex items-center justify-between">
-        <x-ui.checkbox id="remember_me" name="remember" label="Remember me" />
+        <x-checkbox id="remember_me" name="remember" label="Remember me" />
         <a href="/forgot-password" class="text-xs font-semibold text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300">Forgot password?</a>
     </div>
 
-    <x-ui.button type="submit" class="w-full">
+    <x-button type="submit" class="w-full">
         Sign In
-    </x-ui.button>
+    </x-button>
 </form>

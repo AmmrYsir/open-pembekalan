@@ -39,7 +39,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-ui.theme-toggle />
+            <x-theme-toggle />
         </div>
     </header>
 
@@ -135,29 +135,29 @@
         <!-- Stats Section (Reusable Components) -->
         <section class="w-full py-12" aria-label="Key Performance Indicators">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-                <x-ui.stat-card value="RM 142.8M" label="Total Volume Audited">
+                <x-stat-card value="RM 142.8M" label="Total Volume Audited">
                     <x-slot:icon>
                         <x-heroicon-o-currency-dollar class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.stat-card>
+                </x-stat-card>
                 
-                <x-ui.stat-card value="16" label="Connected Partner Agencies">
+                <x-stat-card value="16" label="Connected Partner Agencies">
                     <x-slot:icon>
                         <x-heroicon-o-building-office class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.stat-card>
+                </x-stat-card>
                 
-                <x-ui.stat-card value="1,420+" label="Onboarded Active Suppliers">
+                <x-stat-card value="1,420+" label="Onboarded Active Suppliers">
                     <x-slot:icon>
                         <x-heroicon-o-users class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.stat-card>
+                </x-stat-card>
                 
-                <x-ui.stat-card value="100%" label="Compliant Tax & SSM Audits">
+                <x-stat-card value="100%" label="Compliant Tax & SSM Audits">
                     <x-slot:icon>
                         <x-heroicon-o-shield-check class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.stat-card>
+                </x-stat-card>
             </div>
         </section>
 
@@ -171,37 +171,37 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-                <x-ui.feature-card 
+                <x-feature-card 
                     title="Supplier Onboarding" 
                     description="Simple guided forms to submit company credentials, SSM information, and paid-up capital validation details.">
                     <x-slot:icon>
                         <x-heroicon-o-user-plus class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.feature-card>
+                </x-feature-card>
                 
-                <x-ui.feature-card 
+                <x-feature-card 
                     title="Transparent Audits" 
                     description="Clear tracking of department allocations, budget methods, and active supply requests with focal point details.">
                     <x-slot:icon>
                         <x-heroicon-o-clipboard class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.feature-card>
+                </x-feature-card>
 
-                <x-ui.feature-card 
+                <x-feature-card 
                     title="Focal Coordination" 
                     description="Connect directly with verified focal officers. Complete list of partner procurement networks across divisions.">
                     <x-slot:icon>
                         <x-heroicon-o-chat-bubble-left-right class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.feature-card>
+                </x-feature-card>
 
-                <x-ui.feature-card 
+                <x-feature-card 
                     title="Compliance Engine" 
                     description="Automated tracking of tax references, registration numbers, CIDB certifications, and MOF statuses.">
                     <x-slot:icon>
                         <x-heroicon-o-shield-check class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     </x-slot:icon>
-                </x-ui.feature-card>
+                </x-feature-card>
             </div>
         </section>
 

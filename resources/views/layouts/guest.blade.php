@@ -28,7 +28,7 @@
     
     <!-- Theme Toggle at top right -->
     <div class="fixed top-6 right-6 z-50">
-        <x-ui.theme-toggle />
+        <x-theme-toggle />
     </div>
 
     <!-- Main Content -->

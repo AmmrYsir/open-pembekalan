@@ -167,7 +167,7 @@ new class extends Component
 
     {{-- ── Stat summary cards ── --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Acquisitions</span>
                 <span class="text-emerald-600 dark:text-emerald-400 p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
@@ -178,9 +178,9 @@ new class extends Component
                 <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->totalCount }}</h3>
                 <p class="text-xs text-zinc-500 mt-1">All time records</p>
             </div>
-        </x-ui.card>
+        </x-card>
 
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Draft</span>
                 <span class="text-amber-600 dark:text-amber-400 p-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/30">
@@ -191,9 +191,9 @@ new class extends Component
                 <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->draftCount }}</h3>
                 <p class="text-xs text-zinc-500 mt-1">Pending submission</p>
             </div>
-        </x-ui.card>
+        </x-card>
 
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active</span>
                 <span class="text-blue-600 dark:text-blue-400 p-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/30">
@@ -204,11 +204,11 @@ new class extends Component
                 <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->activeCount }}</h3>
                 <p class="text-xs text-zinc-500 mt-1">Submitted or approved</p>
             </div>
-        </x-ui.card>
+        </x-card>
     </div>
 
     {{-- ── Main table card ── --}}
-    <x-ui.card>
+    <x-card>
         <x-slot:header>
             <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full mb-5">
                 {{-- Search --}}
@@ -251,10 +251,10 @@ new class extends Component
                 </div>
 
                 {{-- Add Button --}}
-                <x-ui.button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="ml-auto shrink-0 cursor-pointer">
+                <x-button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="ml-auto shrink-0 cursor-pointer">
                     <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     New Acquisition
-                </x-ui.button>
+                </x-button>
             </div>
         </x-slot:header>
 
@@ -310,14 +310,14 @@ new class extends Component
                             <td class="px-5 py-4">
                                 <div class="flex flex-col gap-1.5">
                                     @if($acquisition->type)
-                                        <x-ui.badge variant="primary">
+                                        <x-badge variant="primary">
                                             {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->value : $acquisition->type }}
-                                        </x-ui.badge>
+                                        </x-badge>
                                     @endif
                                     @if($acquisition->method)
-                                        <x-ui.badge variant="secondary">
+                                        <x-badge variant="secondary">
                                             {{ $acquisition->method instanceof \App\Enums\AcquisitionMethod ? $acquisition->method->value : $acquisition->method }}
-                                        </x-ui.badge>
+                                        </x-badge>
                                     @endif
                                 </div>
                             </td>
@@ -358,7 +358,7 @@ new class extends Component
                                         default       => $acquisition->status ?? '—',
                                     };
                                   @endphp
-                                <x-ui.badge :variant="$statusVariant" pill>{{ $statusLabel }}</x-ui.badge>
+                                <x-badge :variant="$statusVariant" pill>{{ $statusLabel }}</x-badge>
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap text-right">
                                 <div class="flex items-center justify-end gap-1">
@@ -400,10 +400,10 @@ new class extends Component
                                         <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No acquisitions found</p>
                                         <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Try adjusting your search or filters, or create a new acquisition.</p>
                                     </div>
-                                    <x-ui.button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="cursor-pointer">
+                                    <x-button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="cursor-pointer">
                                         <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                         New Acquisition
-                                    </x-ui.button>
+                                    </x-button>
                                 </div>
                             </td>
                         </tr>
@@ -418,7 +418,7 @@ new class extends Component
                 {{ $this->acquisitions->links() }}
             </div>
         @endif
-    </x-ui.card>
+    </x-card>
 
     {{-- ══════════════════════════════════════════════════════════════════════
          Delete Confirmation Modal
@@ -458,11 +458,11 @@ new class extends Component
                 </div>
             </div>
             <div class="mt-5 flex gap-3 justify-end">
-                <x-ui.button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-ui.button>
-                <x-ui.button variant="danger" size="sm" wire:click="delete" wire:loading.attr="disabled" wire:target="delete">
+                <x-button variant="outline" size="sm" wire:click="cancelDelete">Cancel</x-button>
+                <x-button variant="danger" size="sm" wire:click="delete" wire:loading.attr="disabled" wire:target="delete">
                     <span wire:loading.remove wire:target="delete">Delete</span>
                     <span wire:loading wire:target="delete">Deleting...</span>
-                </x-ui.button>
+                </x-button>
             </div>
         </div>
     </div>

@@ -106,7 +106,7 @@ new class extends Component
 
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Total Registered Features</p>
@@ -116,9 +116,9 @@ new class extends Component
                     <x-heroicon-o-adjustments-horizontal class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 </div>
             </div>
-        </x-ui.card>
+        </x-card>
 
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Active Features</p>
@@ -128,9 +128,9 @@ new class extends Component
                     <x-heroicon-o-check-circle class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 </div>
             </div>
-        </x-ui.card>
+        </x-card>
 
-        <x-ui.card>
+        <x-card>
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Experimental Lab Features</p>
@@ -140,11 +140,11 @@ new class extends Component
                     <x-heroicon-o-beaker class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 </div>
             </div>
-        </x-ui.card>
+        </x-card>
     </div>
 
     {{-- Controls & Table --}}
-    <x-ui.card>
+    <x-card>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
             <div class="relative flex-1 max-w-md">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
@@ -165,7 +165,7 @@ new class extends Component
             </div>
         </div>
 
-        <x-ui.table :headers="['Feature Name & Key', 'Target Scope', 'Status', 'Actions']">
+        <x-table :headers="['Feature Name & Key', 'Target Scope', 'Status', 'Actions']">
             @forelse($this->features as $feature)
                 <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
                     <td class="px-6 py-4">
@@ -197,17 +197,17 @@ new class extends Component
 
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($feature['scope'] === 'experimental')
-                            <x-ui.badge variant="warning" pill>
+                            <x-badge variant="warning" pill>
                                 {{ $feature['scope_label'] }}
-                            </x-ui.badge>
+                            </x-badge>
                         @elseif($feature['scope'] === 'global')
-                            <x-ui.badge variant="info" pill>
+                            <x-badge variant="info" pill>
                                 {{ $feature['scope_label'] }}
-                            </x-ui.badge>
+                            </x-badge>
                         @else
-                            <x-ui.badge variant="secondary" pill>
+                            <x-badge variant="secondary" pill>
                                 {{ $feature['scope_label'] }}
-                            </x-ui.badge>
+                            </x-badge>
                         @endif
                     </td>
 
@@ -268,8 +268,8 @@ new class extends Component
                     </td>
                 </tr>
             @endforelse
-        </x-ui.table>
-    </x-ui.card>
+        </x-table>
+    </x-card>
 
     {{-- Responsive Details Modal --}}
     @if($this->showDetailsModal && $this->selectedFeature)
@@ -357,9 +357,9 @@ new class extends Component
 
                 {{-- Modal Footer --}}
                 <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end shrink-0">
-                    <x-ui.button variant="outline" size="sm" wire:click="closeDetailsModal" class="cursor-pointer">
+                    <x-button variant="outline" size="sm" wire:click="closeDetailsModal" class="cursor-pointer">
                         Close
-                    </x-ui.button>
+                    </x-button>
                 </div>
             </div>
         </div>

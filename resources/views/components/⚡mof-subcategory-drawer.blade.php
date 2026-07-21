@@ -189,7 +189,7 @@ new class extends Component
                                 </h3>
                                 <div class="space-y-4">
                                     <div>
-                                        <x-ui.label for="mof_category_id">Parent MOF Category *</x-ui.label>
+                                        <x-label for="mof_category_id">Parent MOF Category *</x-label>
                                         <select id="mof_category_id" wire:model="mof_category_id" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
                                             <option value="">Select Parent Category</option>
                                             @foreach($this->categories as $cat)
@@ -200,14 +200,14 @@ new class extends Component
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="sub_code">Subcategory Code *</x-ui.label>
-                                        <x-ui.input id="sub_code" wire:model="code" placeholder="e.g. 0101" />
+                                        <x-label for="sub_code">Subcategory Code *</x-label>
+                                        <x-input id="sub_code" wire:model="code" placeholder="e.g. 0101" />
                                         @error('code') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="sub_name">Subcategory Name *</x-ui.label>
-                                        <x-ui.input id="sub_name" wire:model="name" placeholder="e.g. Perabot Rumah dan Pejabat" />
+                                        <x-label for="sub_name">Subcategory Name *</x-label>
+                                        <x-input id="sub_name" wire:model="name" placeholder="e.g. Perabot Rumah dan Pejabat" />
                                         @error('name') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
@@ -219,27 +219,27 @@ new class extends Component
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
                     @if($mode === 'view')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                            <x-button variant="outline" size="sm" wire:click="switchToEdit">
                                 <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Edit
-                            </x-ui.button>
-                            <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                            </x-button>
+                            <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                         </div>
                     @elseif($mode === 'edit')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                            <x-button variant="outline" size="sm" wire:click="switchToView">
                                 <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Back to View
-                            </x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">Save Changes</x-ui.button>
+                            </x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">Save Changes</x-button>
                         </div>
                     @else
                         <div class="flex items-center justify-end gap-3">
-                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">
+                            <x-button variant="outline" size="sm" wire:click="closePanel">Cancel</x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">
                                 <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Create Subcategory
-                            </x-ui.button>
+                            </x-button>
                         </div>
                     @endif
                 </div>

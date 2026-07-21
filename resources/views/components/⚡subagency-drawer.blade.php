@@ -172,9 +172,9 @@ new class extends Component
                                     <div>
                                         <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Status</dt>
                                         <dd class="mt-1">
-                                            <x-ui.badge variant="{{ $is_active ? 'success' : 'secondary' }}" pill>
+                                            <x-badge variant="{{ $is_active ? 'success' : 'secondary' }}" pill>
                                                 {{ $is_active ? 'Active' : 'Inactive' }}
-                                            </x-ui.badge>
+                                            </x-badge>
                                         </dd>
                                     </div>
                                     <div class="col-span-2">
@@ -200,7 +200,7 @@ new class extends Component
                                 </h3>
                                 <div class="space-y-4">
                                     <div>
-                                        <x-ui.label for="agency_id">Parent Agency *</x-ui.label>
+                                        <x-label for="agency_id">Parent Agency *</x-label>
                                         <select id="agency_id" wire:model="agency_id" class="w-full px-3 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
                                             <option value="">Select Parent Agency</option>
                                             @foreach($this->agencies as $agency)
@@ -211,20 +211,20 @@ new class extends Component
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="subagency_code">Subagency Code *</x-ui.label>
-                                        <x-ui.input id="subagency_code" wire:model="code" placeholder="e.g. SUB-201" />
+                                        <x-label for="subagency_code">Subagency Code *</x-label>
+                                        <x-input id="subagency_code" wire:model="code" placeholder="e.g. SUB-201" />
                                         @error('code') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="subagency_name">Subagency Name *</x-ui.label>
-                                        <x-ui.input id="subagency_name" wire:model="name" placeholder="e.g. Telecommunications Division" />
+                                        <x-label for="subagency_name">Subagency Name *</x-label>
+                                        <x-input id="subagency_name" wire:model="name" placeholder="e.g. Telecommunications Division" />
                                         @error('name') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div class="flex items-center gap-3 pt-2">
                                         <input id="sub_active" type="checkbox" wire:model="is_active" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500" />
-                                        <x-ui.label for="sub_active" class="cursor-pointer mb-0">Active Status</x-ui.label>
+                                        <x-label for="sub_active" class="cursor-pointer mb-0">Active Status</x-label>
                                     </div>
                                 </div>
                             </div>
@@ -235,27 +235,27 @@ new class extends Component
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
                     @if($mode === 'view')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                            <x-button variant="outline" size="sm" wire:click="switchToEdit">
                                 <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Edit
-                            </x-ui.button>
-                            <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                            </x-button>
+                            <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                         </div>
                     @elseif($mode === 'edit')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                            <x-button variant="outline" size="sm" wire:click="switchToView">
                                 <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Back to View
-                            </x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">Save Changes</x-ui.button>
+                            </x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">Save Changes</x-button>
                         </div>
                     @else
                         <div class="flex items-center justify-end gap-3">
-                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">
+                            <x-button variant="outline" size="sm" wire:click="closePanel">Cancel</x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">
                                 <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Create Subagency
-                            </x-ui.button>
+                            </x-button>
                         </div>
                     @endif
                 </div>

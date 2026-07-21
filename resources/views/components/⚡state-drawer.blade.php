@@ -187,27 +187,27 @@ new class extends Component
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <x-ui.label for="state_code">State Code *</x-ui.label>
-                                            <x-ui.input id="state_code" wire:model="code" placeholder="e.g. SGR" />
+                                            <x-label for="state_code">State Code *</x-label>
+                                            <x-input id="state_code" wire:model="code" placeholder="e.g. SGR" />
                                             @error('code') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                         </div>
 
                                         <div>
-                                            <x-ui.label for="state_shortname">Short Name *</x-ui.label>
-                                            <x-ui.input id="state_shortname" wire:model="shortname" placeholder="e.g. Selangor" />
+                                            <x-label for="state_shortname">Short Name *</x-label>
+                                            <x-input id="state_shortname" wire:model="shortname" placeholder="e.g. Selangor" />
                                             @error('shortname') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                         </div>
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="state_fullname">Full Name *</x-ui.label>
-                                        <x-ui.input id="state_fullname" wire:model="fullname" placeholder="e.g. Selangor Darul Ehsan" />
+                                        <x-label for="state_fullname">Full Name *</x-label>
+                                        <x-input id="state_fullname" wire:model="fullname" placeholder="e.g. Selangor Darul Ehsan" />
                                         @error('fullname') <p class="text-xs text-rose-600 dark:text-rose-400 mt-1">{{ $message }}</p> @enderror
                                     </div>
 
                                     <div>
-                                        <x-ui.label for="state_capital">Capital</x-ui.label>
-                                        <x-ui.input id="state_capital" wire:model="capital" placeholder="e.g. Shah Alam" />
+                                        <x-label for="state_capital">Capital</x-label>
+                                        <x-input id="state_capital" wire:model="capital" placeholder="e.g. Shah Alam" />
                                     </div>
                                 </div>
                             </div>
@@ -218,27 +218,27 @@ new class extends Component
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
                     @if($mode === 'view')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToEdit">
+                            <x-button variant="outline" size="sm" wire:click="switchToEdit">
                                 <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Edit
-                            </x-ui.button>
-                            <x-ui.button variant="secondary" size="sm" wire:click="closePanel">Close</x-ui.button>
+                            </x-button>
+                            <x-button variant="secondary" size="sm" wire:click="closePanel">Close</x-button>
                         </div>
                     @elseif($mode === 'edit')
                         <div class="flex items-center justify-end gap-2">
-                            <x-ui.button variant="outline" size="sm" wire:click="switchToView">
+                            <x-button variant="outline" size="sm" wire:click="switchToView">
                                 <x-heroicon-o-chevron-left class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Back to View
-                            </x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">Save Changes</x-ui.button>
+                            </x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">Save Changes</x-button>
                         </div>
                     @else
                         <div class="flex items-center justify-end gap-3">
-                            <x-ui.button variant="outline" size="sm" wire:click="closePanel">Cancel</x-ui.button>
-                            <x-ui.button variant="primary" size="sm" wire:click="save">
+                            <x-button variant="outline" size="sm" wire:click="closePanel">Cancel</x-button>
+                            <x-button variant="primary" size="sm" wire:click="save">
                                 <x-heroicon-o-plus class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                 Create State
-                            </x-ui.button>
+                            </x-button>
                         </div>
                     @endif
                 </div>

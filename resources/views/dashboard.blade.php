@@ -9,20 +9,20 @@
                 <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Here is what's happening with the acquisition projects today.</p>
             </div>
             <div class="flex items-center gap-3">
-                <x-ui.button variant="outline" size="sm">
+                <x-button variant="outline" size="sm">
                     <x-heroicon-o-document-arrow-down class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     Export Report
-                </x-ui.button>
-                <x-ui.button variant="primary" size="sm">
+                </x-button>
+                <x-button variant="primary" size="sm">
                     <x-heroicon-o-plus class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     New Acquisition
-                </x-ui.button>
+                </x-button>
             </div>
         </div>
 
         <!-- Metric Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <x-ui.card>
+            <x-card>
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Projects</span>
                     <span class="text-emerald-600 dark:text-emerald-400 p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
@@ -39,9 +39,9 @@
                         <span>vs last month</span>
                     </p>
                 </div>
-            </x-ui.card>
+            </x-card>
 
-            <x-ui.card>
+            <x-card>
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active Tenders</span>
                     <span class="text-blue-600 dark:text-blue-400 p-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/30">
@@ -58,9 +58,9 @@
                         <span>vs last month</span>
                     </p>
                 </div>
-            </x-ui.card>
+            </x-card>
 
-            <x-ui.card>
+            <x-card>
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Allocation</span>
                     <span class="text-amber-600 dark:text-amber-400 p-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/30">
@@ -77,9 +77,9 @@
                         <span>vs last quarter</span>
                     </p>
                 </div>
-            </x-ui.card>
+            </x-card>
 
-            <x-ui.card>
+            <x-card>
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active Suppliers</span>
                     <span class="text-purple-600 dark:text-purple-400 p-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/30">
@@ -96,15 +96,15 @@
                         <span>new this week</span>
                     </p>
                 </div>
-            </x-ui.card>
+            </x-card>
         </div>
 
         <!-- Main Body Splits -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Left Side: Table of Tenders -->
             <div class="lg:col-span-2 space-y-6">
-                <x-ui.card title="Recent Acquisition Projects" subtitle="A summary of the latest procurement activities and proposals">
-                    <x-ui.table :headers="['Project ID / Name', 'Category', 'Budget', 'Status', 'Actions']">
+                <x-card title="Recent Acquisition Projects" subtitle="A summary of the latest procurement activities and proposals">
+                    <x-table :headers="['Project ID / Name', 'Category', 'Budget', 'Status', 'Actions']">
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="font-semibold text-zinc-900 dark:text-zinc-100">PRJ-2026-004</div>
@@ -113,10 +113,10 @@
                             <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">Telecommunications</td>
                             <td class="px-6 py-4 whitespace-nowrap font-mono text-zinc-700 dark:text-zinc-300">RM 450,000</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.badge variant="success">Approved</x-ui.badge>
+                                <x-badge variant="success">Approved</x-badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.button variant="outline" size="sm">Manage</x-ui.button>
+                                <x-button variant="outline" size="sm">Manage</x-button>
                             </td>
                         </tr>
                         <tr>
@@ -127,10 +127,10 @@
                             <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">IT Infrastructure</td>
                             <td class="px-6 py-4 whitespace-nowrap font-mono text-zinc-700 dark:text-zinc-300">RM 120,000</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.badge variant="warning">Under Review</x-ui.badge>
+                                <x-badge variant="warning">Under Review</x-badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.button variant="outline" size="sm">Manage</x-ui.button>
+                                <x-button variant="outline" size="sm">Manage</x-button>
                             </td>
                         </tr>
                         <tr>
@@ -141,10 +141,10 @@
                             <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">Facilities</td>
                             <td class="px-6 py-4 whitespace-nowrap font-mono text-zinc-700 dark:text-zinc-300">RM 85,000</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.badge variant="danger">Rejected</x-ui.badge>
+                                <x-badge variant="danger">Rejected</x-badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.button variant="outline" size="sm">Manage</x-ui.button>
+                                <x-button variant="outline" size="sm">Manage</x-button>
                             </td>
                         </tr>
                         <tr>
@@ -155,20 +155,20 @@
                             <td class="px-6 py-4 whitespace-nowrap text-zinc-650 dark:text-zinc-300">Energy & Power</td>
                             <td class="px-6 py-4 whitespace-nowrap font-mono text-zinc-700 dark:text-zinc-300">RM 850,000</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.badge variant="info">Ongoing</x-ui.badge>
+                                <x-badge variant="info">Ongoing</x-badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-ui.button variant="outline" size="sm">Manage</x-ui.button>
+                                <x-button variant="outline" size="sm">Manage</x-button>
                             </td>
                         </tr>
-                    </x-ui.table>
-                </x-ui.card>
+                    </x-table>
+                </x-card>
             </div>
 
             <!-- Right Side: Mini Widgets (Status Chart / Recent Tenders Summary) -->
             <div class="space-y-6">
                 <!-- SVG Mini Donut Chart -->
-                <x-ui.card title="Acquisition Pipeline" subtitle="Status distribution across current projects">
+                <x-card title="Acquisition Pipeline" subtitle="Status distribution across current projects">
                     <div class="flex flex-col items-center py-4">
                         <div class="relative w-36 h-36 flex items-center justify-center">
                             <!-- SVG Donut Chart Mock -->
@@ -199,10 +199,10 @@
                             </div>
                         </div>
                     </div>
-                </x-ui.card>
+                </x-card>
 
                 <!-- Project Activity Feeds -->
-                <x-ui.card title="Recent Activities" subtitle="Updates from procurement officers">
+                <x-card title="Recent Activities" subtitle="Updates from procurement officers">
                     <div class="space-y-4 flow-root">
                         <ul class="-mb-8">
                             <li>
@@ -246,7 +246,7 @@
                             </li>
                         </ul>
                     </div>
-                </x-ui.card>
+                </x-card>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-slot:title>Agency Officer Management</x-slot:title>
 
-    <x-ui.page-header
+    <x-page-header
         title="Agency Officers"
         subtitle="Manage focal officers, titles, contact numbers, and agency assignments."
     />
