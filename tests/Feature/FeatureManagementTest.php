@@ -12,14 +12,14 @@ uses(RefreshDatabase::class);
 test('features page renders successfully for authenticated user', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/admin/features');
+    $response = $this->actingAs($user)->get('/features');
 
     $response->assertStatus(200);
     $response->assertSee('Feature Management');
 });
 
 test('features page redirects guest user to login', function () {
-    $response = $this->get('/admin/features');
+    $response = $this->get('/features');
 
     $response->assertRedirect('/login');
 });
