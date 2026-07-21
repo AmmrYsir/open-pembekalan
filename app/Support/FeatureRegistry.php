@@ -30,15 +30,6 @@ class FeatureRegistry
                 'icon' => 'beaker',
             ],
             [
-                'key' => 'public-procurement-portal',
-                'name' => 'Public Procurement Portal',
-                'description' => 'Controls access and public visibility of published tenders and tender notices on the portal (/portal).',
-                'scope' => 'global',
-                'scope_label' => 'Public / All Users',
-                'default_active' => true,
-                'icon' => 'globe-alt',
-            ],
-            [
                 'key' => 'system-notifications',
                 'name' => 'System Notifications',
                 'description' => 'Enables real-time notification bell dropdown in header and notification center dashboard.',
@@ -55,24 +46,6 @@ class FeatureRegistry
                 'scope_label' => 'User Profiles',
                 'default_active' => false,
                 'icon' => 'user-group',
-            ],
-            [
-                'key' => 'acquisition-workflow',
-                'name' => 'Procurement Acquisition Pipeline',
-                'description' => 'Toggles advanced acquisition drawer, stats, and state transitions (Draft, Published, Awarded).',
-                'scope' => 'global',
-                'scope_label' => 'Officers & Admins',
-                'default_active' => true,
-                'icon' => 'document-chart-bar',
-            ],
-            [
-                'key' => 'mof-code-directory',
-                'name' => 'MOF Code Directory',
-                'description' => 'Enables MOF category, subcategory, and code lookup database modules for supplier compliance.',
-                'scope' => 'global',
-                'scope_label' => 'System & Suppliers',
-                'default_active' => true,
-                'icon' => 'folder-open',
             ],
         ];
     }
