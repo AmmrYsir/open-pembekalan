@@ -148,12 +148,10 @@ new class extends Component
                 >
             @elseif($user)
                 <div
-                    class="flex h-9 w-9 items-center justify-center rounded-md ring-2 ring-emerald-500/20 shadow-sm"
+                    class="flex h-9 w-9 items-center justify-center rounded-md ring-2 ring-emerald-500/20 shadow-sm text-white font-bold text-sm"
                     style="background-color: {{ $user->getAvatarColor() }};"
                 >
-                    <span class="text-sm font-bold leading-none text-white select-none">
-                        {{ $user->initials() }}
-                    </span>
+                    {{ $user->initials() }}
                 </div>
             @else
                 <div class="flex h-9 w-9 items-center justify-center rounded-md ring-2 ring-emerald-500/20 bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500">
@@ -171,6 +169,7 @@ new class extends Component
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-1.5">
                 <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{{ $user?->name ?? 'Guest User' }}</p>
+                <span class="px-1.5 py-0.25 text-[9px] font-medium tracking-wide bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 rounded-md border border-emerald-200/50 dark:border-emerald-800/50">Multi</span>
             </div>
             <p class="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">{{ $user?->email }}</p>
         </div>
@@ -216,9 +215,17 @@ new class extends Component
             @if($user)
                 <div class="p-2 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/50 flex items-center justify-between">
                     <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="flex h-7 w-7 items-center justify-center rounded-md text-white font-bold text-xs shrink-0" style="background-color: {{ $user->getAvatarColor() }};">
-                            {{ $user->initials() }}
-                        </div>
+                        @if($user->hasAvatar())
+                            <img
+                                class="h-7 w-7 rounded-md object-cover ring-1 ring-emerald-500/20 shrink-0"
+                                src="{{ $user->avatar }}"
+                                alt="{{ $user->name }}'s avatar"
+                            >
+                        @else
+                            <div class="flex h-7 w-7 items-center justify-center rounded-md text-white font-bold text-xs shrink-0" style="background-color: {{ $user->getAvatarColor() }};">
+                                {{ $user->initials() }}
+                            </div>
+                        @endif
                         <div class="min-w-0">
                             <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{{ $user->name }}</p>
                             <p class="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{{ $user->email }}</p>
@@ -238,9 +245,17 @@ new class extends Component
                     @endphp
                     <div class="p-2 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-colors flex items-center justify-between group">
                         <button type="button" wire:click="initiateSwitch({{ $linked->id }})" class="flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer">
-                            <div class="flex h-7 w-7 items-center justify-center rounded-md text-white font-bold text-xs shrink-0" style="background-color: {{ $linked->getAvatarColor() }};">
-                                {{ $linked->initials() }}
-                            </div>
+                            @if($linked->hasAvatar())
+                                <img
+                                    class="h-7 w-7 rounded-md object-cover ring-1 ring-emerald-500/20 shrink-0"
+                                    src="{{ $linked->avatar }}"
+                                    alt="{{ $linked->name }}'s avatar"
+                                >
+                            @else
+                                <div class="flex h-7 w-7 items-center justify-center rounded-md text-white font-bold text-xs shrink-0" style="background-color: {{ $linked->getAvatarColor() }};">
+                                    {{ $linked->initials() }}
+                                </div>
+                            @endif
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-1">
                                     <p class="text-xs font-medium text-zinc-800 dark:text-zinc-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{{ $linked->name }}</p>
@@ -273,6 +288,14 @@ new class extends Component
 
         <!-- Dropdown Actions -->
         <div class="pt-2 mt-1 border-t border-zinc-100 dark:border-zinc-800/80 space-y-1">
+            <a
+                href="{{ route('profile') }}"
+                class="w-full px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+                <x-heroicon-o-user-circle class="w-4 h-4" />
+                View Profile
+            </a>
+
             <a
                 href="{{ route('accounts.link') }}"
                 class="w-full px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
@@ -307,9 +330,17 @@ new class extends Component
                 </div>
 
                 <div class="p-3 bg-zinc-50 dark:bg-zinc-800/60 rounded-xl border border-zinc-100 dark:border-zinc-800 flex items-center gap-3">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-bold text-sm shrink-0" style="background-color: {{ $pendingSwitchUser?->getAvatarColor() }};">
-                        {{ $pendingSwitchUser?->initials() }}
-                    </div>
+                    @if($pendingSwitchUser?->hasAvatar())
+                        <img
+                            class="h-9 w-9 rounded-lg object-cover ring-1 ring-emerald-500/20 shrink-0"
+                            src="{{ $pendingSwitchUser->avatar }}"
+                            alt="{{ $pendingSwitchUser->name }}'s avatar"
+                        >
+                    @else
+                        <div class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-bold text-sm shrink-0" style="background-color: {{ $pendingSwitchUser?->getAvatarColor() }};">
+                            {{ $pendingSwitchUser?->initials() }}
+                        </div>
+                    @endif
                     <div class="min-w-0">
                         <p class="text-xs font-semibold truncate">{{ $pendingSwitchUser?->name }}</p>
                         <p class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{{ $pendingSwitchUser?->email }}</p>

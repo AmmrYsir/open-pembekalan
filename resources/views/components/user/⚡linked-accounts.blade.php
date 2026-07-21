@@ -137,9 +137,17 @@ new class extends Component
                             @endphp
                             <div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 flex items-center justify-between flex-wrap gap-3 hover:border-emerald-500/30 transition-colors">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <div class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-bold text-xs shrink-0 shadow-xs" style="background-color: {{ $linked->getAvatarColor() }};">
-                                        {{ $linked->initials() }}
-                                    </div>
+                                    @if($linked->hasAvatar())
+                                        <img
+                                            class="h-9 w-9 rounded-lg object-cover ring-1 ring-emerald-500/20 shrink-0 shadow-xs"
+                                            src="{{ $linked->avatar }}"
+                                            alt="{{ $linked->name }}'s avatar"
+                                        >
+                                    @else
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-bold text-xs shrink-0 shadow-xs" style="background-color: {{ $linked->getAvatarColor() }};">
+                                            {{ $linked->initials() }}
+                                        </div>
+                                    @endif
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-1.5 flex-wrap">
                                             <p class="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">{{ $linked->name }}</p>
@@ -198,9 +206,17 @@ new class extends Component
                 </div>
 
                 <div class="p-3 bg-zinc-50 dark:bg-zinc-800/60 rounded-xl border border-zinc-100 dark:border-zinc-800 flex items-center gap-3">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-bold text-sm shrink-0" style="background-color: {{ $pendingSwitchUser?->getAvatarColor() }};">
-                        {{ $pendingSwitchUser?->initials() }}
-                    </div>
+                    @if($pendingSwitchUser?->hasAvatar())
+                        <img
+                            class="h-9 w-9 rounded-lg object-cover ring-1 ring-emerald-500/20 shrink-0"
+                            src="{{ $pendingSwitchUser->avatar }}"
+                            alt="{{ $pendingSwitchUser->name }}'s avatar"
+                        >
+                    @else
+                        <div class="flex h-9 w-9 items-center justify-center rounded-lg text-white font-bold text-sm shrink-0" style="background-color: {{ $pendingSwitchUser?->getAvatarColor() }};">
+                            {{ $pendingSwitchUser?->initials() }}
+                        </div>
+                    @endif
                     <div class="min-w-0">
                         <p class="text-xs font-semibold truncate">{{ $pendingSwitchUser?->name }}</p>
                         <p class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{{ $pendingSwitchUser?->email }}</p>
