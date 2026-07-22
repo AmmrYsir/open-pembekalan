@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Notifications\SystemNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -57,7 +58,7 @@ Route::middleware('guest')->group(function () {
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (object $user, string $password) {
+            function (User $user, string $password) {
                 $user->forceFill([
                     'password' => Hash::make($password),
                     'remember_token' => Str::random(60),
