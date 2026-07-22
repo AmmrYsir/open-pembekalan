@@ -146,7 +146,7 @@ new class extends Component
 {{-- ── Root wrapper ── --}}
 <div class="space-y-6">
 
-    {{-- ── Flash message ── --}}
+    {{-- ── Flash Notification ── --}}
     @if(session('success'))
         <div
             x-data="{ show: true }"
@@ -158,275 +158,302 @@ new class extends Component
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-2"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 text-sm font-medium shadow-xs"
+            class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 text-sm font-medium flex items-center gap-2 shadow-xs"
         >
-            <x-heroicon-o-check class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" />
+            <x-heroicon-o-check-circle class="w-5 h-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             {{ session('success') }}
         </div>
     @endif
 
-    {{-- ── Stat summary cards ── --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <x-card>
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Acquisitions</span>
-                <span class="text-emerald-600 dark:text-emerald-400 p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
-                    <x-heroicon-o-clipboard class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                </span>
-            </div>
-            <div class="mt-4">
-                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->totalCount }}</h3>
-                <p class="text-xs text-zinc-500 mt-1">All time records</p>
-            </div>
-        </x-card>
-
-        <x-card>
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Draft</span>
-                <span class="text-amber-600 dark:text-amber-400 p-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/30">
-                    <x-heroicon-o-pencil class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                </span>
-            </div>
-            <div class="mt-4">
-                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->draftCount }}</h3>
-                <p class="text-xs text-zinc-500 mt-1">Pending submission</p>
-            </div>
-        </x-card>
-
-        <x-card>
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active</span>
-                <span class="text-blue-600 dark:text-blue-400 p-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/30">
-                    <x-heroicon-o-check-circle class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                </span>
-            </div>
-            <div class="mt-4">
-                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ $this->activeCount }}</h3>
-                <p class="text-xs text-zinc-500 mt-1">Submitted or approved</p>
-            </div>
-        </x-card>
-    </div>
-
-    {{-- ── Main table card ── --}}
-    <x-card>
-        <x-slot:header>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full mb-5">
-                {{-- Search --}}
-                <div class="relative flex-1 max-w-xs">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
-                        <x-heroicon-o-magnifying-glass class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </div>
-                    <input
-                        type="text"
-                        wire:model.live.debounce.400ms="search"
-                        placeholder="Search projects..."
-                        class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 py-2 pl-10 pr-3.5 text-sm transition-all focus:border-emerald-500 dark:focus:border-emerald-400 focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:outline-none"
-                    >
+    {{-- ── Header Card ── --}}
+    <x-card class="!p-4 sm:!p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40">
+                        <x-heroicon-o-clipboard-document-list class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </span>
+                    <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                        Procurement Acquisitions
+                    </h1>
                 </div>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                    Management and tracking of procurement acquisition projects, methods, and specifications.
+                </p>
+            </div>
 
-                {{-- Filters --}}
-                <div class="flex items-center gap-2 flex-wrap">
-                    <select wire:model.live="filterType" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
-                        <option value="">All Types</option>
-                        @foreach($this->acquisitionTypes as $t)
-                            <option value="{{ $t->value }}">{{ $t->value }}</option>
-                        @endforeach
-                    </select>
-
-                    <select wire:model.live="filterMethod" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
-                        <option value="">All Methods</option>
-                        @foreach($this->acquisitionMethods as $m)
-                            <option value="{{ $m->value }}">{{ $m->value }}</option>
-                        @endforeach
-                    </select>
-
-                    <select wire:model.live="filterStatus" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 py-2 px-3 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:focus:ring-emerald-400">
-                        <option value="">All Statuses</option>
-                        <option value="DRAF">Draf</option>
-                        <option value="DIKEMUKAKAN">Dikemukakan</option>
-                        <option value="DILULUSKAN">Diluluskan</option>
-                        <option value="DITOLAK">Ditolak</option>
-                        <option value="DIBATALKAN">Dibatalkan</option>
-                    </select>
-                </div>
-
-                {{-- Add Button --}}
-                <x-button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="ml-auto shrink-0 cursor-pointer">
+            <div class="flex items-center gap-3">
+                <x-button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="cursor-pointer shadow-xs">
                     <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                     New Acquisition
                 </x-button>
             </div>
-        </x-slot:header>
+        </div>
+    </x-card>
 
-        {{-- Table --}}
-        <div class="overflow-x-auto rounded-2xl border border-zinc-100 dark:border-zinc-800/80 shadow-xs">
-            <table class="min-w-full divide-y divide-zinc-100 dark:divide-zinc-800/50">
-                <thead class="bg-zinc-50/70 dark:bg-zinc-800/40">
-                    <tr>
-                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                            <button wire:click="sort('project_number')" class="flex items-center gap-1 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
-                                Project
-                                @if($sortBy === 'project_number')
-                                    @if($sortDir === 'asc')
-                                        <x-heroicon-o-arrow-up class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
-                                    @else
-                                        <x-heroicon-o-arrow-down class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
-                                    @endif
-                                @else
-                                    <x-heroicon-o-arrows-up-down class="w-3 h-3 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                @endif
-                            </button>
-                        </th>
-                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Type / Method</th>
-                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                            <button wire:click="sort('siling_price')" class="flex items-center gap-1 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
-                                Ceiling Price
-                                @if($sortBy === 'siling_price')
-                                    @if($sortDir === 'asc')
-                                        <x-heroicon-o-arrow-up class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
-                                    @else
-                                        <x-heroicon-o-arrow-down class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
-                                    @endif
-                                @else
-                                    <x-heroicon-o-arrows-up-down class="w-3 h-3 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                @endif
-                            </button>
-                        </th>
-                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Agency</th>
-                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-5 py-3.5 text-right text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-100 dark:divide-zinc-800/50">
-                    @forelse($this->acquisitions as $acquisition)
-                        <tr wire:key="acq-{{ $acquisition->id }}" class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
-                            <td class="px-5 py-4">
-                                <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $acquisition->project_name }}</div>
-                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 font-mono">{{ $acquisition->project_number }}</div>
-                                @if($acquisition->tender_number)
-                                    <div class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 font-sans">Tender: {{ $acquisition->tender_number }}</div>
-                                @endif
-                            </td>
-                            <td class="px-5 py-4">
-                                <div class="flex flex-col gap-1.5">
-                                    @if($acquisition->type)
-                                        <x-badge variant="primary">
-                                            {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->value : $acquisition->type }}
-                                        </x-badge>
-                                    @endif
-                                    @if($acquisition->method)
-                                        <x-badge variant="secondary">
-                                            {{ $acquisition->method instanceof \App\Enums\AcquisitionMethod ? $acquisition->method->value : $acquisition->method }}
-                                        </x-badge>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap font-mono text-sm text-zinc-700 dark:text-zinc-300">
-                                @if($acquisition->siling_price !== null)
-                                    RM {{ number_format((float) $acquisition->siling_price, 2) }}
-                                @else
-                                    <span class="text-zinc-400 dark:text-zinc-650">—</span>
-                                @endif
-                            </td>
-                            <td class="px-5 py-4">
-                                @if($acquisition->agency)
-                                    <div class="text-sm text-zinc-700 dark:text-zinc-300">{{ $acquisition->agency->name }}</div>
-                                @endif
-                                @if($acquisition->subagency)
-                                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $acquisition->subagency->name }}</div>
-                                @endif
-                                @if(!$acquisition->agency)
-                                    <span class="text-zinc-400 dark:text-zinc-650 text-sm">—</span>
-                                @endif
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                @php
-                                    $statusVariant = match($acquisition->status) {
-                                        'DILULUSKAN'  => 'success',
-                                        'DIKEMUKAKAN' => 'info',
-                                        'DRAF'        => 'warning',
-                                        'DITOLAK'     => 'danger',
-                                        'DIBATALKAN'  => 'secondary',
-                                        default       => 'secondary',
-                                    };
-                                    $statusLabel = match($acquisition->status) {
-                                        'DILULUSKAN'  => 'Diluluskan',
-                                        'DIKEMUKAKAN' => 'Dikemukakan',
-                                        'DRAF'        => 'Draf',
-                                        'DITOLAK'     => 'Ditolak',
-                                        'DIBATALKAN'  => 'Dibatalkan',
-                                        default       => $acquisition->status ?? '—',
-                                    };
-                                  @endphp
-                                <x-badge :variant="$statusVariant" pill>{{ $statusLabel }}</x-badge>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-right">
-                                    {{-- Full Page View / Edit --}}
-                                    <a
-                                        href="{{ route('acquisition.show', $acquisition) }}"
-                                        title="Open Full Page (Tabs)"
-                                    >
-                                        <button class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 dark:hover:text-indigo-400 transition-all">
-                                            <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                        </button>
-                                    </a>
-                                    {{-- Quick View (Drawer) --}}
-                                    <button
-                                        wire:click="$dispatch('open-acquisition-drawer', { mode: 'view', id: {{ $acquisition->id }} })"
-                                        title="Quick View (Drawer)"
-                                        class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/30 dark:hover:text-sky-400 transition-all"
-                                    >
-                                        <x-heroicon-o-eye class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                    </button>
-                                    {{-- Quick Edit (Drawer) --}}
-                                    <button
-                                        wire:click="$dispatch('open-acquisition-drawer', { mode: 'edit', id: {{ $acquisition->id }} })"
-                                        title="Quick Edit (Drawer)"
-                                        class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 dark:hover:text-emerald-400 transition-all"
-                                    >
-                                        <x-heroicon-o-pencil class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                    </button>
-                                    {{-- Delete --}}
-                                    <button
-                                        wire:click="confirmDelete({{ $acquisition->id }})"
-                                        title="Delete"
-                                        class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 dark:hover:text-rose-400 transition-all"
-                                    >
-                                        <x-heroicon-o-trash class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-5 py-16 text-center">
-                                <div class="flex flex-col items-center gap-3">
-                                    <span class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                                        <x-heroicon-o-clipboard class="w-7 h-7 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" />
-                                    </span>
-                                    <div>
-                                        <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No acquisitions found</p>
-                                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Try adjusting your search or filters, or create a new acquisition.</p>
-                                    </div>
-                                    <x-button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="cursor-pointer">
-                                        <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                        New Acquisition
-                                    </x-button>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    {{-- ── Stat Summary Cards ── --}}
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {{-- Card 1: Total --}}
+        <div class="p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                <span>Total Acquisitions</span>
+                <x-heroicon-o-clipboard-document-list class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+            </div>
+            <div class="text-2xl font-bold font-mono text-zinc-900 dark:text-zinc-100">
+                {{ $this->totalCount }} Records
+            </div>
+            <p class="text-xs text-zinc-400 font-mono">All Time History</p>
         </div>
 
-        {{-- Pagination --}}
-        @if($this->acquisitions->hasPages())
-            <div class="mt-5 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
-                {{ $this->acquisitions->links() }}
+        {{-- Card 2: Draft --}}
+        <div class="p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                <span>Draft Proposals</span>
+                <x-heroicon-o-pencil-square class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             </div>
-        @endif
+            <div class="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">
+                {{ $this->draftCount }} Drafts
+            </div>
+            <p class="text-xs text-amber-600 dark:text-amber-400 font-mono">Pending Submission</p>
+        </div>
+
+        {{-- Card 3: Active --}}
+        <div class="p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                <span>Active / Approved</span>
+                <x-heroicon-o-check-circle class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+            </div>
+            <div class="text-2xl font-bold font-mono text-blue-600 dark:text-blue-400">
+                {{ $this->activeCount }} Active
+            </div>
+            <p class="text-xs text-blue-600 dark:text-blue-400 font-mono">Submitted & Approved</p>
+        </div>
+    </div>
+
+    {{-- ── Filter Toolbar ── --}}
+    <x-card class="!p-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm">
+            {{-- Search Bar --}}
+            <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                    <x-heroicon-o-magnifying-glass class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                </div>
+                <input
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
+                    placeholder="Search by project name, project number, or tender number..."
+                    class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 py-2.5 pl-10 pr-3.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                >
+            </div>
+
+            {{-- Select Filters --}}
+            <div class="flex items-center gap-3 flex-wrap">
+                <select wire:model.live="filterType" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs py-2 px-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    <option value="">All Types</option>
+                    @foreach($this->acquisitionTypes as $t)
+                        <option value="{{ $t->value }}">{{ $t->value }}</option>
+                    @endforeach
+                </select>
+
+                <select wire:model.live="filterMethod" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs py-2 px-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    <option value="">All Methods</option>
+                    @foreach($this->acquisitionMethods as $m)
+                        <option value="{{ $m->value }}">{{ $m->value }}</option>
+                    @endforeach
+                </select>
+
+                <select wire:model.live="filterStatus" class="rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-xs py-2 px-3 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    <option value="">All Statuses</option>
+                    <option value="DRAF">Draf</option>
+                    <option value="DIKEMUKAKAN">Dikemukakan</option>
+                    <option value="DILULUSKAN">Diluluskan</option>
+                    <option value="DITOLAK">Ditolak</option>
+                    <option value="DIBATALKAN">Dibatalkan</option>
+                </select>
+            </div>
+        </div>
     </x-card>
+
+    {{-- ── Main Table ── --}}
+    <div class="overflow-x-auto rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs">
+        <table class="min-w-full divide-y divide-zinc-100 dark:divide-zinc-800 text-sm">
+            <thead class="bg-zinc-50/70 dark:bg-zinc-800/40">
+                <tr>
+                    <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        <button wire:click="sort('project_number')" class="flex items-center gap-1 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
+                            Project Title & Reference
+                            @if($sortBy === 'project_number')
+                                @if($sortDir === 'asc')
+                                    <x-heroicon-o-arrow-up class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
+                                @else
+                                    <x-heroicon-o-arrow-down class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
+                                @endif
+                            @else
+                                <x-heroicon-o-arrows-up-down class="w-3 h-3 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            @endif
+                        </button>
+                    </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Type / Method</th>
+                    <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        <button wire:click="sort('siling_price')" class="flex items-center gap-1 mx-auto cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors">
+                            Ceiling Price
+                            @if($sortBy === 'siling_price')
+                                @if($sortDir === 'asc')
+                                    <x-heroicon-o-arrow-up class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
+                                @else
+                                    <x-heroicon-o-arrow-down class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" />
+                                @endif
+                            @else
+                                <x-heroicon-o-arrows-up-down class="w-3 h-3 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            @endif
+                        </button>
+                    </th>
+                    <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Agency & Department</th>
+                    <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                @forelse($this->acquisitions as $acquisition)
+                    <tr wire:key="acq-{{ $acquisition->id }}" class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
+                        {{-- Ref Code & Title --}}
+                        <td class="px-4 py-4 max-w-md">
+                            <a href="{{ route('acquisition.show', $acquisition) }}" class="font-bold text-zinc-900 dark:text-zinc-100 text-sm line-clamp-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                                {{ $acquisition->project_name }}
+                            </a>
+                            <div class="flex items-center gap-2.5 text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                    {{ $acquisition->project_number }}
+                                </span>
+                                @if($acquisition->tender_number)
+                                    <span class="text-zinc-400 dark:text-zinc-500 font-sans">• Tender: {{ $acquisition->tender_number }}</span>
+                                @endif
+                            </div>
+                        </td>
+
+                        {{-- Type / Method --}}
+                        <td class="px-4 py-4 whitespace-nowrap space-y-1">
+                            @if($acquisition->type)
+                                <x-badge variant="primary">
+                                    {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->value : $acquisition->type }}
+                                </x-badge>
+                            @endif
+                            @if($acquisition->method)
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+                                    {{ $acquisition->method instanceof \App\Enums\AcquisitionMethod ? $acquisition->method->value : $acquisition->method }}
+                                </div>
+                            @endif
+                        </td>
+
+                        {{-- Ceiling Price --}}
+                        <td class="px-4 py-4 whitespace-nowrap text-center font-mono font-bold text-xs text-zinc-900 dark:text-zinc-100">
+                            @if($acquisition->siling_price !== null)
+                                RM {{ number_format((float) $acquisition->siling_price, 2) }}
+                            @else
+                                <span class="text-zinc-400 dark:text-zinc-650">—</span>
+                            @endif
+                        </td>
+
+                        {{-- Agency & Subagency --}}
+                        <td class="px-4 py-4">
+                            @if($acquisition->agency)
+                                <div class="flex items-center gap-1.5 text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                                    <x-heroicon-o-building-office-2 class="w-3.5 h-3.5 text-zinc-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                    {{ $acquisition->agency->name }}
+                                </div>
+                            @endif
+                            @if($acquisition->subagency)
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 pl-5">{{ $acquisition->subagency->name }}</div>
+                            @endif
+                            @if(!$acquisition->agency && !$acquisition->subagency)
+                                <span class="text-zinc-400 dark:text-zinc-650 text-xs">—</span>
+                            @endif
+                        </td>
+
+                        {{-- Status --}}
+                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                            @php
+                                $statusVariant = match($acquisition->status) {
+                                    'DILULUSKAN'  => 'success',
+                                    'DIKEMUKAKAN' => 'info',
+                                    'DRAF'        => 'warning',
+                                    'DITOLAK'     => 'danger',
+                                    'DIBATALKAN'  => 'secondary',
+                                    default       => 'secondary',
+                                };
+                                $statusLabel = match($acquisition->status) {
+                                    'DILULUSKAN'  => 'Diluluskan',
+                                    'DIKEMUKAKAN' => 'Dikemukakan',
+                                    'DRAF'        => 'Draf',
+                                    'DITOLAK'     => 'Ditolak',
+                                    'DIBATALKAN'  => 'Dibatalkan',
+                                    default       => $acquisition->status ?? '—',
+                                };
+                            @endphp
+                            <x-badge :variant="$statusVariant" pill>{{ $statusLabel }}</x-badge>
+                        </td>
+
+                        {{-- Actions --}}
+                        <td class="px-4 py-4 whitespace-nowrap text-right space-x-1">
+                            {{-- View Link (Full page) --}}
+                            <a
+                                href="{{ route('acquisition.show', $acquisition) }}"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors border border-emerald-200 dark:border-emerald-800/40"
+                                title="View Acquisition Details"
+                            >
+                                <x-heroicon-o-eye class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                View
+                            </a>
+
+                            {{-- Edit Button (Drawer) --}}
+                            <button
+                                wire:click="$dispatch('open-acquisition-drawer', { mode: 'edit', id: {{ $acquisition->id }} })"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
+                                title="Edit Acquisition"
+                            >
+                                <x-heroicon-o-pencil class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Edit
+                            </button>
+
+                            {{-- Delete Button --}}
+                            <button
+                                wire:click="confirmDelete({{ $acquisition->id }})"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors border border-rose-200 dark:border-rose-800/40 cursor-pointer"
+                                title="Delete Acquisition"
+                            >
+                                <x-heroicon-o-trash class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-4 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
+                                    <x-heroicon-o-clipboard-document-list class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" />
+                                </span>
+                                <div>
+                                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No acquisitions found</p>
+                                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Try adjusting your search or filters, or create a new acquisition.</p>
+                                </div>
+                                <x-button variant="primary" size="sm" wire:click="$dispatch('open-acquisition-drawer', { mode: 'create' })" class="cursor-pointer">
+                                    <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                    New Acquisition
+                                </x-button>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{-- ── Pagination ── --}}
+    @if($this->acquisitions->hasPages())
+        <div class="mt-4">
+            {{ $this->acquisitions->links() }}
+        </div>
+    @endif
 
     {{-- ══════════════════════════════════════════════════════════════════════
          Delete Confirmation Modal

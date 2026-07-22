@@ -2,8 +2,6 @@
 
 use App\Models\Acquisition;
 use App\Models\User;
-use App\States\Acquisition\Draft;
-use App\States\Acquisition\Verified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -35,7 +33,7 @@ test('acquisition show livewire component supports title expansion for long titl
     Livewire::actingAs($user)
         ->test('acquisition.show', ['acquisition' => $acquisition])
         ->assertSet('expandFullTitle', false)
-        ->call('$toggle', 'expandFullTitle')
+        ->call('toggleFullTitle')
         ->assertSet('expandFullTitle', true);
 });
 

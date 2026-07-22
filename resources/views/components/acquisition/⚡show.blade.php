@@ -25,6 +25,11 @@ new class extends Component
     public bool $isEvaluationUnlocked = false; // Lock state for evaluation tabs
     public bool $expandFullTitle = false; // Toggle full project title view
 
+    public function toggleFullTitle(): void
+    {
+        $this->expandFullTitle = !$this->expandFullTitle;
+    }
+
     // Add Checklist Item Modal State (Officer)
     public bool $showAddItemModal = false;
     public string $newItemChecklistType = 'technical';
