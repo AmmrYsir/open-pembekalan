@@ -22,6 +22,7 @@ new class extends Component
     public string $activeTab = 'project-info'; // 'project-info' | 'committee' | 'technical-checklist' | 'financial-checklist' | 'technical-spec' | 'financial-pricelist' | 'scoring' | 'documents'
     public bool $isEditing = false;
     public bool $previewSupplierMode = false;
+    public bool $isEvaluationUnlocked = false; // Lock state for evaluation tabs
 
     // Add Checklist Item Modal State (Officer)
     public bool $showAddItemModal = false;
@@ -490,6 +491,16 @@ new class extends Component
         $this->activeTab = $tab;
     }
 
+    public function toggleEvaluationLock(): void
+    {
+        $this->isEvaluationUnlocked = !$this->isEvaluationUnlocked;
+        if ($this->isEvaluationUnlocked) {
+            session()->flash('success', 'Akses tab penilaian telah dibuka menerusi Notis Mesyuarat.');
+        } else {
+            session()->flash('success', 'Akses tab penilaian telah dikunci semula.');
+        }
+    }
+
     public function enableEdit(): void
     {
         $this->form->fillFromModel($this->acquisition);
@@ -739,7 +750,7 @@ new class extends Component
         $this->noticeVenue = 'Bilik Mesyuarat Utama / Google Meet';
         $this->noticeStartAt = date('Y-m-d\TH:i', strtotime('+2 days 09:00'));
         $this->noticeEndAt = date('Y-m-d\TH:i', strtotime('+2 days 12:30'));
-        $this->noticeAgenda = 'Memuktamadkan Spesifikasi Teknikal (3-Lapisan), Jadual Harga BOQ, Technical/Financial Checklists, dan Nisbah Scoring.';
+        $this->noticeAgenda = 'Memuktamadkan Spesifikasi Teknikal (3-Lapisan), Jadual Harga BOQ, Technical/Financial Checklists, dan Scoring.';
         $this->showMeetingNoticeModal = true;
     }
 
@@ -777,8 +788,9 @@ new class extends Component
             'focus_tabs' => $focusMap[$this->noticeCommitteeType] ?? ['Committee'],
         ];
 
+        $this->isEvaluationUnlocked = true; // Auto-unlock evaluation tabs upon issuing meeting notice
         $this->showMeetingNoticeModal = false;
-        session()->flash('success', 'Notis Mesyuarat ' . $this->noticeCommitteeType . ' telah diterbitkan dan dihantar.');
+        session()->flash('success', 'Notis Mesyuarat ' . $this->noticeCommitteeType . ' telah diterbitkan. Tab Penilaian kini dibuka!');
     }
 
     public function sendMeetingNotice(string $noticeId): void
@@ -786,7 +798,8 @@ new class extends Component
         foreach ($this->meetingNotices as &$n) {
             if ($n['id'] === $noticeId) {
                 $n['status'] = 'sent';
-                session()->flash('success', 'Notis mesyuarat ' . $n['code'] . ' telah dihantar kepada ahli jawatankuasa.');
+                $this->isEvaluationUnlocked = true;
+                session()->flash('success', 'Notis mesyuarat ' . $n['code'] . ' telah dihantar dan tab penilaian telah dibuka!');
                 break;
             }
         }
@@ -1050,84 +1063,110 @@ new class extends Component
         </div>
     </x-card>
 
-    {{-- ── Tab Navigation Bar (8 Tabs) ── --}}
-    <div class="border-b border-zinc-200 dark:border-zinc-800">
-        <nav class="-mb-px flex gap-6 overflow-x-auto" aria-label="Tabs">
-            {{-- Tab 1: Project Information --}}
-            <button
-                wire:click="setTab('project-info')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'project-info' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-document-text class="w-4 h-4 shrink-0 {{ $activeTab === 'project-info' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Project Information
-            </button>
+    {{-- ── DE-CLUTTERED SEGMENTED TAB NAVIGATION BAR ── --}}
+    <div class="space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-2 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800">
+            
+            {{-- Segment 1: Main Management --}}
+            <div class="flex items-center gap-1.5 overflow-x-auto">
+                <span class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 shrink-0">
+                    Main:
+                </span>
+                
+                <button
+                    wire:click="setTab('project-info')"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap cursor-pointer transition-all {{ $activeTab === 'project-info' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200' }}"
+                >
+                    <x-heroicon-o-document-text class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    Project Info
+                </button>
 
-            {{-- Tab 2: Committee --}}
-            <button
-                wire:click="setTab('committee')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'committee' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-user-group class="w-4 h-4 shrink-0 {{ $activeTab === 'committee' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Committee & Meeting Notice
-            </button>
+                <button
+                    wire:click="setTab('committee')"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap cursor-pointer transition-all {{ $activeTab === 'committee' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200' }}"
+                >
+                    <x-heroicon-o-user-group class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    Committee & Notices
+                </button>
 
-            {{-- Tab 3: Technical Checklist --}}
-            <button
-                wire:click="setTab('technical-checklist')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'technical-checklist' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-clipboard-document-check class="w-4 h-4 shrink-0 {{ $activeTab === 'technical-checklist' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Technical Checklist
-            </button>
+                <button
+                    wire:click="setTab('documents')"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap cursor-pointer transition-all {{ $activeTab === 'documents' ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200' }}"
+                >
+                    <x-heroicon-o-printer class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    Printable Docs
+                </button>
+            </div>
 
-            {{-- Tab 4: Financial Checklist --}}
-            <button
-                wire:click="setTab('financial-checklist')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'financial-checklist' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-banknotes class="w-4 h-4 shrink-0 {{ $activeTab === 'financial-checklist' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Financial Checklist
-            </button>
+            {{-- Segment 2: Evaluation Suite (With Lock Status 🔒) --}}
+            <div class="flex items-center gap-1.5 overflow-x-auto pt-2 md:pt-0 border-t md:border-t-0 border-zinc-200 dark:border-zinc-800">
+                <div class="flex items-center gap-1 shrink-0">
+                    <span class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                        Evaluation Suite:
+                    </span>
+                    <button wire:click="toggleEvaluationLock" class="text-xs font-mono font-semibold px-2 py-0.5 rounded-md cursor-pointer transition-colors {{ $isEvaluationUnlocked ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border border-emerald-200 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 border border-rose-200 dark:border-rose-800/40' }}" title="Click to toggle lock state for testing">
+                        {{ $isEvaluationUnlocked ? 'Unlocked 🔓' : 'Locked 🔒' }}
+                    </button>
+                </div>
 
-            {{-- Tab 5: Technical Specification (3-Layer Nested) --}}
-            <button
-                wire:click="setTab('technical-spec')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'technical-spec' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-cpu-chip class="w-4 h-4 shrink-0 {{ $activeTab === 'technical-spec' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Technical Specification
-            </button>
-
-            {{-- Tab 6: Financial Pricelist --}}
-            <button
-                wire:click="setTab('financial-pricelist')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'financial-pricelist' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-calculator class="w-4 h-4 shrink-0 {{ $activeTab === 'financial-pricelist' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Financial Pricelist
-            </button>
-
-            {{-- Tab 7: Scoring --}}
-            <button
-                wire:click="setTab('scoring')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'scoring' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-chart-bar class="w-4 h-4 shrink-0 {{ $activeTab === 'scoring' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Scoring
-            </button>
-
-            {{-- Tab 8: Document for Procurement --}}
-            <button
-                wire:click="setTab('documents')"
-                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'documents' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
-            >
-                <x-heroicon-o-printer class="w-4 h-4 shrink-0 {{ $activeTab === 'documents' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Document for Procurement
-            </button>
-        </nav>
+                @foreach([
+                    ['technical-checklist', 'Tech Checklist', 'clipboard-document-check'],
+                    ['financial-checklist', 'Fin Checklist', 'banknotes'],
+                    ['technical-spec', 'Tech Specs', 'cpu-chip'],
+                    ['financial-pricelist', 'Fin Pricelist', 'calculator'],
+                    ['scoring', 'Scoring', 'chart-bar'],
+                ] as [$tKey, $tLabel, $tIcon])
+                    <button
+                        wire:click="setTab('{{ $tKey }}')"
+                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap cursor-pointer transition-all {{ $activeTab === $tKey ? 'bg-emerald-600 text-white shadow-xs' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200' }}"
+                    >
+                        <span>{{ $tLabel }}</span>
+                        @if(!$isEvaluationUnlocked)
+                            <x-heroicon-o-lock-closed class="w-3 h-3 text-rose-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" />
+                        @endif
+                    </button>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     {{-- ── TAB CONTENT ── --}}
+
+    {{-- ════ LOCKED ACCESS NOTICE CARD FOR EVALUATION TABS ════ --}}
+    @if(in_array($activeTab, ['technical-checklist', 'financial-checklist', 'technical-spec', 'financial-pricelist', 'scoring']) && !$isEvaluationUnlocked)
+        <x-card class="text-center py-12">
+            <div class="max-w-md mx-auto space-y-4">
+                <div class="w-16 h-16 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-500 border border-rose-200 dark:border-rose-800/50 flex items-center justify-center mx-auto">
+                    <x-heroicon-o-lock-closed class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                </div>
+
+                <div class="space-y-1">
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                        Akses Tab Penilaian Dikunci (Restricted Access)
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        Tab modul penilaian ini dikunci sehingga <strong>Notis Mesyuarat (JK Spesifikasi / JK Penilaian)</strong> diterbitkan secara rasmi kepada ahli jawatankuasa yang dilantik.
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-300 font-mono">
+                    Status: Notis Mesyuarat Perlu Diterbitkan Terlebih Dahulu
+                </div>
+
+                <div class="pt-2 flex items-center justify-center gap-3">
+                    <button wire:click="setTab('committee')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 transition-colors">
+                        <x-heroicon-o-user-group class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        Terbitkan Notis di Tab Committee
+                    </button>
+
+                    <button wire:click="toggleEvaluationLock" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors shadow-xs cursor-pointer">
+                        <x-heroicon-o-lock-open class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        Buka Kunci Akses (Officer Override)
+                    </button>
+                </div>
+            </div>
+        </x-card>
+    @endif
 
     {{-- ════ TAB 1: PROJECT INFORMATION ════ --}}
     @if($activeTab === 'project-info')
@@ -1591,9 +1630,9 @@ new class extends Component
                                         </span>
                                         <x-badge variant="primary">{{ $n['committee_type'] }}</x-badge>
                                         @if($n['status'] === 'sent')
-                                            <x-badge variant="success" pill>Notice Issued & Sent</x-badge>
+                                            <x-badge variant="success" pill>Notice Issued & Unlocked 🔓</x-badge>
                                         @else
-                                            <x-badge variant="warning" pill>Draft Notice</x-badge>
+                                            <x-badge variant="warning" pill>Draft Notice 🔒</x-badge>
                                         @endif
                                     </div>
 
@@ -1611,7 +1650,7 @@ new class extends Component
 
                                 {{-- Focus Tabs Links --}}
                                 <div class="flex items-center gap-2 flex-wrap text-xs">
-                                    <span class="text-zinc-400 font-medium">Meeting Scope:</span>
+                                    <span class="text-zinc-400 font-medium">Unlocked Scope:</span>
                                     @foreach($n['focus_tabs'] as $tabName)
                                         <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-mono text-xs border border-indigo-200 dark:border-indigo-800/40">
                                             {{ $tabName }}
@@ -1628,7 +1667,7 @@ new class extends Component
 
                                     @if($n['status'] === 'draft')
                                         <x-button variant="primary" size="sm" wire:click="sendMeetingNotice('{{ $n['id'] }}')">
-                                            Send Notice Notification
+                                            Send Notice & Unlock Tabs
                                         </x-button>
                                     @endif
                                 </div>
@@ -1641,7 +1680,7 @@ new class extends Component
     @endif
 
     {{-- ════ TAB 3: TECHNICAL CHECKLIST ════ --}}
-    @if($activeTab === 'technical-checklist')
+    @if($activeTab === 'technical-checklist' && $isEvaluationUnlocked)
         @php
             $totalTechChecklistWeightage = array_reduce($technicalChecklist, fn($acc, $i) => $acc + ($i['weightage'] ?? 0), 0);
         @endphp
@@ -1898,7 +1937,7 @@ new class extends Component
     @endif
 
     {{-- ════ TAB 4: FINANCIAL CHECKLIST ════ --}}
-    @if($activeTab === 'financial-checklist')
+    @if($activeTab === 'financial-checklist' && $isEvaluationUnlocked)
         @php
             $totalFinChecklistWeightage = array_reduce($financialChecklist, fn($acc, $i) => $acc + ($i['weightage'] ?? 0), 0);
         @endphp
@@ -2155,7 +2194,7 @@ new class extends Component
     @endif
 
     {{-- ════ TAB 5: TECHNICAL SPECIFICATION (3-LAYER NESTED HIERARCHY) ════ --}}
-    @if($activeTab === 'technical-spec')
+    @if($activeTab === 'technical-spec' && $isEvaluationUnlocked)
         @php
             $totalTechSpecWeightage = array_reduce($technicalSpecs, fn($acc, $cat) => $acc + ($cat['weightage'] ?? 0), 0);
         @endphp
@@ -2282,7 +2321,7 @@ new class extends Component
     @endif
 
     {{-- ════ TAB 6: FINANCIAL PRICELIST (BILL OF QUANTITIES) ════ --}}
-    @if($activeTab === 'financial-pricelist')
+    @if($activeTab === 'financial-pricelist' && $isEvaluationUnlocked)
         @php
             $totalPricelistWeightage = array_reduce($financialPricelist, fn($acc, $i) => $acc + ($i['weightage'] ?? 0), 0);
         @endphp
@@ -2393,7 +2432,7 @@ new class extends Component
     @endif
 
     {{-- ════ TAB 7: SCORING (OVERALL EVALUATION MATRIX) ════ --}}
-    @if($activeTab === 'scoring')
+    @if($activeTab === 'scoring' && $isEvaluationUnlocked)
         @php
             $sumTechChecklist = array_reduce($technicalChecklist, fn($a, $i) => $a + ($i['weightage'] ?? 0), 0);
             $sumFinChecklist = array_reduce($financialChecklist, fn($a, $i) => $a + ($i['weightage'] ?? 0), 0);

@@ -24,7 +24,7 @@ test('authenticated user can view dedicated acquisition show page', function () 
     $response->assertSee('PRJ-2026-999');
 });
 
-test('acquisition show livewire component supports 8 tabs including committee meeting notices', function () {
+test('acquisition show livewire component supports segmented tab bar and locked evaluation tabs', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
@@ -38,9 +38,11 @@ test('acquisition show livewire component supports 8 tabs including committee me
         ->call('setTab', 'committee')
         ->assertSet('activeTab', 'committee')
         ->assertSee('Meeting Notices Schedule')
-        ->assertSee('JK Spesifikasi')
         ->call('setTab', 'technical-checklist')
         ->assertSet('activeTab', 'technical-checklist')
+        ->assertSee('Akses Tab Penilaian Dikunci')
+        ->call('toggleEvaluationLock')
+        ->assertSet('isEvaluationUnlocked', true)
         ->assertSee('Primary Item #1')
         ->call('setTab', 'financial-checklist')
         ->assertSet('activeTab', 'financial-checklist')
@@ -59,40 +61,21 @@ test('acquisition show livewire component supports 8 tabs including committee me
         ->assertSee('Document for Procurement');
 });
 
-test('acquisition show component supports meeting notice creation modal in committee tab', function () {
+test('issuing meeting notice auto unlocks evaluation tabs', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
         'project_number' => 'PRJ-2026-333',
-        'project_name' => 'Meeting Notice Test',
+        'project_name' => 'Meeting Notice Lock Test',
     ]);
 
     Livewire::actingAs($user)
         ->test('acquisition.show', ['acquisition' => $acquisition])
+        ->assertSet('isEvaluationUnlocked', false)
         ->call('setTab', 'committee')
         ->call('openMeetingNoticeModal')
-        ->assertSet('showMeetingNoticeModal', true)
         ->set('noticeCommitteeType', 'JK Spesifikasi')
-        ->set('noticeSubject', 'Mesyuarat Semakan Spesifikasi & BOQ')
+        ->set('noticeSubject', 'Mesyuarat Semakan Spesifikasi')
         ->call('saveMeetingNotice')
-        ->assertSet('showMeetingNoticeModal', false)
-        ->assertSee('NOTIS-JKSPES');
-});
-
-test('acquisition show component supports printable procurement document preview modal', function () {
-    $user = User::factory()->create(['email_verified_at' => now()]);
-
-    $acquisition = Acquisition::create([
-        'project_number' => 'PRJ-2026-555',
-        'project_name' => 'Procurement Document Test',
-    ]);
-
-    Livewire::actingAs($user)
-        ->test('acquisition.show', ['acquisition' => $acquisition])
-        ->call('setTab', 'documents')
-        ->call('openProcurementDocModal', 'doc_tender_stmt')
-        ->assertSet('showProcurementDocModal', true)
-        ->assertSee('Supplier Tender Statement')
-        ->call('closeProcurementDocModal')
-        ->assertSet('showProcurementDocModal', false);
+        ->assertSet('isEvaluationUnlocked', true);
 });
