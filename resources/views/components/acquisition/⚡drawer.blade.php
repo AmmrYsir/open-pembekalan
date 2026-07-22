@@ -51,6 +51,12 @@ new class extends Component
     }
 
     #[Computed]
+    public function currentAcquisition(): ?Acquisition
+    {
+        return $this->activeId ? Acquisition::find($this->activeId) : null;
+    }
+
+    #[Computed]
     public function agencies(): \Illuminate\Database\Eloquent\Collection
     {
         return Agency::orderBy('name')->get(['id', 'name']);
@@ -114,15 +120,29 @@ new class extends Component
             $this->mode = 'view';
         } else {
             $record = $this->form->store();
-            dd($record);
             $this->activeId = $record->id;
-			Sequence::where('slug', 'acquisition-number')->increment('value');
+            Sequence::where('slug', 'project-number')->increment('value');
             session()->flash('success', 'Acquisition created successfully.');
             
             $this->form->fillFromModel($record);
             $this->mode = 'view';
         }
 
+        $this->dispatch('acquisition-saved');
+    }
+
+    public function transitionTo(string $targetStateClass): void
+    {
+        if (!$this->activeId) {
+            return;
+        }
+
+        $acquisition = Acquisition::findOrFail($this->activeId);
+        $acquisition->status->transitionTo($targetStateClass);
+
+        session()->flash('success', 'Status updated to ' . $acquisition->status->label());
+
+        $this->form->fillFromModel($acquisition->fresh());
         $this->dispatch('acquisition-saved');
     }
 
@@ -147,20 +167,6 @@ new class extends Component
         $this->showPanel = false;
         $this->form->resetForm();
         $this->resetValidation();
-    }
-
-    public function sendForConfirmation(): void
-    {
-        session()->flash('success', 'Acquisition sent for confirmation.');
-        $this->mode = 'view';
-        $this->dispatch('acquisition-saved');
-    }
-
-    public function verify(): void
-    {
-        session()->flash('success', 'Acquisition verified.');
-        $this->mode = 'view';
-        $this->dispatch('acquisition-saved');
     }
 };
 ?>
@@ -249,6 +255,21 @@ new class extends Component
                     @if($mode === 'view')
                         {{-- ════ VIEW MODE — read-only detail layout ════ --}}
                         <div class="space-y-7">
+
+                            {{-- Status Banner --}}
+                            @if($this->currentAcquisition && $this->currentAcquisition->status)
+                                <div class="flex items-center justify-between p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Pipeline Status:</span>
+                                        <x-badge variant="{{ $this->currentAcquisition->status->color() }}">
+                                            {{ $this->currentAcquisition->status->label() }}
+                                        </x-badge>
+                                    </div>
+                                    <span class="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                                        {{ $this->currentAcquisition->status->getValue() }}
+                                    </span>
+                                </div>
+                            @endif
 
                             {{-- Section: Project Information --}}
                             <div>
@@ -597,22 +618,30 @@ new class extends Component
                 <div class="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/60 dark:bg-zinc-900/60">
 
                     @if($mode === 'view')
-                        {{-- VIEW footer: [Send for Confirmation] [Verify]  ···  [Edit] [Close] --}}
+                        {{-- VIEW footer: [Real State Pipeline Transition Buttons]  ···  [Edit] [Close] --}}
                         <div class="flex items-center justify-between gap-3">
 
-                            {{-- Left — workflow state actions --}}
+                            {{-- Left — real state workflow actions --}}
                             <div class="flex items-center gap-2">
-                                <x-button variant="secondary" size="sm" wire:click="sendForConfirmation" wire:loading.attr="disabled" wire:target="sendForConfirmation">
-                                    <x-heroicon-o-paper-airplane class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                    <span wire:loading.remove wire:target="sendForConfirmation">Send for Confirmation</span>
-                                    <span wire:loading wire:target="sendForConfirmation">Sending...</span>
-                                </x-button>
-
-                                <x-button variant="secondary" size="sm" wire:click="verify" wire:loading.attr="disabled" wire:target="verify">
-                                    <x-heroicon-o-shield-check class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                    <span wire:loading.remove wire:target="verify">Verify</span>
-                                    <span wire:loading wire:target="verify">Verifying...</span>
-                                </x-button>
+                                @if($this->currentAcquisition && $this->currentAcquisition->status)
+                                    @foreach($this->currentAcquisition->status->transitionableStateInstances() as $targetState)
+                                        <x-button 
+                                            variant="primary" 
+                                            size="sm" 
+                                            wire:click="transitionTo('{{ addslashes(get_class($targetState)) }}')" 
+                                            wire:loading.attr="disabled"
+                                            wire:target="transitionTo('{{ addslashes(get_class($targetState)) }}')"
+                                        >
+                                            <x-heroicon-o-arrow-right-circle class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                            <span wire:loading.remove wire:target="transitionTo('{{ addslashes(get_class($targetState)) }}')">
+                                                Advance to {{ $targetState->label() }}
+                                            </span>
+                                            <span wire:loading wire:target="transitionTo('{{ addslashes(get_class($targetState)) }}')">
+                                                Updating...
+                                            </span>
+                                        </x-button>
+                                    @endforeach
+                                @endif
                             </div>
 
                             {{-- Right — Edit + Close --}}

@@ -4,6 +4,7 @@ namespace App\States\Transitions;
 
 use App\Models\Acquisition;
 use App\Models\Assignment;
+use Illuminate\Support\Str;
 use Spatie\ModelStates\DefaultTransition;
 
 class UpdateAssignment extends DefaultTransition
@@ -12,9 +13,18 @@ class UpdateAssignment extends DefaultTransition
     {
         /** @var Acquisition $acquisition */
         $acquisition = parent::handle();
-        dd($acquisition);
 
-        $assignment = Assignment::where('acquisition_id', $acquisition->id)->first();
+        Assignment::updateOrCreate(
+            ['acquisition_id' => $acquisition->id],
+            [
+                'uuid' => (string) Str::uuid(),
+                'title' => $acquisition->status?->label() ?? '',
+                'status' => $acquisition->status?->getValue(),
+                'reference_no' => $acquisition->project_number,
+                'assignable_type' => Acquisition::class,
+                'assignable_id' => $acquisition->id,
+            ]
+        );
 
         return $acquisition;
     }

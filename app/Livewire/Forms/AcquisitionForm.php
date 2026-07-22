@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Enums\AcquisitionCommitteeType;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
 use App\Models\Acquisition;
@@ -54,7 +55,7 @@ class AcquisitionForm extends Form
             'method' => ['required', 'string'],
             'project_number' => ['required', 'string', 'max:100'],
             'project_name' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'string'],
+            'status' => ['nullable', 'string'],
             'vot_type_id' => ['nullable', 'integer', 'exists:vot_types,id'],
             'tender_number' => ['nullable', 'string', 'max:100'],
             'siling_price' => ['nullable', 'numeric', 'min:0'],
@@ -99,7 +100,7 @@ class AcquisitionForm extends Form
         $this->method = $a->method instanceof AcquisitionMethod ? $a->method->value : '';
         $this->project_number = $a->project_number ?? '';
         $this->project_name = $a->project_name ?? '';
-        $this->status = $a->status ?? '';
+        $this->status = $a->status?->getValue() ?? 'DRAFT';
         $this->vot_type_id = $a->vot_type_id;
         $this->tender_number = $a->tender_number ?? '';
         $this->siling_price = $a->siling_price !== null ? (string) $a->siling_price : '';
@@ -109,7 +110,7 @@ class AcquisitionForm extends Form
         $this->is_required_kbp = (bool) $a->is_required_kbp;
         $this->mof_required = (bool) $a->mof_required;
         $this->cidb_required = (bool) $a->cidb_required;
-        $this->committee_type = $a->committee_type->value ?? '';
+        $this->committee_type = $a->committee_type instanceof AcquisitionCommitteeType ? $a->committee_type->value : ($a->committee_type ?? '');
         $this->user_id = $a->user_id;
     }
 
@@ -123,7 +124,7 @@ class AcquisitionForm extends Form
             'method' => $this->method,
             'project_number' => $this->project_number,
             'project_name' => $this->project_name,
-            'status' => $this->status,
+            'status' => $this->status ?: 'DRAFT',
             'vot_type_id' => $this->vot_type_id,
             'tender_number' => $this->tender_number ?: null,
             'siling_price' => $this->siling_price !== '' ? (float) $this->siling_price : null,
@@ -144,7 +145,7 @@ class AcquisitionForm extends Form
 
         $data = $this->getMappedData();
         if (empty($data['status'])) {
-            $data['status'] = 'DRAF';
+            $data['status'] = 'DRAFT';
         }
 
         return Acquisition::create($data);
@@ -163,7 +164,7 @@ class AcquisitionForm extends Form
         $this->method = '';
         $this->project_number = Sequence::where('slug', 'project-number')->first()->next_sequence ?? '';
         $this->project_name = '';
-        $this->status = null;
+        $this->status = 'DRAFT';
         $this->vot_type_id = null;
         $this->tender_number = '';
         $this->siling_price = '';

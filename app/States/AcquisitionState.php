@@ -3,10 +3,10 @@
 namespace App\States;
 
 use App\Models\Acquisition;
+use App\States\Acquisition\Approved;
 use App\States\Acquisition\CommitteeAppointment;
 use App\States\Acquisition\Draft;
 use App\States\Acquisition\Verified;
-use App\States\Acquisition\Approved;
 use App\States\Transitions\UpdateAssignment;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
@@ -24,6 +24,7 @@ abstract class AcquisitionState extends State
     {
         return parent::config()
             ->default(Draft::class)
+            ->registerStatesFromDirectory(app_path('States/Acquisition'))
             ->allowTransition(Draft::class, Verified::class, UpdateAssignment::class)
             ->allowTransition(Verified::class, Approved::class, UpdateAssignment::class)
             ->allowTransition(Approved::class, CommitteeAppointment::class, UpdateAssignment::class);

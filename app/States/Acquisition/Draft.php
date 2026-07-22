@@ -10,7 +10,7 @@ class Draft extends AcquisitionState
 
     public function label(): string
     {
-        return 'DRAFT';
+        return 'DRAF';
     }
 
     public function color(): string

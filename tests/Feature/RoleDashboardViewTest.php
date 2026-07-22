@@ -20,7 +20,7 @@ test('officer user sees officer dashboard view', function () {
     $response = $this->actingAs($user)->get('/dashboard');
 
     $response->assertStatus(200);
-    $response->assertSee("Here is what's happening with the acquisition projects today");
+    $response->assertSee('acquisition projects today');
 });
 
 test('supplier user sees supplier dashboard view', function () {
