@@ -67,6 +67,7 @@
                         </a>
                     </div>
 
+                    @hasanyrole('superadmin|officer')
                     <div class="space-y-1">
                         <x-label class="px-2 mb-2 text-[10px] text-zinc-400 dark:text-zinc-500">Procurement</x-label>
                         
@@ -85,6 +86,7 @@
                             In Progress
                         </a>
                     </div>
+                    @endhasanyrole
 
                     @role('superadmin')
                     <div class="space-y-1">

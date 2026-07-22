@@ -203,9 +203,6 @@ new class extends Component
                 <x-heroicon-o-user-group class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span class="text-xs font-bold tracking-tight text-zinc-900 dark:text-zinc-100">Switch Account</span>
             </div>
-            <span class="text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400">
-                Security Verified
-            </span>
         </div>
 
         <!-- Accounts List -->

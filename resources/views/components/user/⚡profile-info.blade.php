@@ -160,6 +160,7 @@ new class extends Component
 				</x-input>
 
 				<!-- Organization & Department Info -->
+                @unlessrole('supplier')
 				<div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-2">
 					<div class="flex items-center justify-between">
 						<span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
@@ -178,6 +179,7 @@ new class extends Component
 						To request a change to your assigned Agency or Department, please contact a System Administrator.
 					</p>
 				</div>
+                @endunlessrole
 			</div>
 
 			<x-slot:footer>

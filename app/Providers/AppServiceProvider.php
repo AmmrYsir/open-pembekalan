@@ -116,11 +116,11 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerRoleDirectives(): void
     {
-        Blade::if('hasRole', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasRole($roles));
+        Blade::if('hasrole', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasRole($roles));
         Blade::if('role', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasRole($roles));
-        Blade::if('hasAnyRole', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasAnyRole($roles));
-        Blade::if('hasAllRoles', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasAllRoles($roles));
-        Blade::if('unlessRole', fn (mixed $roles): bool => auth()->check() && auth()->user()->unlessRole($roles));
+        Blade::if('hasanyrole', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasAnyRole($roles));
+        Blade::if('hasallroles', fn (mixed $roles): bool => auth()->check() && auth()->user()->hasAllRoles($roles));
+        Blade::if('unlessrole', fn (mixed $roles): bool => auth()->check() && auth()->user()->unlessRole($roles));
 
         Gate::before(function ($user, string $ability) {
             if (str_starts_with($ability, 'role:')) {
