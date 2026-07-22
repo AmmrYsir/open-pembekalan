@@ -6,17 +6,20 @@ use App\Contracts\HasUuidContract;
 use App\Enums\AcquisitionCommitteeType;
 use App\Enums\AcquisitionMethod;
 use App\Enums\AcquisitionType;
+use App\States\AcquisitionState;
 use App\Traits\HasUuid;
 use Database\Factories\AcquisitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\ModelStates\HasStates;
 
 /**
  * @property AcquisitionType|null $type
  * @property AcquisitionMethod|null $method
  * @property AcquisitionCommitteeType|null $committee_type
+ * @property AcquisitionState|null $status
  */
 class Acquisition extends Model implements HasUuidContract
 {
@@ -49,6 +52,7 @@ class Acquisition extends Model implements HasUuidContract
             'type' => AcquisitionType::class,
             'method' => AcquisitionMethod::class,
             'committee_type' => AcquisitionCommitteeType::class,
+            'status' => AcquisitionState::class,
             'is_required_kbp' => 'boolean',
             'mof_required' => 'boolean',
             'cidb_required' => 'boolean',
@@ -77,5 +81,13 @@ class Acquisition extends Model implements HasUuidContract
     public function subagency(): BelongsTo
     {
         return $this->belongsTo(Subagency::class);
+    }
+
+    /**
+     * @return HasOne<Assignment, $this>
+     */
+    public function assignments(): HasOne
+    {
+        return $this->hasOne(Assignment::class);
     }
 }
