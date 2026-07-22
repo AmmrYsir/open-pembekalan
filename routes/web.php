@@ -46,6 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/acquisition/{acquisition}', function (Acquisition $acquisition) {
         return view('pages.acquisition-show', compact('acquisition'));
     })->name('acquisition.show');
+    Route::view('/advertisement', 'pages.advertisement')->name('advertisement');
+    Route::get('/advertisement/{id}', function ($id) {
+        return view('pages.advertisement-show', compact('id'));
+    })->name('advertisement.show');
     Route::view('/notifications', 'pages.notifications')->middleware(EnsureFeaturesAreActive::using('system-notifications'))->name('notifications');
     Route::view('/link-account', 'auth.link-account')->name('accounts.link');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
