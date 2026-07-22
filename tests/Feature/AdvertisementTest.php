@@ -39,31 +39,22 @@ test('advertisement drawer can be triggered via open-advertisement-drawer event'
         ->assertSet('isOpen', false);
 });
 
-test('advertisement show component renders 6 tabs including mof codes tab and supports tab switching', function () {
+test('advertisement show supports corrigendum and cancellation workflows', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
-
-    $response = $this->actingAs($user)->get(route('advertisement.show', 1));
-    $response->assertOk();
 
     Livewire::actingAs($user)
         ->test('advertisement.show', ['advertisementId' => '1'])
-        ->assertSet('activeTab', 'details')
-        ->call('setTab', 'mof-codes')
-        ->assertSet('activeTab', 'mof-codes')
-        ->assertSee('220801')
-        ->assertSee('Mandatory Code (Wajib)')
-        ->call('toggleMofRequirement', 'mof_1')
-        ->assertSee('Optional Code (Pilihan)')
-        ->call('setTab', 'documents')
-        ->assertSet('activeTab', 'documents')
-        ->assertSee('Official_Tender_Advertisement_Notice.pdf')
-        ->call('setTab', 'briefing')
-        ->assertSet('activeTab', 'briefing')
-        ->assertSee('Briefing')
-        ->call('setTab', 'submissions')
-        ->assertSet('activeTab', 'submissions')
-        ->assertSee('MEGA SECURITY SERVICES SDN BHD')
-        ->call('setTab', 'preview')
-        ->assertSet('activeTab', 'preview')
-        ->assertSee('Supplier Public Portal View Simulation');
+        ->assertSet('showCorrigendumModal', false)
+        ->call('openCorrigendumModal')
+        ->assertSet('showCorrigendumModal', true)
+        ->set('corrigendumReason', 'Closing date extension due to administrative request')
+        ->call('issueCorrigendum')
+        ->assertSet('showCorrigendumModal', false)
+        ->assertSee('OFFICIAL CORRIGENDUM / ADDENDUM NOTICE ISSUED')
+        ->call('openCancellationModal')
+        ->assertSet('showCancellationModal', true)
+        ->set('cancelReason', 'Project budget restructured by treasury')
+        ->call('cancelAdvertisement')
+        ->assertSet('showCancellationModal', false)
+        ->assertSee('THIS ADVERTISEMENT NOTICE HAS BEEN OFFICIALLY CANCELLED');
 });

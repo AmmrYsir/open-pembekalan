@@ -8,6 +8,18 @@ new class extends Component
     public string $activeTab = 'details'; // 'details' | 'mof-codes' | 'documents' | 'briefing' | 'submissions' | 'preview'
     public bool $expandFullTitle = false;
 
+    // Modals
+    public bool $showCorrigendumModal = false;
+    public bool $showCancellationModal = false;
+
+    // Form inputs for Corrigendum
+    public string $corrigendumReason = '';
+    public string $corrigendumDetails = '';
+
+    // Form inputs for Cancellation
+    public string $cancelReason = '';
+    public string $cancelRef = '';
+
     // Mock Advertisement Detail State
     public array $ad = [
         'id' => '1',
@@ -19,7 +31,7 @@ new class extends Component
         'document_fee' => 50.00,
         'publish_at' => '2026-08-01 09:00 AM',
         'closing_at' => '2026-08-21 12:00 PM',
-        'status' => 'published',
+        'status' => 'published', // 'published' | 'corrigendum_issued' | 'cancelled' | 'draft' | 'closed'
         'cidb_code' => 'Not Applicable',
         'kbp_required' => true,
         'briefing_required' => true,
@@ -28,6 +40,21 @@ new class extends Component
         'officer_name' => 'Ammar Yasir (Procurement Officer)',
         'officer_phone' => '05-254 1928 / Ext 104',
         'officer_email' => 'procurement@msnperak.gov.my',
+        'cancellation_reason' => null,
+        'cancellation_ref' => null,
+        'cancelled_at' => null,
+    ];
+
+    // Mock Corrigendums / Addendums Issued History
+    public array $corrigendums = [
+        [
+            'id' => 'corr_1',
+            'code' => 'CORR-01/ADV-2026-001',
+            'issued_at' => '2026-08-04 02:15 PM',
+            'reason' => 'Closing date extension & briefing venue update due to administrative requests.',
+            'details' => 'Tender closing date extended from 14 Aug to 21 Aug 2026. Briefing venue moved to Level 4 Conference Room.',
+            'issued_by' => 'Ammar Yasir (Procurement Officer)',
+        ],
     ];
 
     // Mock Required MOF Codes for this Advertisement
@@ -46,14 +73,6 @@ new class extends Component
             'category' => 'Perkhidmatan (Services)',
             'subcategory' => 'Kawalan Keselamatan (Security Services)',
             'description' => 'Kawalan Keselamatan Bersenjata Api (Armed Guarding & Patrol)',
-            'is_mandatory' => false,
-        ],
-        [
-            'id' => 'mof_3',
-            'code' => '221501',
-            'category' => 'Perkhidmatan (Services)',
-            'subcategory' => 'Pembersihan & Sanitasi (Cleaning Services)',
-            'description' => 'Pembersihan Bangunan dan Pejabat (Building Housekeeping)',
             'is_mandatory' => false,
         ],
     ];
@@ -76,10 +95,10 @@ new class extends Component
         ],
         [
             'id' => 'doc_3',
-            'filename' => 'Bill_of_Quantities_Pricing_Schedule.xlsx',
-            'filesize' => '850 KB',
-            'type' => 'Excel BOQ Template',
-            'downloads' => 29,
+            'filename' => 'Corrigendum_Notice_No_1.pdf',
+            'filesize' => '1.1 MB',
+            'type' => 'Corrigendum PDF',
+            'downloads' => 19,
         ],
     ];
 
@@ -101,19 +120,62 @@ new class extends Component
             'bid_status' => 'submitted',
             'submitted_at' => '2026-08-18 09:15 AM',
         ],
-        [
-            'supplier_name' => 'KINTA GUARDIAN SERVICES ENTERPRISE',
-            'ssm_no' => '202003019284 (IP049281-W)',
-            'purchased_at' => '2026-08-04 03:20 PM',
-            'receipt_no' => 'REC-2026-8850',
-            'bid_status' => 'pending',
-            'submitted_at' => null,
-        ],
     ];
 
     public function setTab(string $tab): void
     {
         $this->activeTab = $tab;
+    }
+
+    public function openCorrigendumModal(): void
+    {
+        $this->reset(['corrigendumReason', 'corrigendumDetails']);
+        $this->showCorrigendumModal = true;
+    }
+
+    public function issueCorrigendum(): void
+    {
+        if (trim($this->corrigendumReason) === '') {
+            $this->addError('corrigendumReason', 'Reason for corrigendum is required.');
+            return;
+        }
+
+        $count = count($this->corrigendums) + 1;
+        $this->corrigendums[] = [
+            'id' => 'corr_' . $count,
+            'code' => 'CORR-0' . $count . '/' . $this->ad['code'],
+            'issued_at' => date('Y-m-d h:i A'),
+            'reason' => $this->corrigendumReason,
+            'details' => $this->corrigendumDetails ?: $this->corrigendumReason,
+            'issued_by' => 'Ammar Yasir (Procurement Officer)',
+        ];
+
+        $this->ad['status'] = 'corrigendum_issued';
+        $this->showCorrigendumModal = false;
+        session()->flash('success', 'Official Corrigendum / Addendum notice successfully published to suppliers.');
+    }
+
+    public function openCancellationModal(): void
+    {
+        $this->reset(['cancelReason', 'cancelRef']);
+        $this->cancelRef = 'REF-CANCEL-' . rand(1000, 9999);
+        $this->showCancellationModal = true;
+    }
+
+    public function cancelAdvertisement(): void
+    {
+        if (trim($this->cancelReason) === '') {
+            $this->addError('cancelReason', 'Cancellation reason is required.');
+            return;
+        }
+
+        $this->ad['status'] = 'cancelled';
+        $this->ad['cancellation_reason'] = $this->cancelReason;
+        $this->ad['cancellation_ref'] = $this->cancelRef;
+        $this->ad['cancelled_at'] = date('Y-m-d h:i A');
+
+        $this->showCancellationModal = false;
+        session()->flash('success', 'Advertisement notice has been officially CANCELLED.');
     }
 
     public function toggleMofRequirement(string $id): void
@@ -126,12 +188,6 @@ new class extends Component
             }
         }
     }
-
-    public function togglePublish(): void
-    {
-        $this->ad['status'] = $this->ad['status'] === 'published' ? 'draft' : 'published';
-        session()->flash('success', 'Publication status has been updated.');
-    }
 };
 ?>
 
@@ -142,6 +198,32 @@ new class extends Component
         <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 text-sm font-medium flex items-center gap-2">
             <x-heroicon-o-check-circle class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
             {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- CANCELLED NOTICE BANNER IF CANCELLED --}}
+    @if($ad['status'] === 'cancelled')
+        <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 text-rose-800 dark:text-rose-300 space-y-2">
+            <div class="flex items-center gap-2 font-bold text-sm">
+                <x-heroicon-o-x-circle class="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                <span>THIS ADVERTISEMENT NOTICE HAS BEEN OFFICIALLY CANCELLED</span>
+            </div>
+            <p class="text-xs text-rose-700 dark:text-rose-300">
+                <strong>Reason:</strong> {{ $ad['cancellation_reason'] }} | <strong>Approval Ref:</strong> {{ $ad['cancellation_ref'] }} | <strong>Date Cancelled:</strong> {{ $ad['cancelled_at'] }}
+            </p>
+        </div>
+    @endif
+
+    {{-- CORRIGENDUM ISSUED BANNER IF CORRIGENDUM ACTIVE --}}
+    @if($ad['status'] === 'corrigendum_issued')
+        <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 text-amber-800 dark:text-amber-300 space-y-2">
+            <div class="flex items-center gap-2 font-bold text-sm">
+                <x-heroicon-o-exclamation-triangle class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                <span>OFFICIAL CORRIGENDUM / ADDENDUM NOTICE ISSUED</span>
+            </div>
+            <p class="text-xs text-amber-700 dark:text-amber-300">
+                One or more official addendum notices have been published for this tender advertisement. Please refer to the Corrigendum Log below.
+            </p>
         </div>
     @endif
 
@@ -162,8 +244,12 @@ new class extends Component
 
                     @if($ad['status'] === 'published')
                         <x-badge variant="success" pill>Active / Published</x-badge>
+                    @elseif($ad['status'] === 'corrigendum_issued')
+                        <x-badge variant="warning" pill>Corrigendum Issued</x-badge>
+                    @elseif($ad['status'] === 'cancelled')
+                        <x-badge variant="danger" pill>Cancelled Notice</x-badge>
                     @else
-                        <x-badge variant="warning" pill>Draft Notice</x-badge>
+                        <x-badge variant="secondary" pill>Draft Notice</x-badge>
                     @endif
 
                     <span class="px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-xs ml-auto sm:ml-0">
@@ -201,17 +287,32 @@ new class extends Component
                 </div>
             </div>
 
-            {{-- Right Compact Action Toolbar --}}
-            <div class="flex items-center gap-2 shrink-0 self-start pt-1 lg:pt-0">
-                <x-button variant="primary" size="sm" wire:click="togglePublish" class="cursor-pointer">
-                    <x-heroicon-o-arrow-path class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    {{ $ad['status'] === 'published' ? 'Unpublish Notice' : 'Publish Notice' }}
-                </x-button>
+            {{-- Right Compact Action Toolbar with Workflow Buttons --}}
+            <div class="flex items-center gap-2 shrink-0 self-start pt-1 lg:pt-0 flex-wrap">
+                @if($ad['status'] !== 'cancelled')
+                    {{-- Issue Corrigendum Button --}}
+                    <button
+                        wire:click="openCorrigendumModal"
+                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 hover:bg-amber-100 transition-colors border border-amber-200 dark:border-amber-800/40 cursor-pointer"
+                    >
+                        <x-heroicon-o-pencil-square class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        Issue Corrigendum / Addendum
+                    </button>
+
+                    {{-- Cancel Advertisement Button --}}
+                    <button
+                        wire:click="openCancellationModal"
+                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100 transition-colors border border-rose-200 dark:border-rose-800/40 cursor-pointer"
+                    >
+                        <x-heroicon-o-x-circle class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        Cancel Advertisement
+                    </button>
+                @endif
 
                 <a href="{{ route('advertisement') }}">
                     <x-button variant="secondary" size="sm" class="cursor-pointer">
                         <x-heroicon-o-arrow-left class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                        Back to Advertisements
+                        Back
                     </x-button>
                 </a>
             </div>
@@ -280,7 +381,7 @@ new class extends Component
 
     {{-- ── TAB CONTENT ── --}}
 
-    {{-- TAB 1: ADVERTISEMENT DETAILS --}}
+    {{-- TAB 1: ADVERTISEMENT DETAILS & CORRIGENDUM HISTORY LOG --}}
     @if($activeTab === 'details')
         <x-card>
             <div class="space-y-8">
@@ -326,6 +427,35 @@ new class extends Component
                     </dl>
                 </div>
 
+                {{-- CORRIGENDUM / ADDENDUM HISTORY AUDIT LOG CARD --}}
+                @if(count($corrigendums) > 0)
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
+                            <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                            Official Corrigendum / Addendum History Log
+                            <span class="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></span>
+                        </h3>
+
+                        <div class="space-y-3">
+                            @foreach($corrigendums as $corr)
+                                <div class="p-4 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-mono text-xs font-bold text-amber-800 dark:text-amber-300">
+                                            {{ $corr['code'] }}
+                                        </span>
+                                        <span class="text-xs text-zinc-400 font-mono">Issued: {{ $corr['issued_at'] }}</span>
+                                    </div>
+                                    <h4 class="text-xs font-bold text-zinc-900 dark:text-zinc-100">{{ $corr['reason'] }}</h4>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400">{{ $corr['details'] }}</p>
+                                    <div class="text-[11px] text-zinc-400 font-mono pt-1 border-t border-amber-200/50">
+                                        Issued by: {{ $corr['issued_by'] }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 <div>
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4 flex items-center gap-2">
                         <span class="w-5 h-px bg-zinc-300 dark:bg-zinc-700"></span>
@@ -367,7 +497,7 @@ new class extends Component
                         </p>
                     </div>
 
-                    <x-button variant="primary" size="sm" onclick="alert('Simulasi: Tambah Kod MOF Baru');" class="cursor-pointer">
+                    <x-button variant="primary" size="sm" onclick="alert('Simulation: Add MOF Code');" class="cursor-pointer">
                         <x-heroicon-o-plus class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                         Add MOF Code
                     </x-button>
@@ -438,7 +568,7 @@ new class extends Component
                         </p>
                     </div>
 
-                    <x-button variant="primary" size="sm" onclick="alert('Simulasi: Muat naik dokumen tender baru');" class="cursor-pointer">
+                    <x-button variant="primary" size="sm" onclick="alert('Simulation: Upload new document');" class="cursor-pointer">
                         <x-heroicon-o-plus class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                         Attach Document File
                     </x-button>
@@ -593,7 +723,7 @@ new class extends Component
         </x-card>
     @endif
 
-    {{-- TAB 6: SUPPLIER PUBLIC PORTAL PREVIEW SIMULATION --}}
+    {{-- TAB 6: SUPPLIER PUBLIC PORTAL PREVIEW SIMULATION WITH CORRIGENDUM & CANCELLATION BANNERS --}}
     @if($activeTab === 'preview')
         <div class="p-6 rounded-2xl bg-zinc-900 text-white shadow-2xl border border-zinc-800 space-y-6">
             <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
@@ -603,6 +733,32 @@ new class extends Component
                 </div>
                 <span class="text-xs text-zinc-400 font-mono">https://openpembekalan.gov.my/tender/{{ $ad['code'] }}</span>
             </div>
+
+            {{-- PUBLIC PORTAL CANCELLATION BANNER --}}
+            @if($ad['status'] === 'cancelled')
+                <div class="p-4 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-sm text-rose-400">
+                        <x-heroicon-o-x-circle class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        NOTICE: THIS TENDER ADVERTISEMENT HAS BEEN CANCELLED
+                    </div>
+                    <p class="text-xs text-zinc-300">
+                        Document purchase and bid submissions are closed. Reason: {{ $ad['cancellation_reason'] }}
+                    </p>
+                </div>
+            @endif
+
+            {{-- PUBLIC PORTAL CORRIGENDUM BANNER --}}
+            @if($ad['status'] === 'corrigendum_issued')
+                <div class="p-4 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-sm text-amber-400">
+                        <x-heroicon-o-exclamation-triangle class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        NOTICE: OFFICIAL CORRIGENDUM / ADDENDUM PUBLISHED
+                    </div>
+                    <p class="text-xs text-zinc-300">
+                        Suppliers are required to review the latest addendum document before submitting their proposals.
+                    </p>
+                </div>
+            @endif
 
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
@@ -636,9 +792,97 @@ new class extends Component
                 </div>
 
                 <div class="pt-4 flex items-center gap-4">
-                    <button onclick="alert('Simulation: Supplier clicks Purchase Document');" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm cursor-pointer shadow-lg shadow-emerald-500/20">
-                        Purchase Document & Bid Now →
-                    </button>
+                    @if($ad['status'] === 'cancelled')
+                        <button disabled class="px-6 py-2.5 rounded-xl bg-zinc-800 text-zinc-500 font-bold text-sm cursor-not-allowed border border-zinc-700">
+                            Bidding Closed (Cancelled)
+                        </button>
+                    @else
+                        <button onclick="alert('Simulation: Supplier clicks Purchase Document');" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm cursor-pointer shadow-lg shadow-emerald-500/20">
+                            Purchase Document & Bid Now →
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ISSUE CORRIGENDUM / ADDENDUM MODAL --}}
+    @if($showCorrigendumModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-center justify-center p-4">
+                <div wire:click="$set('showCorrigendumModal', false)" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-xs transition-opacity"></div>
+
+                <div class="relative w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 p-6 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-5">
+                    <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 border border-amber-200">
+                                <x-heroicon-o-pencil-square class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </span>
+                            <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100">Issue Corrigendum / Addendum Notice</h3>
+                        </div>
+                        <button wire:click="$set('showCorrigendumModal', false)" class="text-zinc-400 hover:text-zinc-600">
+                            <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </button>
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <x-label for="corrigendumReason" :required="true">Reason for Corrigendum / Amendment</x-label>
+                            <input id="corrigendumReason" type="text" wire:model="corrigendumReason" placeholder="e.g. Closing date extension & technical specification amendment" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                            @error('corrigendumReason') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <x-label for="corrigendumDetails">Amendment Details & Supplier Instructions</x-label>
+                            <textarea id="corrigendumDetails" wire:model="corrigendumDetails" rows="4" placeholder="Describe the specific changes made to the tender advertisement..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" wire:click="$set('showCorrigendumModal', false)">Cancel</x-button>
+                        <x-button variant="primary" size="sm" wire:click="issueCorrigendum">Publish Corrigendum</x-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- CANCEL ADVERTISEMENT MODAL --}}
+    @if($showCancellationModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-center justify-center p-4">
+                <div wire:click="$set('showCancellationModal', false)" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-xs transition-opacity"></div>
+
+                <div class="relative w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 p-6 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-5">
+                    <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 border border-rose-200">
+                                <x-heroicon-o-x-circle class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            </span>
+                            <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100">Cancel Active Advertisement Notice</h3>
+                        </div>
+                        <button wire:click="$set('showCancellationModal', false)" class="text-zinc-400 hover:text-zinc-600">
+                            <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </button>
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <x-label for="cancelRef" :required="true">Official Approval Reference Number</x-label>
+                            <input id="cancelRef" type="text" wire:model="cancelRef" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 font-mono font-bold">
+                        </div>
+
+                        <div>
+                            <x-label for="cancelReason" :required="true">Official Reason for Cancellation</x-label>
+                            <textarea id="cancelReason" wire:model="cancelReason" rows="3" placeholder="Provide reason for cancelling this advertisement notice..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
+                            @error('cancelReason') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" wire:click="$set('showCancellationModal', false)">Cancel</x-button>
+                        <x-button variant="danger" size="sm" wire:click="cancelAdvertisement">Confirm Cancellation</x-button>
+                    </div>
                 </div>
             </div>
         </div>
