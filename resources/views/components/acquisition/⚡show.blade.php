@@ -19,7 +19,7 @@ new class extends Component
     public Acquisition $acquisition;
     public AcquisitionForm $form;
 
-    public string $activeTab = 'project-info'; // 'project-info' | 'committee' | 'technical-checklist' | 'financial-checklist' | 'technical-spec' | 'financial-pricelist' | 'scoring'
+    public string $activeTab = 'project-info'; // 'project-info' | 'committee' | 'technical-checklist' | 'financial-checklist' | 'technical-spec' | 'financial-pricelist' | 'scoring' | 'documents'
     public bool $isEditing = false;
     public bool $previewSupplierMode = false;
 
@@ -64,6 +64,78 @@ new class extends Component
     public float $techWeightageRatio = 70.0;
     public float $finWeightageRatio = 30.0;
     public float $passingTechMark = 70.0;
+
+    // Document for Procurement Modal State
+    public bool $showProcurementDocModal = false;
+    public ?array $activeProcurementDoc = null;
+
+    // Official Procurement Printable Documents List (English Naming Conventions)
+    public array $procurementDocuments = [
+        [
+            'id' => 'doc_tech_check',
+            'code' => 'DOC-TECH-01',
+            'title' => 'Technical Submission Checklist Document',
+            'malay_ref' => 'Checklist Teknikal Dokumen Penyerahan',
+            'desc' => 'Official printable checklist schedule detailing all required technical documents for supplier submission.',
+            'category' => 'Checklist',
+        ],
+        [
+            'id' => 'doc_fin_check',
+            'code' => 'DOC-FIN-01',
+            'title' => 'Financial Submission Checklist Document',
+            'malay_ref' => 'Checklist Kewangan Dokumen Penyerahan',
+            'desc' => 'Official printable checklist schedule detailing financial statements, audited reports, and tax declarations.',
+            'category' => 'Checklist',
+        ],
+        [
+            'id' => 'doc_boq_price',
+            'code' => 'DOC-BOQ-01',
+            'title' => 'Indicative Pricing Schedule & BOQ',
+            'malay_ref' => 'Tawaran Harga Indikatif & Pecahan BOQ',
+            'desc' => 'Formatted itemized Bill of Quantities pricing schedule for vendor net price quotation.',
+            'category' => 'Pricing',
+        ],
+        [
+            'id' => 'doc_tech_spec',
+            'code' => 'DOC-SPEC-01',
+            'title' => 'Technical Specification Schedule',
+            'malay_ref' => 'Jadual Spesifikasi Teknikal Lengkap',
+            'desc' => 'Detailed 3-level technical specification requirements schedule and evaluation compliance criteria.',
+            'category' => 'Specification',
+        ],
+        [
+            'id' => 'doc_terms_cond',
+            'code' => 'DOC-TNC-01',
+            'title' => 'General Terms & Conditions',
+            'malay_ref' => 'Syarat-syarat Am Perolehan',
+            'desc' => 'General procurement regulations, bidder eligibility rules, submission guidelines, and legal terms.',
+            'category' => 'Legal',
+        ],
+        [
+            'id' => 'doc_tender_stmt',
+            'code' => 'DOC-STT-01',
+            'title' => 'Supplier Tender Statement',
+            'malay_ref' => 'Kenyataan Tawaran Pembekal',
+            'desc' => 'Formal tender offer declaration statement to be signed by supplier authorized director.',
+            'category' => 'Declaration',
+        ],
+        [
+            'id' => 'doc_bidder_decl',
+            'code' => 'DOC-IP-01',
+            'title' => 'Sample Bidder Declaration Letter (Integrity Pact)',
+            'malay_ref' => 'Sampel Surat Akuan Pembida (Pakatan Integriti)',
+            'desc' => 'Mandatory Anti-Corruption Integrity Pact declaration letter sample for submitting suppliers.',
+            'category' => 'Declaration',
+        ],
+        [
+            'id' => 'doc_loa_sample',
+            'code' => 'DOC-LOA-01',
+            'title' => 'Sample Letter of Acceptance (LOA)',
+            'malay_ref' => 'Sampel Surat Setuju Terima (SST)',
+            'desc' => 'Official sample letter of acceptance issued by government/agency to the appointed winning supplier.',
+            'category' => 'Contract',
+        ],
+    ];
 
     // Technical Checklist Items (Item #1 is Technical Specification)
     public array $technicalChecklist = [
@@ -602,6 +674,24 @@ new class extends Component
         session()->flash('success', 'Pricelist item removed.');
     }
 
+    // Procurement Document Preview Modal Handler
+    public function openProcurementDocModal(string $docId): void
+    {
+        foreach ($this->procurementDocuments as $doc) {
+            if ($doc['id'] === $docId) {
+                $this->activeProcurementDoc = $doc;
+                break;
+            }
+        }
+        $this->showProcurementDocModal = true;
+    }
+
+    public function closeProcurementDocModal(): void
+    {
+        $this->showProcurementDocModal = false;
+        $this->activeProcurementDoc = null;
+    }
+
     // Supplier Action Modal
     public function openSupplierActionModal(string $type, string $id): void
     {
@@ -860,7 +950,7 @@ new class extends Component
         </div>
     </x-card>
 
-    {{-- ── Tab Navigation Bar (7 Tabs) ── --}}
+    {{-- ── Tab Navigation Bar (8 Tabs) ── --}}
     <div class="border-b border-zinc-200 dark:border-zinc-800">
         <nav class="-mb-px flex gap-6 overflow-x-auto" aria-label="Tabs">
             {{-- Tab 1: Project Information --}}
@@ -917,13 +1007,22 @@ new class extends Component
                 Financial Pricelist
             </button>
 
-            {{-- Tab 7: Scoring (New Evaluation Tab) --}}
+            {{-- Tab 7: Scoring --}}
             <button
                 wire:click="setTab('scoring')"
                 class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'scoring' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
             >
                 <x-heroicon-o-chart-bar class="w-4 h-4 shrink-0 {{ $activeTab === 'scoring' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 Scoring
+            </button>
+
+            {{-- Tab 8: Document for Procurement (New Printable Documents Tab) --}}
+            <button
+                wire:click="setTab('documents')"
+                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'documents' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
+            >
+                <x-heroicon-o-printer class="w-4 h-4 shrink-0 {{ $activeTab === 'documents' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                Document for Procurement
             </button>
         </nav>
     </div>
@@ -2268,260 +2367,250 @@ new class extends Component
         </x-card>
     @endif
 
-    {{-- ════ ADD TECHNICAL SPEC MODAL ════ --}}
-    @if($showAddTechSpecModal)
+    {{-- ════ TAB 8: DOCUMENT FOR PROCUREMENT (PRINTABLE DOCUMENTS) ════ --}}
+    @if($activeTab === 'documents')
+        <x-card>
+            <div class="space-y-6">
+                {{-- Header --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
+                    <div>
+                        <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                            <x-heroicon-o-printer class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Document for Procurement
+                        </h3>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                            Official printable document suite formatted for supplier printout, submission, and contract execution.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50 font-mono text-xs font-bold">
+                            8 Printable Procurement Templates Available
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Document Cards Grid --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    @foreach($procurementDocuments as $doc)
+                        <div class="p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs hover:border-emerald-500/40 transition-colors flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 font-mono text-xs font-bold text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+                                        {{ $doc['code'] }}
+                                    </span>
+                                    <x-badge variant="info" pill>{{ $doc['category'] }}</x-badge>
+                                </div>
+
+                                <h4 class="text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+                                    {{ $doc['title'] }}
+                                </h4>
+
+                                <div class="text-xs text-emerald-600 dark:text-emerald-400 font-mono italic">
+                                    Rujukan: {{ $doc['malay_ref'] }}
+                                </div>
+
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                                    {{ $doc['desc'] }}
+                                </p>
+                            </div>
+
+                            <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+                                <span class="text-xs text-zinc-400 font-mono flex items-center gap-1">
+                                    <x-heroicon-o-document-arrow-down class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                    PDF & Print Ready
+                                </span>
+
+                                <x-button variant="primary" size="sm" wire:click="openProcurementDocModal('{{ $doc['id'] }}')" class="cursor-pointer">
+                                    <x-heroicon-o-printer class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                    Preview & Print Document
+                                </x-button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </x-card>
+    @endif
+
+    {{-- ════ PRINTABLE PROCUREMENT DOCUMENT PREVIEW MODAL ════ --}}
+    @if($showProcurementDocModal && $activeProcurementDoc)
         <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddTechSpecModal"></div>
+            <div class="fixed inset-0 bg-zinc-950/70 backdrop-blur-sm" wire:click="closeProcurementDocModal"></div>
 
-            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                        Tambah Spesifikasi Teknikal (Tahap {{ $newSpecLevel }})
-                    </h3>
-                    <button wire:click="closeAddTechSpecModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </button>
-                </div>
-
-                <form wire:submit="saveTechSpecItem" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <x-label for="newSpecCode" :required="true">Kod Item</x-label>
-                            <input id="newSpecCode" type="text" wire:model="newSpecCode" placeholder="e.g. 1.0, 1.1, 1.1.1" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                        <div>
-                            <x-label for="newSpecWeightage">Pemberat (%) / Markah Maks</x-label>
-                            <input id="newSpecWeightage" type="number" step="0.5" wire:model="newSpecWeightage" placeholder="10.0" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                    </div>
-
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+                {{-- Modal Header --}}
+                <div class="p-4 sm:p-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-4 bg-zinc-50 dark:bg-zinc-900/90">
                     <div>
-                        <x-label for="newSpecName" :required="true">Nama Spesifikasi / Kategori</x-label>
-                        <input id="newSpecName" type="text" wire:model="newSpecName" placeholder="Tajuk spesifikasi teknikal..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        @error('newSpecName') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <x-label for="newSpecDesc">Keterangan / Terperinci</x-label>
-                        <textarea id="newSpecDesc" wire:model="newSpecDesc" rows="2" placeholder="Terangkan keperluan spesifikasi min..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
-                    </div>
-
-                    @if($newSpecLevel === 3)
-                        <div>
-                            <x-label for="newSpecType">Jenis Penilaian</x-label>
-                            <select id="newSpecType" wire:model="newSpecType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                                <option value="text">Teks / Penjelasan</option>
-                                <option value="number">Nombor / Nilai Terukur</option>
-                                <option value="boolean">Pematuhan Ya/Tidak</option>
-                                <option value="choice">Pilihan Peringkat SLA</option>
-                            </select>
-                        </div>
-                    @endif
-
-                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddTechSpecModal">Batal</x-button>
-                        <x-button variant="primary" size="sm" type="submit">Simpan Spesifikasi</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endif
-
-    {{-- ════ ADD FINANCIAL PRICELIST MODAL ════ --}}
-    @if($showAddPricelistModal)
-        <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddPricelistModal"></div>
-
-            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                        Tambah Perkara Jadual Harga (BOQ)
-                    </h3>
-                    <button wire:click="closeAddPricelistModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </button>
-                </div>
-
-                <form wire:submit="savePricelistItem" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <x-label for="newPriceCode" :required="true">Kod Rujukan BOQ</x-label>
-                            <input id="newPriceCode" type="text" wire:model="newPriceCode" placeholder="BOQ-01" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                        <div>
-                            <x-label for="newPriceUom">Unit Ukuran (UOM)</x-label>
-                            <input id="newPriceUom" type="text" wire:model="newPriceUom" placeholder="e.g. Unit, Lesen, Pakej" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                    </div>
-
-                    <div>
-                        <x-label for="newPriceName" :required="true">Keterangan Barangan / Perkhidmatan</x-label>
-                        <input id="newPriceName" type="text" wire:model="newPriceName" placeholder="Keterangan item jadual harga..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        @error('newPriceName') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <x-label for="newPriceQty">Kuantiti</x-label>
-                            <input id="newPriceQty" type="number" min="1" wire:model="newPriceQty" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                        <div>
-                            <x-label for="newPriceEstUnitPrice">Harga Unit (RM)</x-label>
-                            <input id="newPriceEstUnitPrice" type="number" step="0.01" wire:model="newPriceEstUnitPrice" placeholder="0.00" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                        <div>
-                            <x-label for="newPriceWeightage">Pemberat (%)</x-label>
-                            <input id="newPriceWeightage" type="number" step="0.5" wire:model="newPriceWeightage" placeholder="10" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddPricelistModal">Batal</x-button>
-                        <x-button variant="primary" size="sm" type="submit">Simpan Item Harga</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endif
-
-    {{-- ════ ADD CHECKLIST ITEM MODAL (OFFICER) ════ --}}
-    @if($showAddItemModal)
-        <div
-            x-data
-            class="fixed inset-0 z-50 flex items-center justify-center p-4"
-            role="dialog"
-            aria-modal="true"
-        >
-            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddItemModal"></div>
-
-            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
-                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                        Tambah Perkara Senarai Semak {{ ucfirst($newItemChecklistType) }}
-                    </h3>
-                    <button wire:click="closeAddItemModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </button>
-                </div>
-
-                <form wire:submit="saveChecklistItem" class="space-y-4">
-                    <div>
-                        <x-label for="newItemTitle" :required="true">Tajuk Perkara / Nama Dokumen</x-label>
-                        <input id="newItemTitle" type="text" wire:model="newItemTitle" placeholder="contoh: Borang Pengesahan Lesen SIRIM" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500">
-                        @error('newItemTitle') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <x-label for="newItemDesc">Keterangan / Arahan Kepada Pembekal</x-label>
-                        <textarea id="newItemDesc" wire:model="newItemDesc" rows="2" placeholder="Jelaskan apa yang perlu dimuat naik atau diisi oleh pembekal..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <x-label for="newItemInputType" :required="true">Jenis Keperluan Input</x-label>
-                            <select id="newItemInputType" wire:model.live="newItemInputType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                                <option value="file_upload">Muat Naik Fail</option>
-                                <option value="file_download_upload">Muat Turun & Muat Naik</option>
-                                <option value="text_input">Jawapan Teks</option>
-                                <option value="number_input">Input Nombor</option>
-                                <option value="boolean">Kotak Semak Pematuhan</option>
-                            </select>
-                        </div>
-                        <div>
-                            <x-label for="newItemWeightage">Pemberat (%)</x-label>
-                            <input id="newItemWeightage" type="number" step="0.5" wire:model="newItemWeightage" placeholder="15" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                    </div>
-
-                    @if(in_array($newItemInputType, ['file_download_upload', 'file_download']))
-                        <div>
-                            <x-label for="newItemTemplateFilename">Nama Fail Templat (Dokumen Rujukan Pegawai)</x-label>
-                            <input id="newItemTemplateFilename" type="text" wire:model="newItemTemplateFilename" placeholder="contoh: Borang_Templat_Spesifikasi.pdf" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                    @endif
-
-                    <label class="flex items-center gap-3 cursor-pointer pt-2">
-                        <input type="checkbox" wire:model="newItemIsRequired" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
-                        <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200">Tanda sebagai Wajib (Mandatory Item)</span>
-                    </label>
-
-                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddItemModal">Batal</x-button>
-                        <x-button variant="primary" size="sm" type="submit">Simpan Perkara</x-button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endif
-
-    {{-- ════ SUPPLIER PREVIEW ACTION MODAL ════ --}}
-    @if($showSupplierActionModal && $activeSupplierItem)
-        <div
-            x-data
-            class="fixed inset-0 z-50 flex items-center justify-center p-4"
-            role="dialog"
-            aria-modal="true"
-        >
-            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeSupplierActionModal"></div>
-
-            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
-                <div class="flex items-start justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
-                    <div>
-                        <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Tindakan Penyerahan Pembekal</span>
-                        <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5">
-                            {{ $activeSupplierItem['title'] }}
+                        <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">{{ $activeProcurementDoc['code'] }}</span>
+                        <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                            {{ $activeProcurementDoc['title'] }}
                         </h3>
                     </div>
-                    <button wire:click="closeSupplierActionModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </button>
+
+                    <div class="flex items-center gap-3">
+                        <button
+                            onclick="window.print()"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer transition-colors shadow-xs"
+                        >
+                            <x-heroicon-o-printer class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Print / Download PDF
+                        </button>
+
+                        <button wire:click="closeProcurementDocModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                            <x-heroicon-o-x-mark class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </button>
+                    </div>
                 </div>
 
-                <div class="space-y-4">
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
-                        {{ $activeSupplierItem['desc'] }}
-                    </p>
+                {{-- Printable Formatted Content Sheet --}}
+                <div class="p-6 sm:p-10 overflow-y-auto space-y-8 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm font-sans leading-relaxed">
+                    {{-- Official Letterhead --}}
+                    <div class="text-center space-y-2 pb-6 border-b-2 border-zinc-900 dark:border-zinc-100">
+                        <div class="text-xs font-bold tracking-widest text-zinc-500 uppercase">KERAJAAN MALAYSIA / MALAYSIA GOVERNMENT</div>
+                        <h2 class="text-lg font-bold uppercase tracking-tight">{{ $acquisition->agency?->name ?? 'JABATAN PEROLEHAN KERAJAAN' }}</h2>
+                        <p class="text-xs text-zinc-500 font-mono">DOKUMEN RASMI PEROLEHAN / OFFICIAL PROCUREMENT DOCUMENTATION</p>
+                    </div>
 
-                    @if(in_array($activeSupplierItem['input_type'], ['file_download_upload', 'file_download']))
-                        <div class="p-3 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-2 text-xs text-indigo-700 dark:text-indigo-300 font-medium">
-                                <x-heroicon-o-arrow-down-tray class="w-4 h-4 shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                <span>Templat: <strong class="font-mono">{{ $activeSupplierItem['template_filename'] }}</strong></span>
+                    {{-- Document Reference Metadata --}}
+                    <div class="grid grid-cols-2 gap-4 text-xs font-mono bg-zinc-50 dark:bg-zinc-900/60 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                        <div>
+                            <div><strong>Project Number:</strong> {{ $acquisition->project_number }}</div>
+                            <div><strong>Tender Reference:</strong> {{ $acquisition->tender_number ?: 'TND-2026-N/A' }}</div>
+                            <div><strong>Acquisition Type:</strong> {{ $acquisition->type ? ($acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->value : $acquisition->type) : 'PEROLEHAN' }}</div>
+                        </div>
+                        <div class="text-right">
+                            <div><strong>Document Ref:</strong> {{ $activeProcurementDoc['code'] }}</div>
+                            <div><strong>Malay Title:</strong> {{ $activeProcurementDoc['malay_ref'] }}</div>
+                            <div><strong>Date Generated:</strong> {{ date('d F Y') }}</div>
+                        </div>
+                    </div>
+
+                    {{-- Dynamic Body Content per Document Type --}}
+                    <div class="space-y-6">
+                        <h3 class="text-center font-bold text-base uppercase underline underline-offset-4">
+                            {{ $activeProcurementDoc['title'] }}
+                        </h3>
+
+                        @if($activeProcurementDoc['id'] === 'doc_tech_check')
+                            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                                This document serves as the official printable technical submission checklist required from suppliers bidding for project <strong>{{ $acquisition->project_name }}</strong>.
+                            </p>
+                            <table class="min-w-full divide-y divide-zinc-300 dark:divide-zinc-700 text-xs border border-zinc-200 dark:border-zinc-800">
+                                <thead class="bg-zinc-100 dark:bg-zinc-800">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left font-bold">#</th>
+                                        <th class="px-3 py-2 text-left font-bold">Requirement Title</th>
+                                        <th class="px-3 py-2 text-left font-bold">Type</th>
+                                        <th class="px-3 py-2 text-center font-bold">Mandatory</th>
+                                        <th class="px-3 py-2 text-center font-bold">Supplier Verification Check</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                                    @foreach($technicalChecklist as $idx => $tItem)
+                                        <tr>
+                                            <td class="px-3 py-2 font-mono font-bold">{{ $idx + 1 }}</td>
+                                            <td class="px-3 py-2 font-semibold">{{ $tItem['title'] }}</td>
+                                            <td class="px-3 py-2 uppercase">{{ $tItem['input_type'] }}</td>
+                                            <td class="px-3 py-2 text-center font-bold">{{ $tItem['is_required'] ? 'YES' : 'NO' }}</td>
+                                            <td class="px-3 py-2 text-center font-mono">[ &nbsp; ] Complete</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @elseif($activeProcurementDoc['id'] === 'doc_fin_check')
+                            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                                Official printable financial checklist schedule required for company financial audit and tax compliance.
+                            </p>
+                            <table class="min-w-full divide-y divide-zinc-300 dark:divide-zinc-700 text-xs border border-zinc-200 dark:border-zinc-800">
+                                <thead class="bg-zinc-100 dark:bg-zinc-800">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left font-bold">#</th>
+                                        <th class="px-3 py-2 text-left font-bold">Financial Requirement Title</th>
+                                        <th class="px-3 py-2 text-left font-bold">Submission Format</th>
+                                        <th class="px-3 py-2 text-center font-bold">Mandatory</th>
+                                        <th class="px-3 py-2 text-center font-bold">Verification Check</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                                    @foreach($financialChecklist as $idx => $fItem)
+                                        <tr>
+                                            <td class="px-3 py-2 font-mono font-bold">{{ $idx + 1 }}</td>
+                                            <td class="px-3 py-2 font-semibold">{{ $fItem['title'] }}</td>
+                                            <td class="px-3 py-2 uppercase">{{ $fItem['input_type'] }}</td>
+                                            <td class="px-3 py-2 text-center font-bold">{{ $fItem['is_required'] ? 'YES' : 'NO' }}</td>
+                                            <td class="px-3 py-2 text-center font-mono">[ &nbsp; ] Verified</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @elseif($activeProcurementDoc['id'] === 'doc_boq_price')
+                            <p class="text-xs text-zinc-600 dark:text-zinc-400">
+                                Itemized Bill of Quantities (BOQ) price submission form for project <strong>{{ $acquisition->project_name }}</strong>.
+                            </p>
+                            <table class="min-w-full divide-y divide-zinc-300 dark:divide-zinc-700 text-xs border border-zinc-200 dark:border-zinc-800">
+                                <thead class="bg-zinc-100 dark:bg-zinc-800">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left font-bold">Item Ref</th>
+                                        <th class="px-3 py-2 text-left font-bold">Item Description</th>
+                                        <th class="px-3 py-2 text-center font-bold">Qty / UOM</th>
+                                        <th class="px-3 py-2 text-right font-bold">Unit Price Quoted (RM)</th>
+                                        <th class="px-3 py-2 text-right font-bold">Subtotal Quoted (RM)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono">
+                                    @foreach($financialPricelist as $pItem)
+                                        <tr>
+                                            <td class="px-3 py-2 font-bold text-emerald-600">{{ $pItem['item_code'] }}</td>
+                                            <td class="px-3 py-2 font-sans font-medium">{{ $pItem['name'] }}</td>
+                                            <td class="px-3 py-2 text-center">{{ $pItem['qty'] }} {{ $pItem['uom'] }}</td>
+                                            <td class="px-3 py-2 text-right">RM ________________</td>
+                                            <td class="px-3 py-2 text-right">RM ________________</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="space-y-4 text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
+                                <p>
+                                    <strong>1. INTRODUCTORY CLAUSE:</strong> This document constitutes formal legal and administrative documentation governing the procurement project <strong>{{ $acquisition->project_name }}</strong> under project number <strong>{{ $acquisition->project_number }}</strong>.
+                                </p>
+                                <p>
+                                    <strong>2. OBLIGATIONS & COMPLIANCE:</strong> The participating tenderer agrees to comply fully with all specified technical specifications, financial requirements, and anti-corruption integrity pact provisions as mandated by Government Procurement Instructions and Ministry of Finance Circulars.
+                                </p>
+                                <p>
+                                    <strong>3. SUBMISSION DECLARATION:</strong> All information provided in this document is true, complete, and legally binding. Any false statements shall result in immediate disqualification and blacklisting from future government procurement activities.
+                                </p>
                             </div>
-                            <a href="#" onclick="alert('Simulasi muat turun templat'); return false;" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500">
-                                Muat Turun
-                            </a>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
 
-                    {{-- Dynamic Input Field --}}
-                    @if(in_array($activeSupplierItem['input_type'], ['file_upload', 'file_download_upload']))
-                        <div class="space-y-2">
-                            <x-label for="supplierUploadedFilename">Pilih Fail Dokumen Untuk Dimuat Naik</x-label>
-                            <input id="supplierUploadedFilename" type="text" wire:model="supplierUploadedFilename" placeholder="nama_fail_dokumen_pembekal.pdf" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                            <p class="text-xs text-zinc-400 font-mono">Format: {{ $activeSupplierItem['allowed_extensions'] ?: '.pdf, .docx' }} (Max 25MB)</p>
+                    {{-- Formal Signature Block --}}
+                    <div class="pt-10 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-2 gap-8 text-xs">
+                        <div class="space-y-12">
+                            <div>
+                                <p class="font-bold">Authorized Officer Signature & Chop</p>
+                                <p class="text-zinc-500">Government / Procurement Department</p>
+                            </div>
+                            <div class="border-b border-zinc-400 w-48"></div>
+                            <div>
+                                <p><strong>Name:</strong> {{ $acquisition->user_id ? \App\Models\User::find($acquisition->user_id)?->name : 'Senior Procurement Officer' }}</p>
+                                <p><strong>Date:</strong> ________________________</p>
+                            </div>
                         </div>
-                    @elseif($activeSupplierItem['input_type'] === 'text_input')
-                        <div class="space-y-2">
-                            <x-label for="supplierInputText">Masukkan Maklumat / Teks Jawapan</x-label>
-                            <textarea id="supplierInputText" wire:model="supplierInputText" rows="3" placeholder="Nyatakan jawapan atau maklumat perkhidmatan..." class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
-                        </div>
-                    @elseif($activeSupplierItem['input_type'] === 'number_input')
-                        <div class="space-y-2">
-                            <x-label for="supplierInputNumber">Masukkan Nilai Nombor / Amaun RM</x-label>
-                            <input id="supplierInputNumber" type="number" step="0.01" wire:model="supplierInputNumber" placeholder="0.00" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
-                        </div>
-                    @elseif($activeSupplierItem['input_type'] === 'boolean')
-                        <label class="flex items-center gap-3 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 cursor-pointer">
-                            <input type="checkbox" wire:model="supplierInputBoolean" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
-                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200">Saya mengesahkan patuh kepada semua syarat dan spesifikasi yang ditetapkan.</span>
-                        </label>
-                    @endif
-                </div>
 
-                <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                    <x-button variant="outline" size="sm" wire:click="closeSupplierActionModal">Tutup</x-button>
-                    <x-button variant="primary" size="sm" wire:click="submitSupplierAction">Simpan Penyerahan</x-button>
+                        <div class="space-y-12">
+                            <div>
+                                <p class="font-bold">Supplier Authorized Director Signature & Stamp</p>
+                                <p class="text-zinc-500">Participating Vendor Company</p>
+                            </div>
+                            <div class="border-b border-zinc-400 w-48"></div>
+                            <div>
+                                <p><strong>Company Name:</strong> ________________________</p>
+                                <p><strong>Date:</strong> ________________________</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -24,7 +24,7 @@ test('authenticated user can view dedicated acquisition show page', function () 
     $response->assertSee('PRJ-2026-999');
 });
 
-test('acquisition show livewire component supports 7 tabs including scoring', function () {
+test('acquisition show livewire component supports 8 tabs including document for procurement', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
@@ -51,21 +51,29 @@ test('acquisition show livewire component supports 7 tabs including scoring', fu
         ->assertSee('Bill of Quantities')
         ->call('setTab', 'scoring')
         ->assertSet('activeTab', 'scoring')
-        ->assertSee('Overall Scoring & Evaluation Matrix');
+        ->assertSee('Overall Scoring & Evaluation Matrix')
+        ->call('setTab', 'documents')
+        ->assertSet('activeTab', 'documents')
+        ->assertSee('Document for Procurement')
+        ->assertSee('Supplier Tender Statement')
+        ->assertSee('Sample Bidder Declaration Letter (Integrity Pact)')
+        ->assertSee('Sample Letter of Acceptance (LOA)');
 });
 
-test('acquisition show component supports weightage ratios and primary checklist links', function () {
+test('acquisition show component supports printable procurement document preview modal', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
         'project_number' => 'PRJ-2026-555',
-        'project_name' => 'Scoring & Weightage Test',
+        'project_name' => 'Procurement Document Test',
     ]);
 
     Livewire::actingAs($user)
         ->test('acquisition.show', ['acquisition' => $acquisition])
-        ->call('setTab', 'scoring')
-        ->set('techWeightageRatio', 80.0)
-        ->set('finWeightageRatio', 20.0)
-        ->assertSee('Ratio: 80% Technical : 20% Financial');
+        ->call('setTab', 'documents')
+        ->call('openProcurementDocModal', 'doc_tender_stmt')
+        ->assertSet('showProcurementDocModal', true)
+        ->assertSee('Supplier Tender Statement')
+        ->call('closeProcurementDocModal')
+        ->assertSet('showProcurementDocModal', false);
 });
