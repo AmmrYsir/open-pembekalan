@@ -20,7 +20,7 @@ class AcquisitionForm extends Form
 
     public string $project_name = '';
 
-    public ?string $status = null;
+    public ?string $status = 'DRAFT';
 
     public ?int $vot_type_id = null;
 
@@ -54,7 +54,7 @@ class AcquisitionForm extends Form
             'method' => ['required', 'string'],
             'project_number' => ['required', 'string', 'max:100'],
             'project_name' => ['required', 'string', 'max:255'],
-            'status' => ['nullable', 'string'],
+            'status' => ['required', 'string'],
             'vot_type_id' => ['nullable', 'integer', 'exists:vot_types,id'],
             'tender_number' => ['nullable', 'string', 'max:100'],
             'siling_price' => ['nullable', 'numeric', 'min:0'],

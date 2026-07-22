@@ -6,6 +6,7 @@ use App\Models\Acquisition;
 use App\States\Acquisition\CommitteeAppointment;
 use App\States\Acquisition\Draft;
 use App\States\Acquisition\Verified;
+use App\States\Acquisition\Approved;
 use App\States\Transitions\UpdateAssignment;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;

@@ -114,6 +114,7 @@ new class extends Component
             $this->mode = 'view';
         } else {
             $record = $this->form->store();
+            dd($record);
             $this->activeId = $record->id;
 			Sequence::where('slug', 'acquisition-number')->increment('value');
             session()->flash('success', 'Acquisition created successfully.');
