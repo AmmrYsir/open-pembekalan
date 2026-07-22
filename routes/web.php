@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TestNotificationController;
+use App\Models\Acquisition;
 use Illuminate\Support\Facades\Route;
 use Laravel\Pennant\Middleware\EnsureFeaturesAreActive;
 
@@ -42,6 +43,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'pages.dashboard')->name('dashboard');
     Route::view('/acquisition', 'pages.acquisition')->name('acquisition');
+    Route::get('/acquisition/{acquisition}', function (Acquisition $acquisition) {
+        return view('pages.acquisition-show', compact('acquisition'));
+    })->name('acquisition.show');
     Route::view('/notifications', 'pages.notifications')->middleware(EnsureFeaturesAreActive::using('system-notifications'))->name('notifications');
     Route::view('/link-account', 'auth.link-account')->name('accounts.link');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');

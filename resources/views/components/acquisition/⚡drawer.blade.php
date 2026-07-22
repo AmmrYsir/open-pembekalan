@@ -241,12 +241,24 @@ new class extends Component
                             </p>
                         </div>
                     </div>
-                    <button
-                        wire:click="closePanel"
-                        class="shrink-0 p-2 rounded-xl cursor-pointer text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
-                    >
-                        <x-heroicon-o-x-mark class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        @if($activeId)
+                            <a
+                                href="{{ route('acquisition.show', $activeId) }}"
+                                title="Open Full Page with Tabs"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-colors"
+                            >
+                                <x-heroicon-o-arrow-top-right-on-square class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Full Page
+                            </a>
+                        @endif
+                        <button
+                            wire:click="closePanel"
+                            class="p-2 rounded-xl cursor-pointer text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                        >
+                            <x-heroicon-o-x-mark class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </button>
+                    </div>
                 </div>
 
                 {{-- ── Scrollable Body ────────────────────────────────────── --}}
