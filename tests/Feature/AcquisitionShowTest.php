@@ -24,7 +24,7 @@ test('authenticated user can view dedicated acquisition show page', function () 
     $response->assertSee('PRJ-2026-999');
 });
 
-test('acquisition show livewire component supports 8 tabs including document for procurement', function () {
+test('acquisition show livewire component supports 8 tabs including committee meeting notices', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
@@ -37,6 +37,8 @@ test('acquisition show livewire component supports 8 tabs including document for
         ->assertSet('activeTab', 'project-info')
         ->call('setTab', 'committee')
         ->assertSet('activeTab', 'committee')
+        ->assertSee('Meeting Notices Schedule')
+        ->assertSee('JK Spesifikasi')
         ->call('setTab', 'technical-checklist')
         ->assertSet('activeTab', 'technical-checklist')
         ->assertSee('Primary Item #1')
@@ -54,10 +56,27 @@ test('acquisition show livewire component supports 8 tabs including document for
         ->assertSee('Overall Scoring & Evaluation Matrix')
         ->call('setTab', 'documents')
         ->assertSet('activeTab', 'documents')
-        ->assertSee('Document for Procurement')
-        ->assertSee('Supplier Tender Statement')
-        ->assertSee('Sample Bidder Declaration Letter (Integrity Pact)')
-        ->assertSee('Sample Letter of Acceptance (LOA)');
+        ->assertSee('Document for Procurement');
+});
+
+test('acquisition show component supports meeting notice creation modal in committee tab', function () {
+    $user = User::factory()->create(['email_verified_at' => now()]);
+
+    $acquisition = Acquisition::create([
+        'project_number' => 'PRJ-2026-333',
+        'project_name' => 'Meeting Notice Test',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('acquisition.show', ['acquisition' => $acquisition])
+        ->call('setTab', 'committee')
+        ->call('openMeetingNoticeModal')
+        ->assertSet('showMeetingNoticeModal', true)
+        ->set('noticeCommitteeType', 'JK Spesifikasi')
+        ->set('noticeSubject', 'Mesyuarat Semakan Spesifikasi & BOQ')
+        ->call('saveMeetingNotice')
+        ->assertSet('showMeetingNoticeModal', false)
+        ->assertSee('NOTIS-JKSPES');
 });
 
 test('acquisition show component supports printable procurement document preview modal', function () {

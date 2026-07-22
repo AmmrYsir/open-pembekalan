@@ -69,6 +69,45 @@ new class extends Component
     public bool $showProcurementDocModal = false;
     public ?array $activeProcurementDoc = null;
 
+    // Meeting Notice Modal State (Committee Tab)
+    public bool $showMeetingNoticeModal = false;
+    public string $noticeCommitteeType = 'JK Spesifikasi';
+    public string $noticeSubject = 'Mesyuarat Penyediaan Spesifikasi & Semakan Checklist';
+    public string $noticeVenue = 'Bilik Mesyuarat Utama / Google Meet';
+    public string $noticeStartAt = '2026-08-01T09:00';
+    public string $noticeEndAt = '2026-08-01T12:30';
+    public string $noticeAgenda = 'Memuktamadkan Spesifikasi Teknikal (3-Lapisan), Jadual Harga BOQ, Technical/Financial Checklists, dan Scoring.';
+
+    // Committee Meeting Notices List
+    public array $meetingNotices = [
+        [
+            'id' => 'notice_1',
+            'code' => 'NOTIS-JKSPES-2026/01',
+            'committee_type' => 'JK Spesifikasi',
+            'subject' => 'Mesyuarat Penyediaan Spesifikasi & Semakan Checklist',
+            'venue' => 'Bilik Mesyuarat Utama, Aras 4 / Google Meet',
+            'start_at' => '2026-08-01 09:00 AM',
+            'end_at' => '2026-08-01 12:30 PM',
+            'agenda' => 'Memuktamadkan Spesifikasi Teknikal (3-Lapisan), Jadual Harga BOQ, Technical & Financial Checklists, serta Nisbah Scoring.',
+            'status' => 'sent',
+            'recipients' => ['Senior Evaluation Officer (Pengerusi)', 'Technical Assessor Officer', 'Financial Auditor Officer'],
+            'focus_tabs' => ['Technical Checklist', 'Financial Checklist', 'Technical Specification', 'Financial Pricelist', 'Scoring'],
+        ],
+        [
+            'id' => 'notice_2',
+            'code' => 'NOTIS-JKTEK-2026/01',
+            'committee_type' => 'JK Penilaian Teknikal',
+            'subject' => 'Mesyuarat Penilaian Dokumen Teknikal Pembekal',
+            'venue' => 'Bilik Mesyuarat Perolehan 2',
+            'start_at' => '2026-08-15 02:00 PM',
+            'end_at' => '2026-08-15 05:00 PM',
+            'agenda' => 'Penilaian dan pemarkahan dokumen teknikal pembekal yang telah diserahkan mengikut kriteria 3-lapisan.',
+            'status' => 'draft',
+            'recipients' => ['Technical Assessor Officer', 'Senior Technical Evaluator'],
+            'focus_tabs' => ['Technical Checklist', 'Technical Specification'],
+        ],
+    ];
+
     // Official Procurement Printable Documents List (English Naming Conventions)
     public array $procurementDocuments = [
         [
@@ -692,6 +731,67 @@ new class extends Component
         $this->activeProcurementDoc = null;
     }
 
+    // Meeting Notice Modal Handlers
+    public function openMeetingNoticeModal(): void
+    {
+        $this->noticeCommitteeType = 'JK Spesifikasi';
+        $this->noticeSubject = 'Mesyuarat Penyediaan Spesifikasi & Semakan Checklist';
+        $this->noticeVenue = 'Bilik Mesyuarat Utama / Google Meet';
+        $this->noticeStartAt = date('Y-m-d\TH:i', strtotime('+2 days 09:00'));
+        $this->noticeEndAt = date('Y-m-d\TH:i', strtotime('+2 days 12:30'));
+        $this->noticeAgenda = 'Memuktamadkan Spesifikasi Teknikal (3-Lapisan), Jadual Harga BOQ, Technical/Financial Checklists, dan Nisbah Scoring.';
+        $this->showMeetingNoticeModal = true;
+    }
+
+    public function closeMeetingNoticeModal(): void
+    {
+        $this->showMeetingNoticeModal = false;
+    }
+
+    public function saveMeetingNotice(): void
+    {
+        if (trim($this->noticeSubject) === '') {
+            $this->addError('noticeSubject', 'Subject is required.');
+            return;
+        }
+
+        $focusMap = [
+            'JK Spesifikasi' => ['Technical Checklist', 'Financial Checklist', 'Technical Specification', 'Financial Pricelist', 'Scoring'],
+            'JK Penilaian Teknikal' => ['Technical Checklist', 'Technical Specification'],
+            'JK Penilaian Kewangan' => ['Financial Checklist', 'Financial Pricelist', 'Scoring'],
+            'JK Pembuka Tawaran' => ['Technical Checklist', 'Financial Checklist'],
+            'JK Lembaga Perolehan' => ['Scoring', 'Document for Procurement'],
+        ];
+
+        $this->meetingNotices[] = [
+            'id' => 'notice_' . time(),
+            'code' => 'NOTIS-' . strtoupper(str_replace(' ', '', $this->noticeCommitteeType)) . '-' . date('Y') . '/' . (count($this->meetingNotices) + 1),
+            'committee_type' => $this->noticeCommitteeType,
+            'subject' => $this->noticeSubject,
+            'venue' => $this->noticeVenue,
+            'start_at' => date('d M Y h:i A', strtotime($this->noticeStartAt)),
+            'end_at' => date('d M Y h:i A', strtotime($this->noticeEndAt)),
+            'agenda' => $this->noticeAgenda,
+            'status' => 'sent',
+            'recipients' => ['Appointed Committee Members of ' . $this->noticeCommitteeType],
+            'focus_tabs' => $focusMap[$this->noticeCommitteeType] ?? ['Committee'],
+        ];
+
+        $this->showMeetingNoticeModal = false;
+        session()->flash('success', 'Notis Mesyuarat ' . $this->noticeCommitteeType . ' telah diterbitkan dan dihantar.');
+    }
+
+    public function sendMeetingNotice(string $noticeId): void
+    {
+        foreach ($this->meetingNotices as &$n) {
+            if ($n['id'] === $noticeId) {
+                $n['status'] = 'sent';
+                session()->flash('success', 'Notis mesyuarat ' . $n['code'] . ' telah dihantar kepada ahli jawatankuasa.');
+                break;
+            }
+        }
+    }
+
     // Supplier Action Modal
     public function openSupplierActionModal(string $type, string $id): void
     {
@@ -968,7 +1068,7 @@ new class extends Component
                 class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'committee' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
             >
                 <x-heroicon-o-user-group class="w-4 h-4 shrink-0 {{ $activeTab === 'committee' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                Committee
+                Committee & Meeting Notice
             </button>
 
             {{-- Tab 3: Technical Checklist --}}
@@ -1016,7 +1116,7 @@ new class extends Component
                 Scoring
             </button>
 
-            {{-- Tab 8: Document for Procurement (New Printable Documents Tab) --}}
+            {{-- Tab 8: Document for Procurement --}}
             <button
                 wire:click="setTab('documents')"
                 class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'documents' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
@@ -1370,25 +1470,27 @@ new class extends Component
         @endif
     @endif
 
-    {{-- ════ TAB 2: COMMITTEE ════ --}}
+    {{-- ════ TAB 2: COMMITTEE & MEETING NOTICES ════ --}}
     @if($activeTab === 'committee')
         <x-card>
-            <div class="space-y-6">
+            <div class="space-y-8">
+                {{-- Header --}}
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
                     <div>
                         <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                             <x-heroicon-o-user-group class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                            Acquisition Evaluation Committee
+                            Acquisition Evaluation Committee & Meeting Notices
                         </h3>
                         <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                            Committee setup and appointed evaluation members for {{ $acquisition->project_number }}.
+                            Committee setup, appointed evaluation members, and official Meeting Notices (Notis Mesyuarat).
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <x-badge variant="info">
-                            {{ $acquisition->committee_type ? ($acquisition->committee_type instanceof \App\Enums\AcquisitionCommitteeType ? $acquisition->committee_type->label() : $acquisition->committee_type) : 'Unassigned Type' }}
-                        </x-badge>
+                    <div class="flex items-center gap-3">
+                        <x-button variant="primary" size="sm" wire:click="openMeetingNoticeModal" class="cursor-pointer">
+                            <x-heroicon-o-envelope class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Issue Meeting Notice
+                        </x-button>
                     </div>
                 </div>
 
@@ -1458,6 +1560,80 @@ new class extends Component
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                {{-- ── MEETING NOTICES SECTION (NOTIS MESYUARAT) ── --}}
+                <div class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                <x-heroicon-o-bell-alert class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Meeting Notices Schedule & Member Notifications
+                            </h4>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                                Issued meeting notices grouped by committee type (e.g. JK Spesifikasi, JK Penilaian Teknikal).
+                            </p>
+                        </div>
+
+                        <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                            {{ count($meetingNotices) }} Notices Issued
+                        </span>
+                    </div>
+
+                    <div class="space-y-4">
+                        @foreach($meetingNotices as $n)
+                            <div class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs space-y-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                                    <div class="flex items-center gap-3">
+                                        <span class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-mono text-xs font-bold">
+                                            {{ $n['code'] }}
+                                        </span>
+                                        <x-badge variant="primary">{{ $n['committee_type'] }}</x-badge>
+                                        @if($n['status'] === 'sent')
+                                            <x-badge variant="success" pill>Notice Issued & Sent</x-badge>
+                                        @else
+                                            <x-badge variant="warning" pill>Draft Notice</x-badge>
+                                        @endif
+                                    </div>
+
+                                    <div class="text-xs font-mono text-zinc-500 flex items-center gap-1.5">
+                                        <x-heroicon-o-clock class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                        <span>{{ $n['start_at'] }} — {{ $n['end_at'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <h5 class="text-sm font-bold text-zinc-900 dark:text-zinc-100">{{ $n['subject'] }}</h5>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400"><strong class="text-zinc-800 dark:text-zinc-200">Venue:</strong> {{ $n['venue'] }}</p>
+                                    <p class="text-xs text-zinc-600 dark:text-zinc-400"><strong class="text-zinc-800 dark:text-zinc-200">Agenda Focus:</strong> {{ $n['agenda'] }}</p>
+                                </div>
+
+                                {{-- Focus Tabs Links --}}
+                                <div class="flex items-center gap-2 flex-wrap text-xs">
+                                    <span class="text-zinc-400 font-medium">Meeting Scope:</span>
+                                    @foreach($n['focus_tabs'] as $tabName)
+                                        <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-mono text-xs border border-indigo-200 dark:border-indigo-800/40">
+                                            {{ $tabName }}
+                                        </span>
+                                    @endforeach
+                                </div>
+
+                                {{-- Recipient Officers --}}
+                                <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-4 text-xs">
+                                    <div class="flex items-center gap-1.5 text-zinc-500">
+                                        <x-heroicon-o-paper-airplane class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                        <span>Notified Members: <strong>{{ implode(', ', $n['recipients']) }}</strong></span>
+                                    </div>
+
+                                    @if($n['status'] === 'draft')
+                                        <x-button variant="primary" size="sm" wire:click="sendMeetingNotice('{{ $n['id'] }}')">
+                                            Send Notice Notification
+                                        </x-button>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -2433,6 +2609,70 @@ new class extends Component
         </x-card>
     @endif
 
+    {{-- ════ CREATE MEETING NOTICE MODAL (COMMITTEE TAB) ════ --}}
+    @if($showMeetingNoticeModal)
+        <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeMeetingNoticeModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-xl space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                        <x-heroicon-o-envelope class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        Terbitkan Notis Mesyuarat Jawatankuasa (Meeting Notice)
+                    </h3>
+                    <button wire:click="closeMeetingNoticeModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <form wire:submit="saveMeetingNotice" class="space-y-4">
+                    <div>
+                        <x-label for="noticeCommitteeType" :required="true">Kumpulan Jawatankuasa (Committee Type)</x-label>
+                        <select id="noticeCommitteeType" wire:model="noticeCommitteeType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                            <option value="JK Spesifikasi">JK Spesifikasi (Technical & Financial Specs, BOQ, Checklists, Scoring)</option>
+                            <option value="JK Penilaian Teknikal">JK Penilaian Teknikal (Pemarkahan Teknikal Pembekal)</option>
+                            <option value="JK Penilaian Kewangan">JK Penilaian Kewangan (Pemarkahan Kewangan BOQ)</option>
+                            <option value="JK Pembuka Tawaran">JK Pembuka Tawaran (Peti Cadangan Tender)</option>
+                            <option value="JK Lembaga Perolehan">JK Lembaga Perolehan (Keputusan Kelulusan Final)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <x-label for="noticeSubject" :required="true">Tajuk / Subjek Notis Mesyuarat</x-label>
+                        <input id="noticeSubject" type="text" wire:model="noticeSubject" placeholder="e.g. Mesyuarat Penyediaan Spesifikasi & Semakan Checklist" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        @error('noticeSubject') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="noticeStartAt" :required="true">Tarikh & Masa Mula (Start)</x-label>
+                            <input id="noticeStartAt" type="datetime-local" wire:model="noticeStartAt" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="noticeEndAt" :required="true">Tarikh & Masa Tamat (End)</x-label>
+                            <input id="noticeEndAt" type="datetime-local" wire:model="noticeEndAt" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-label for="noticeVenue">Lokasi / Pautan Mesyuarat (Venue)</x-label>
+                        <input id="noticeVenue" type="text" wire:model="noticeVenue" placeholder="e.g. Bilik Mesyuarat Utama / Google Meet Link" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                    </div>
+
+                    <div>
+                        <x-label for="noticeAgenda">Agenda & Skop Perbincangan</x-label>
+                        <textarea id="noticeAgenda" wire:model="noticeAgenda" rows="3" placeholder="Jelaskan skop tugas dan dokumen yang perlu disemak oleh ahli jawatankuasa..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" type="button" wire:click="closeMeetingNoticeModal">Batal</x-button>
+                        <x-button variant="primary" size="sm" type="submit">Terbitkan & Hantar Notis</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
     {{-- ════ PRINTABLE PROCUREMENT DOCUMENT PREVIEW MODAL ════ --}}
     @if($showProcurementDocModal && $activeProcurementDoc)
         <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
@@ -2611,6 +2851,265 @@ new class extends Component
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ════ ADD TECHNICAL SPEC MODAL ════ --}}
+    @if($showAddTechSpecModal)
+        <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddTechSpecModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                        Tambah Spesifikasi Teknikal (Tahap {{ $newSpecLevel }})
+                    </h3>
+                    <button wire:click="closeAddTechSpecModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <form wire:submit="saveTechSpecItem" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="newSpecCode" :required="true">Kod Item</x-label>
+                            <input id="newSpecCode" type="text" wire:model="newSpecCode" placeholder="e.g. 1.0, 1.1, 1.1.1" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newSpecWeightage">Pemberat (%) / Markah Maks</x-label>
+                            <input id="newSpecWeightage" type="number" step="0.5" wire:model="newSpecWeightage" placeholder="10.0" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-label for="newSpecName" :required="true">Nama Spesifikasi / Kategori</x-label>
+                        <input id="newSpecName" type="text" wire:model="newSpecName" placeholder="Tajuk spesifikasi teknikal..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        @error('newSpecName') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <x-label for="newSpecDesc">Keterangan / Terperinci</x-label>
+                        <textarea id="newSpecDesc" wire:model="newSpecDesc" rows="2" placeholder="Terangkan keperluan spesifikasi min..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
+                    </div>
+
+                    @if($newSpecLevel === 3)
+                        <div>
+                            <x-label for="newSpecType">Jenis Penilaian</x-label>
+                            <select id="newSpecType" wire:model="newSpecType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="text">Teks / Penjelasan</option>
+                                <option value="number">Nombor / Nilai Terukur</option>
+                                <option value="boolean">Pematuhan Ya/Tidak</option>
+                                <option value="choice">Pilihan Peringkat SLA</option>
+                            </select>
+                        </div>
+                    @endif
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddTechSpecModal">Batal</x-button>
+                        <x-button variant="primary" size="sm" type="submit">Simpan Spesifikasi</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    {{-- ════ ADD FINANCIAL PRICELIST MODAL ════ --}}
+    @if($showAddPricelistModal)
+        <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddPricelistModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                        Tambah Perkara Jadual Harga (BOQ)
+                    </h3>
+                    <button wire:click="closeAddPricelistModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <form wire:submit="savePricelistItem" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="newPriceCode" :required="true">Kod Rujukan BOQ</x-label>
+                            <input id="newPriceCode" type="text" wire:model="newPriceCode" placeholder="BOQ-01" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newPriceUom">Unit Ukuran (UOM)</x-label>
+                            <input id="newPriceUom" type="text" wire:model="newPriceUom" placeholder="e.g. Unit, Lesen, Pakej" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-label for="newPriceName" :required="true">Keterangan Barangan / Perkhidmatan</x-label>
+                        <input id="newPriceName" type="text" wire:model="newPriceName" placeholder="Keterangan item jadual harga..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        @error('newPriceName') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <x-label for="newPriceQty">Kuantiti</x-label>
+                            <input id="newPriceQty" type="number" min="1" wire:model="newPriceQty" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newPriceEstUnitPrice">Harga Unit (RM)</x-label>
+                            <input id="newPriceEstUnitPrice" type="number" step="0.01" wire:model="newPriceEstUnitPrice" placeholder="0.00" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newPriceWeightage">Pemberat (%)</x-label>
+                            <input id="newPriceWeightage" type="number" step="0.5" wire:model="newPriceWeightage" placeholder="10" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddPricelistModal">Batal</x-button>
+                        <x-button variant="primary" size="sm" type="submit">Simpan Item Harga</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    {{-- ════ ADD CHECKLIST ITEM MODAL (OFFICER) ════ --}}
+    @if($showAddItemModal)
+        <div
+            x-data
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+        >
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddItemModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                        Tambah Perkara Senarai Semak {{ ucfirst($newItemChecklistType) }}
+                    </h3>
+                    <button wire:click="closeAddItemModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <form wire:submit="saveChecklistItem" class="space-y-4">
+                    <div>
+                        <x-label for="newItemTitle" :required="true">Tajuk Perkara / Nama Dokumen</x-label>
+                        <input id="newItemTitle" type="text" wire:model="newItemTitle" placeholder="contoh: Borang Pengesahan Lesen SIRIM" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500">
+                        @error('newItemTitle') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <x-label for="newItemDesc">Keterangan / Arahan Kepada Pembekal</x-label>
+                        <textarea id="newItemDesc" wire:model="newItemDesc" rows="2" placeholder="Jelaskan apa yang perlu dimuat naik atau diisi oleh pembekal..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="newItemInputType" :required="true">Jenis Keperluan Input</x-label>
+                            <select id="newItemInputType" wire:model.live="newItemInputType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="file_upload">Muat Naik Fail</option>
+                                <option value="file_download_upload">Muat Turun & Muat Naik</option>
+                                <option value="text_input">Jawapan Teks</option>
+                                <option value="number_input">Input Nombor</option>
+                                <option value="boolean">Kotak Semak Pematuhan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <x-label for="newItemWeightage">Pemberat (%)</x-label>
+                            <input id="newItemWeightage" type="number" step="0.5" wire:model="newItemWeightage" placeholder="15" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    @if(in_array($newItemInputType, ['file_download_upload', 'file_download']))
+                        <div>
+                            <x-label for="newItemTemplateFilename">Nama Fail Templat (Dokumen Rujukan Pegawai)</x-label>
+                            <input id="newItemTemplateFilename" type="text" wire:model="newItemTemplateFilename" placeholder="contoh: Borang_Templat_Spesifikasi.pdf" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    @endif
+
+                    <label class="flex items-center gap-3 cursor-pointer pt-2">
+                        <input type="checkbox" wire:model="newItemIsRequired" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+                        <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200">Tanda sebagai Wajib (Mandatory Item)</span>
+                    </label>
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddItemModal">Batal</x-button>
+                        <x-button variant="primary" size="sm" type="submit">Simpan Perkara</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    {{-- ════ SUPPLIER PREVIEW ACTION MODAL ════ --}}
+    @if($showSupplierActionModal && $activeSupplierItem)
+        <div
+            x-data
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+        >
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeSupplierActionModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
+                <div class="flex items-start justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <div>
+                        <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Tindakan Penyerahan Pembekal</span>
+                        <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5">
+                            {{ $activeSupplierItem['title'] }}
+                        </h3>
+                    </div>
+                    <button wire:click="closeSupplierActionModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                        {{ $activeSupplierItem['desc'] }}
+                    </p>
+
+                    @if(in_array($activeSupplierItem['input_type'], ['file_download_upload', 'file_download']))
+                        <div class="p-3 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2 text-xs text-indigo-700 dark:text-indigo-300 font-medium">
+                                <x-heroicon-o-arrow-down-tray class="w-4 h-4 shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                <span>Templat: <strong class="font-mono">{{ $activeSupplierItem['template_filename'] }}</strong></span>
+                            </div>
+                            <a href="#" onclick="alert('Simulasi muat turun templat'); return false;" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-500">
+                                Muat Turun
+                            </a>
+                        </div>
+                    @endif
+
+                    {{-- Dynamic Input Field --}}
+                    @if(in_array($activeSupplierItem['input_type'], ['file_upload', 'file_download_upload']))
+                        <div class="space-y-2">
+                            <x-label for="supplierUploadedFilename">Pilih Fail Dokumen Untuk Dimuat Naik</x-label>
+                            <input id="supplierUploadedFilename" type="text" wire:model="supplierUploadedFilename" placeholder="nama_fail_dokumen_pembekal.pdf" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                            <p class="text-xs text-zinc-400 font-mono">Format: {{ $activeSupplierItem['allowed_extensions'] ?: '.pdf, .docx' }} (Max 25MB)</p>
+                        </div>
+                    @elseif($activeSupplierItem['input_type'] === 'text_input')
+                        <div class="space-y-2">
+                            <x-label for="supplierInputText">Masukkan Maklumat / Teks Jawapan</x-label>
+                            <textarea id="supplierInputText" wire:model="supplierInputText" rows="3" placeholder="Nyatakan jawapan atau maklumat perkhidmatan..." class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
+                        </div>
+                    @elseif($activeSupplierItem['input_type'] === 'number_input')
+                        <div class="space-y-2">
+                            <x-label for="supplierInputNumber">Masukkan Nilai Nombor / Amaun RM</x-label>
+                            <input id="supplierInputNumber" type="number" step="0.01" wire:model="supplierInputNumber" placeholder="0.00" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    @elseif($activeSupplierItem['input_type'] === 'boolean')
+                        <label class="flex items-center gap-3 p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 cursor-pointer">
+                            <input type="checkbox" wire:model="supplierInputBoolean" class="rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-200">Saya mengesahkan patuh kepada semua syarat dan spesifikasi yang ditetapkan.</span>
+                        </label>
+                    @endif
+                </div>
+
+                <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                    <x-button variant="outline" size="sm" wire:click="closeSupplierActionModal">Tutup</x-button>
+                    <x-button variant="primary" size="sm" wire:click="submitSupplierAction">Simpan Penyerahan</x-button>
                 </div>
             </div>
         </div>
