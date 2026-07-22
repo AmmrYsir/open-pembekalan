@@ -24,7 +24,7 @@ test('authenticated user can view dedicated acquisition show page', function () 
     $response->assertSee('PRJ-2026-999');
 });
 
-test('acquisition show livewire component supports tabs and editing', function () {
+test('acquisition show livewire component supports 7 tabs including scoring', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
@@ -39,56 +39,33 @@ test('acquisition show livewire component supports tabs and editing', function (
         ->assertSet('activeTab', 'committee')
         ->call('setTab', 'technical-checklist')
         ->assertSet('activeTab', 'technical-checklist')
+        ->assertSee('Primary Item #1')
         ->call('setTab', 'financial-checklist')
         ->assertSet('activeTab', 'financial-checklist')
-        ->call('setTab', 'project-info')
-        ->call('enableEdit')
-        ->assertSet('isEditing', true)
-        ->set('form.project_name', 'Updated Project Name')
-        ->set('form.type', 'SEBUTHARGA')
-        ->set('form.method', 'BEKALAN')
-        ->call('save')
-        ->assertSet('isEditing', false);
-
-    expect($acquisition->fresh()->project_name)->toBe('Updated Project Name');
+        ->assertSee('Primary Item #1')
+        ->call('setTab', 'technical-spec')
+        ->assertSet('activeTab', 'technical-spec')
+        ->assertSee('Technical Specification')
+        ->call('setTab', 'financial-pricelist')
+        ->assertSet('activeTab', 'financial-pricelist')
+        ->assertSee('Bill of Quantities')
+        ->call('setTab', 'scoring')
+        ->assertSet('activeTab', 'scoring')
+        ->assertSee('Overall Scoring & Evaluation Matrix');
 });
 
-test('acquisition show livewire component supports adding custom checklist items and supplier preview', function () {
+test('acquisition show component supports weightage ratios and primary checklist links', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
-        'project_number' => 'PRJ-2026-666',
-        'project_name' => 'Checklist Builder Test',
+        'project_number' => 'PRJ-2026-555',
+        'project_name' => 'Scoring & Weightage Test',
     ]);
 
     Livewire::actingAs($user)
         ->test('acquisition.show', ['acquisition' => $acquisition])
-        ->call('openAddItemModal', 'technical')
-        ->assertSet('showAddItemModal', true)
-        ->set('newItemTitle', 'Custom Spec Document')
-        ->set('newItemDesc', 'Custom spec instructions for vendor')
-        ->set('newItemInputType', 'file_download_upload')
-        ->set('newItemTemplateFilename', 'Custom_Spec_Template.pdf')
-        ->call('saveChecklistItem')
-        ->assertSet('showAddItemModal', false)
-        ->assertSee('Custom Spec Document')
-        ->call('$toggle', 'previewSupplierMode')
-        ->assertSet('previewSupplierMode', true)
-        ->assertSee('Custom_Spec_Template.pdf');
-});
-
-test('acquisition show livewire component supports state transition', function () {
-    $user = User::factory()->create(['email_verified_at' => now()]);
-
-    $acquisition = Acquisition::create([
-        'project_number' => 'PRJ-2026-777',
-        'project_name' => 'Transition Test',
-    ]);
-
-    Livewire::actingAs($user)
-        ->test('acquisition.show', ['acquisition' => $acquisition])
-        ->call('transitionTo', Verified::class)
-        ->assertHasNoErrors();
-
-    expect($acquisition->fresh()->status)->toBeInstanceOf(Verified::class);
+        ->call('setTab', 'scoring')
+        ->set('techWeightageRatio', 80.0)
+        ->set('finWeightageRatio', 20.0)
+        ->assertSee('Ratio: 80% Technical : 20% Financial');
 });

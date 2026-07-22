@@ -19,17 +19,18 @@ new class extends Component
     public Acquisition $acquisition;
     public AcquisitionForm $form;
 
-    public string $activeTab = 'project-info';
+    public string $activeTab = 'project-info'; // 'project-info' | 'committee' | 'technical-checklist' | 'financial-checklist' | 'technical-spec' | 'financial-pricelist' | 'scoring'
     public bool $isEditing = false;
     public bool $previewSupplierMode = false;
 
-    // Add Item Modal State (Officer)
+    // Add Checklist Item Modal State (Officer)
     public bool $showAddItemModal = false;
-    public string $newItemChecklistType = 'technical'; // 'technical' | 'financial'
+    public string $newItemChecklistType = 'technical';
     public string $newItemTitle = '';
     public string $newItemDesc = '';
     public string $newItemInputType = 'file_upload';
     public string $newItemTemplateFilename = '';
+    public float $newItemWeightage = 15.0;
     public bool $newItemIsRequired = true;
 
     // Supplier Preview Action Modal State
@@ -41,18 +42,44 @@ new class extends Component
     public bool $supplierInputBoolean = false;
     public string $supplierUploadedFilename = '';
 
-    // Technical Checklist Items
+    // Modals for Technical Spec & Financial Pricelist
+    public bool $showAddTechSpecModal = false;
+    public int $newSpecLevel = 1;
+    public string $newSpecParentId = '';
+    public string $newSpecCode = '';
+    public string $newSpecName = '';
+    public string $newSpecDesc = '';
+    public string $newSpecType = 'text';
+    public float $newSpecWeightage = 10.0;
+
+    public bool $showAddPricelistModal = false;
+    public string $newPriceCode = '';
+    public string $newPriceName = '';
+    public string $newPriceUom = 'Unit';
+    public int $newPriceQty = 1;
+    public float $newPriceEstUnitPrice = 0.0;
+    public float $newPriceWeightage = 10.0;
+
+    // Scoring Tab Configurations
+    public float $techWeightageRatio = 70.0;
+    public float $finWeightageRatio = 30.0;
+    public float $passingTechMark = 70.0;
+
+    // Technical Checklist Items (Item #1 is Technical Specification)
     public array $technicalChecklist = [
         [
             'id' => 'tech_1',
-            'title' => 'Borang Spesifikasi Teknikal & Jadual Pematuhan',
-            'desc' => 'Sila muat turun templat borang spesifikasi teknikal, isi dan lengkapkan sebelum memuat naik semula.',
+            'title' => '1. Borang Spesifikasi Teknikal (Technical Specification Sheet)',
+            'desc' => 'Dokumen spesifikasi teknikal terperinci mengikut struktur 3-lapisan (Rujuk Tab Technical Specification).',
             'input_type' => 'file_download_upload',
-            'template_filename' => 'Templat_Spesifikasi_Teknikal_V1.pdf',
+            'template_filename' => 'Spesifikasi_Teknikal_Lengkap_V1.pdf',
             'is_required' => true,
+            'weightage' => 30.0,
             'allowed_extensions' => '.pdf,.docx',
             'status' => 'pending',
             'value' => null,
+            'is_primary_link' => true,
+            'target_tab' => 'technical-spec',
         ],
         [
             'id' => 'tech_2',
@@ -61,6 +88,7 @@ new class extends Component
             'input_type' => 'file_upload',
             'template_filename' => null,
             'is_required' => true,
+            'weightage' => 20.0,
             'allowed_extensions' => '.pdf',
             'status' => 'pending',
             'value' => null,
@@ -72,6 +100,7 @@ new class extends Component
             'input_type' => 'file_upload',
             'template_filename' => null,
             'is_required' => true,
+            'weightage' => 20.0,
             'allowed_extensions' => '.pdf,.jpg,.png',
             'status' => 'pending',
             'value' => null,
@@ -83,6 +112,7 @@ new class extends Component
             'input_type' => 'text_input',
             'template_filename' => null,
             'is_required' => true,
+            'weightage' => 15.0,
             'allowed_extensions' => null,
             'status' => 'pending',
             'value' => null,
@@ -94,44 +124,38 @@ new class extends Component
             'input_type' => 'number_input',
             'template_filename' => null,
             'is_required' => true,
-            'allowed_extensions' => null,
-            'status' => 'pending',
-            'value' => null,
-        ],
-        [
-            'id' => 'tech_6',
-            'title' => 'Pengesahan Pematuhan Syarat Tempoh Serahan',
-            'desc' => 'Sahkan persetujuan membekalkan mengikut tempoh jadual serahan yang ditetapkan.',
-            'input_type' => 'boolean',
-            'template_filename' => null,
-            'is_required' => true,
+            'weightage' => 15.0,
             'allowed_extensions' => null,
             'status' => 'pending',
             'value' => null,
         ],
     ];
 
-    // Financial Checklist Items
+    // Financial Checklist Items (Item #1 is Financial Pricelist)
     public array $financialChecklist = [
         [
             'id' => 'fin_1',
+            'title' => '1. Jadual Harga Ringkasan & Pecahan BOQ (Financial Pricelist Schedule)',
+            'desc' => 'Jadual pecahan harga dan tawaran bersih kewangan bagi setiap item BOQ (Rujuk Tab Financial Pricelist).',
+            'input_type' => 'file_download_upload',
+            'template_filename' => 'Templat_Jadual_Harga_BOQ.xlsx',
+            'is_required' => true,
+            'weightage' => 35.0,
+            'allowed_extensions' => '.xlsx,.pdf',
+            'status' => 'pending',
+            'value' => null,
+            'is_primary_link' => true,
+            'target_tab' => 'financial-pricelist',
+        ],
+        [
+            'id' => 'fin_2',
             'title' => 'Penyata Bank 3 Bulan Terkini',
             'desc' => 'Muat naik penyata akaun bank syarikat yang telah disahkan bagi 3 bulan terkini.',
             'input_type' => 'file_upload',
             'template_filename' => null,
             'is_required' => true,
+            'weightage' => 25.0,
             'allowed_extensions' => '.pdf',
-            'status' => 'pending',
-            'value' => null,
-        ],
-        [
-            'id' => 'fin_2',
-            'title' => 'Borang Ringkasan Tawaran Harga (Summary of Price)',
-            'desc' => 'Sila muat turun templat Jadual Harga, isi maklumat pecahan harga dan muat naik semula beserta amaun tawaran bersih.',
-            'input_type' => 'file_download_upload',
-            'template_filename' => 'Templat_Jadual_Harga_Pekeliling.xlsx',
-            'is_required' => true,
-            'allowed_extensions' => '.xlsx,.pdf',
             'status' => 'pending',
             'value' => null,
         ],
@@ -142,6 +166,7 @@ new class extends Component
             'input_type' => 'number_input',
             'template_filename' => null,
             'is_required' => true,
+            'weightage' => 20.0,
             'allowed_extensions' => null,
             'status' => 'pending',
             'value' => null,
@@ -153,6 +178,7 @@ new class extends Component
             'input_type' => 'file_upload',
             'template_filename' => null,
             'is_required' => false,
+            'weightage' => 10.0,
             'allowed_extensions' => '.pdf',
             'status' => 'pending',
             'value' => null,
@@ -164,20 +190,181 @@ new class extends Component
             'input_type' => 'file_download_upload',
             'template_filename' => 'Borang_Akuan_Cukai_Deposit.pdf',
             'is_required' => true,
+            'weightage' => 10.0,
             'allowed_extensions' => '.pdf',
             'status' => 'pending',
             'value' => null,
         ],
+    ];
+
+    // Technical Specification (3-Layer Nested Structure)
+    public array $technicalSpecs = [
         [
-            'id' => 'fin_6',
-            'title' => 'Maklumat Kemudahan Kredit / Baris Kredit Bank',
-            'desc' => 'Nyatakan nama bank dan nilai had kemudahan kredit yang diluluskan.',
-            'input_type' => 'text_input',
-            'template_filename' => null,
-            'is_required' => false,
-            'allowed_extensions' => null,
-            'status' => 'pending',
-            'value' => null,
+            'id' => 'spec_cat_1',
+            'level' => 1,
+            'code' => '1.0',
+            'name' => 'INFRASTRUKTUR PELAYAN & HARDWARE',
+            'desc' => 'Spesifikasi fizikal pelayan, pemproses, dan memori utama.',
+            'type' => 'category',
+            'weightage' => 40.0,
+            'children' => [
+                [
+                    'id' => 'spec_subcat_1_1',
+                    'level' => 2,
+                    'code' => '1.1',
+                    'name' => 'Unit Pemprosesan & Memori Utama',
+                    'desc' => 'Spesifikasi teras pemprosesan CPU & RAM.',
+                    'type' => 'subcategory',
+                    'weightage' => 25.0,
+                    'children' => [
+                        [
+                            'id' => 'spec_item_1_1_1',
+                            'level' => 3,
+                            'code' => '1.1.1',
+                            'name' => 'Pemproses CPU (Processor Architecture)',
+                            'desc' => 'Minimum Dual Intel Xeon Scalable 3.2GHz (Min 32 Cores/64 Threads).',
+                            'type' => 'text',
+                            'weightage' => 15.0,
+                            'max_mark' => 15,
+                        ],
+                        [
+                            'id' => 'spec_item_1_1_2',
+                            'level' => 3,
+                            'code' => '1.1.2',
+                            'name' => 'Kapasiti Memori Utama (RAM)',
+                            'desc' => 'Minimum 128GB DDR5 ECC Registered RAM (Boleh dinaik taraf ke 512GB).',
+                            'type' => 'number',
+                            'weightage' => 10.0,
+                            'max_mark' => 10,
+                        ],
+                    ],
+                ],
+                [
+                    'id' => 'spec_subcat_1_2',
+                    'level' => 2,
+                    'code' => '1.2',
+                    'name' => 'Sistem Storan & Controller (Storage System)',
+                    'desc' => 'Spesifikasi pemacu NVMe/SSD & RAID Controller.',
+                    'type' => 'subcategory',
+                    'weightage' => 15.0,
+                    'children' => [
+                        [
+                            'id' => 'spec_item_1_2_1',
+                            'level' => 3,
+                            'code' => '1.2.1',
+                            'name' => 'Kapasiti Storan Enterprise NVMe SSD',
+                            'desc' => 'Minimum 4x 1.92TB Enterprise NVMe SSD RAID 10.',
+                            'type' => 'text',
+                            'weightage' => 15.0,
+                            'max_mark' => 15,
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        [
+            'id' => 'spec_cat_2',
+            'level' => 1,
+            'code' => '2.0',
+            'name' => 'PERISIAN DAN PERLESENAN (SOFTWARE & LICENSING)',
+            'desc' => 'Perlesenan sistem pengoperasian, virtualisasi, dan keselamatan.',
+            'type' => 'category',
+            'weightage' => 35.0,
+            'children' => [
+                [
+                    'id' => 'spec_subcat_2_1',
+                    'level' => 2,
+                    'code' => '2.1',
+                    'name' => 'Sistem Pengoperasian & Virtualisasi',
+                    'desc' => 'Lesen Enterprise OS & Hypervisor.',
+                    'type' => 'subcategory',
+                    'weightage' => 20.0,
+                    'children' => [
+                        [
+                            'id' => 'spec_item_2_1_1',
+                            'level' => 3,
+                            'code' => '2.1.1',
+                            'name' => 'Lesen Red Hat Enterprise Linux / Windows Server Enterprise',
+                            'desc' => 'Lesen rasmi berserta sokongan kemas kini 3 tahun.',
+                            'type' => 'boolean',
+                            'weightage' => 20.0,
+                            'max_mark' => 20,
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        [
+            'id' => 'spec_cat_3',
+            'level' => 1,
+            'code' => '3.0',
+            'name' => 'SOKONGAN & PERKHIDMATAN (SUPPORT & SLA)',
+            'desc' => 'Syarat perkhidmatan sokongan teknikal dan latihan.',
+            'type' => 'category',
+            'weightage' => 25.0,
+            'children' => [
+                [
+                    'id' => 'spec_subcat_3_1',
+                    'level' => 2,
+                    'code' => '3.1',
+                    'name' => 'Penyelenggaraan & Masa Tindak Balas SLA',
+                    'desc' => 'Jadual sokongan dan masa tindak balas kerosakan.',
+                    'type' => 'subcategory',
+                    'weightage' => 25.0,
+                    'children' => [
+                        [
+                            'id' => 'spec_item_3_1_1',
+                            'level' => 3,
+                            'code' => '3.1.1',
+                            'name' => 'Masa Tindak Balas Tapak 24x7 (On-Site Response Time)',
+                            'desc' => 'Masa tindak balasan kerosakan kritikal dalam tempoh 4 jam.',
+                            'type' => 'choice',
+                            'weightage' => 25.0,
+                            'max_mark' => 25,
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    // Financial Pricelist (Bill of Quantities / BOQ Schedule)
+    public array $financialPricelist = [
+        [
+            'id' => 'price_1',
+            'item_code' => 'BOQ-01',
+            'name' => 'Bekalan & Pemasangan Pelayan Enterprise High Performance',
+            'uom' => 'Unit',
+            'qty' => 2,
+            'est_unit_price' => 45000.00,
+            'weightage' => 40.0,
+        ],
+        [
+            'id' => 'price_2',
+            'item_code' => 'BOQ-02',
+            'name' => 'Perlesenan Sistem Pengoperasian Enterprise (3 Tahun)',
+            'uom' => 'Lesen',
+            'qty' => 2,
+            'est_unit_price' => 12000.00,
+            'weightage' => 20.0,
+        ],
+        [
+            'id' => 'price_3',
+            'item_code' => 'BOQ-03',
+            'name' => 'Perkhidmatan Konfigurasi & Migrasi Data Rangkaian',
+            'uom' => 'Pakej',
+            'qty' => 1,
+            'est_unit_price' => 15000.00,
+            'weightage' => 20.0,
+        ],
+        [
+            'id' => 'price_4',
+            'item_code' => 'BOQ-04',
+            'name' => 'Latihan Pentadbiran Sistem & Penyelenggaraan SLA 24x7',
+            'uom' => 'Sesi',
+            'qty' => 2,
+            'est_unit_price' => 7500.00,
+            'weightage' => 20.0,
         ],
     ];
 
@@ -220,6 +407,7 @@ new class extends Component
         session()->flash('success', 'Status updated to ' . $this->acquisition->status->label());
     }
 
+    // Modal Handlers
     public function openAddItemModal(string $checklistType): void
     {
         $this->newItemChecklistType = $checklistType;
@@ -227,6 +415,7 @@ new class extends Component
         $this->newItemDesc = '';
         $this->newItemInputType = 'file_upload';
         $this->newItemTemplateFilename = '';
+        $this->newItemWeightage = 15.0;
         $this->newItemIsRequired = true;
         $this->showAddItemModal = true;
     }
@@ -250,6 +439,7 @@ new class extends Component
             'input_type' => $this->newItemInputType,
             'template_filename' => in_array($this->newItemInputType, ['file_download_upload', 'file_download']) ? ($this->newItemTemplateFilename ?: 'Document_Template.pdf') : null,
             'is_required' => $this->newItemIsRequired,
+            'weightage' => (float) $this->newItemWeightage,
             'allowed_extensions' => str_contains($this->newItemInputType, 'file') ? '.pdf,.docx,.xlsx' : null,
             'status' => 'pending',
             'value' => null,
@@ -292,12 +482,132 @@ new class extends Component
         }
     }
 
-    // Supplier Preview Action Modal Handlers
+    // Technical Spec Modal Handlers
+    public function openAddTechSpecModal(int $level = 1, string $parentId = ''): void
+    {
+        $this->newSpecLevel = $level;
+        $this->newSpecParentId = $parentId;
+        $this->newSpecCode = '';
+        $this->newSpecName = '';
+        $this->newSpecDesc = '';
+        $this->newSpecType = $level === 3 ? 'text' : ($level === 1 ? 'category' : 'subcategory');
+        $this->newSpecWeightage = 10.0;
+        $this->showAddTechSpecModal = true;
+    }
+
+    public function closeAddTechSpecModal(): void
+    {
+        $this->showAddTechSpecModal = false;
+    }
+
+    public function saveTechSpecItem(): void
+    {
+        if (trim($this->newSpecName) === '') {
+            $this->addError('newSpecName', 'Specification item name is required.');
+            return;
+        }
+
+        $newItem = [
+            'id' => 'spec_' . time(),
+            'level' => $this->newSpecLevel,
+            'code' => $this->newSpecCode ?: ($this->newSpecLevel === 1 ? '4.0' : '4.1'),
+            'name' => $this->newSpecName,
+            'desc' => $this->newSpecDesc,
+            'type' => $this->newSpecType,
+            'weightage' => (float) $this->newSpecWeightage,
+            'max_mark' => $this->newSpecLevel === 3 ? (int) $this->newSpecWeightage : null,
+            'children' => [],
+        ];
+
+        if ($this->newSpecLevel === 1) {
+            $this->technicalSpecs[] = $newItem;
+        } elseif ($this->newSpecLevel === 2) {
+            foreach ($this->technicalSpecs as &$cat) {
+                if ($cat['id'] === $this->newSpecParentId) {
+                    $cat['children'][] = $newItem;
+                    break;
+                }
+            }
+        } elseif ($this->newSpecLevel === 3) {
+            foreach ($this->technicalSpecs as &$cat) {
+                foreach ($cat['children'] as &$sub) {
+                    if ($sub['id'] === $this->newSpecParentId) {
+                        $sub['children'][] = $newItem;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        $this->showAddTechSpecModal = false;
+        session()->flash('success', 'Technical specification item added.');
+    }
+
+    public function deleteTechSpecNode(string $id): void
+    {
+        $this->technicalSpecs = array_values(array_filter($this->technicalSpecs, function($cat) use ($id) {
+            if ($cat['id'] === $id) return false;
+            $cat['children'] = array_values(array_filter($cat['children'], function($sub) use ($id) {
+                if ($sub['id'] === $id) return false;
+                $sub['children'] = array_values(array_filter($sub['children'], fn($item) => $item['id'] !== $id));
+                return true;
+            }));
+            return true;
+        }));
+
+        session()->flash('success', 'Specification item deleted.');
+    }
+
+    // Financial Pricelist Modal Handlers
+    public function openAddPricelistModal(): void
+    {
+        $this->newPriceCode = 'BOQ-0' . (count($this->financialPricelist) + 1);
+        $this->newPriceName = '';
+        $this->newPriceUom = 'Unit';
+        $this->newPriceQty = 1;
+        $this->newPriceEstUnitPrice = 0.0;
+        $this->newPriceWeightage = 10.0;
+        $this->showAddPricelistModal = true;
+    }
+
+    public function closeAddPricelistModal(): void
+    {
+        $this->showAddPricelistModal = false;
+    }
+
+    public function savePricelistItem(): void
+    {
+        if (trim($this->newPriceName) === '') {
+            $this->addError('newPriceName', 'Item description is required.');
+            return;
+        }
+
+        $this->financialPricelist[] = [
+            'id' => 'price_' . time(),
+            'item_code' => $this->newPriceCode ?: 'BOQ-' . rand(10, 99),
+            'name' => $this->newPriceName,
+            'uom' => $this->newPriceUom,
+            'qty' => (int) $this->newPriceQty,
+            'est_unit_price' => (float) $this->newPriceEstUnitPrice,
+            'weightage' => (float) $this->newPriceWeightage,
+        ];
+
+        $this->showAddPricelistModal = false;
+        session()->flash('success', 'Pricelist item added.');
+    }
+
+    public function deletePricelistItem(string $id): void
+    {
+        $this->financialPricelist = array_values(array_filter($this->financialPricelist, fn($item) => $item['id'] !== $id));
+        session()->flash('success', 'Pricelist item removed.');
+    }
+
+    // Supplier Action Modal
     public function openSupplierActionModal(string $type, string $id): void
     {
         $this->activeSupplierType = $type;
         $items = $type === 'technical' ? $this->technicalChecklist : $this->financialChecklist;
-        
+
         foreach ($items as $item) {
             if ($item['id'] === $id) {
                 $this->activeSupplierItem = $item;
@@ -550,7 +860,7 @@ new class extends Component
         </div>
     </x-card>
 
-    {{-- ── Tab Navigation Bar ── --}}
+    {{-- ── Tab Navigation Bar (7 Tabs) ── --}}
     <div class="border-b border-zinc-200 dark:border-zinc-800">
         <nav class="-mb-px flex gap-6 overflow-x-auto" aria-label="Tabs">
             {{-- Tab 1: Project Information --}}
@@ -587,6 +897,33 @@ new class extends Component
             >
                 <x-heroicon-o-banknotes class="w-4 h-4 shrink-0 {{ $activeTab === 'financial-checklist' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                 Financial Checklist
+            </button>
+
+            {{-- Tab 5: Technical Specification (3-Layer Nested) --}}
+            <button
+                wire:click="setTab('technical-spec')"
+                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'technical-spec' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
+            >
+                <x-heroicon-o-cpu-chip class="w-4 h-4 shrink-0 {{ $activeTab === 'technical-spec' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                Technical Specification
+            </button>
+
+            {{-- Tab 6: Financial Pricelist --}}
+            <button
+                wire:click="setTab('financial-pricelist')"
+                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'financial-pricelist' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
+            >
+                <x-heroicon-o-calculator class="w-4 h-4 shrink-0 {{ $activeTab === 'financial-pricelist' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                Financial Pricelist
+            </button>
+
+            {{-- Tab 7: Scoring (New Evaluation Tab) --}}
+            <button
+                wire:click="setTab('scoring')"
+                class="group inline-flex items-center gap-2 py-3 px-1 border-b-2 text-sm font-medium whitespace-nowrap cursor-pointer transition-colors {{ $activeTab === 'scoring' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700' }}"
+            >
+                <x-heroicon-o-chart-bar class="w-4 h-4 shrink-0 {{ $activeTab === 'scoring' ? 'text-emerald-500' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                Scoring
             </button>
         </nav>
     </div>
@@ -1030,9 +1367,12 @@ new class extends Component
 
     {{-- ════ TAB 3: TECHNICAL CHECKLIST ════ --}}
     @if($activeTab === 'technical-checklist')
+        @php
+            $totalTechChecklistWeightage = array_reduce($technicalChecklist, fn($acc, $i) => $acc + ($i['weightage'] ?? 0), 0);
+        @endphp
         <x-card>
             <div class="space-y-6">
-                {{-- Clean Header --}}
+                {{-- Clean Header with Total Weightage --}}
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
                     <div>
                         <div class="flex items-center gap-2">
@@ -1045,9 +1385,14 @@ new class extends Component
                             @else
                                 <x-badge variant="success" pill>Officer Mode</x-badge>
                             @endif
+
+                            {{-- Total Weightage Badge --}}
+                            <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
+                                Total Weightage: {{ $totalTechChecklistWeightage }}%
+                            </span>
                         </div>
                         <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                            Configure required technical documents, template downloads, and input fields for suppliers to fulfill.
+                            Configure required technical submission documents. <strong>Item #1 is linked directly to Technical Specification</strong>.
                         </p>
                     </div>
 
@@ -1078,18 +1423,32 @@ new class extends Component
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">#</th>
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Requirement / Document Title</th>
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Submission Type</th>
+                                    <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Weightage (%)</th>
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Requirement</th>
                                     <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-sm">
                                 @foreach($technicalChecklist as $index => $item)
-                                    <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
+                                    <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors {{ !empty($item['is_primary_link']) ? 'bg-emerald-50/30 dark:bg-emerald-950/10' : '' }}">
                                         <td class="px-4 py-3.5 font-mono text-xs font-bold text-zinc-400">{{ $index + 1 }}</td>
                                         <td class="px-4 py-3.5">
-                                            <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $item['title'] }}</div>
-                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $item['desc'] }}</div>
-                                            @if($item['template_filename'])
+                                            <div class="flex items-center gap-2">
+                                                <h4 class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $item['title'] }}</h4>
+                                                @if(!empty($item['is_primary_link']))
+                                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white">Primary Item #1</span>
+                                                @endif
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $item['desc'] }}</p>
+
+                                            @if(!empty($item['is_primary_link']))
+                                                <div class="mt-1.5">
+                                                    <button wire:click="setTab('technical-spec')" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">
+                                                        <x-heroicon-o-cpu-chip class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                                        Urutkan / Lihat Tab Technical Specification →
+                                                    </button>
+                                                </div>
+                                            @elseif($item['template_filename'])
                                                 <div class="mt-1 flex items-center gap-1.5 text-xs font-mono text-indigo-600 dark:text-indigo-400">
                                                     <x-heroicon-o-paper-clip class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                                     <span>Template: {{ $item['template_filename'] }}</span>
@@ -1109,6 +1468,9 @@ new class extends Component
                                                 <x-badge variant="secondary" pill>Yes/No Compliance</x-badge>
                                             @endif
                                         </td>
+                                        <td class="px-4 py-3.5 whitespace-nowrap text-center font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                            {{ $item['weightage'] ?? 0 }}%
+                                        </td>
                                         <td class="px-4 py-3.5 whitespace-nowrap">
                                             <button wire:click="toggleItemRequired('technical', '{{ $item['id'] }}')" class="cursor-pointer">
                                                 @if($item['is_required'])
@@ -1119,13 +1481,17 @@ new class extends Component
                                             </button>
                                         </td>
                                         <td class="px-4 py-3.5 whitespace-nowrap text-right">
-                                            <button
-                                                wire:click="deleteChecklistItem('technical', '{{ $item['id'] }}')"
-                                                class="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-colors"
-                                                title="Delete item"
-                                            >
-                                                <x-heroicon-o-trash class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                            </button>
+                                            @if(empty($item['is_primary_link']))
+                                                <button
+                                                    wire:click="deleteChecklistItem('technical', '{{ $item['id'] }}')"
+                                                    class="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-colors"
+                                                    title="Delete item"
+                                                >
+                                                    <x-heroicon-o-trash class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                                </button>
+                                            @else
+                                                <span class="text-xs text-zinc-400 italic">Protected</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -1133,7 +1499,7 @@ new class extends Component
                         </table>
                     </div>
                 @else
-                    {{-- ── SUPPLIER PREVIEW MODE (TABULAR VIEW WITH ACTION BUTTONS) ── --}}
+                    {{-- ── SUPPLIER PREVIEW MODE ── --}}
                     <div class="space-y-4">
                         <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 flex items-center justify-between text-xs text-amber-800 dark:text-amber-300">
                             <div class="flex items-center gap-2">
@@ -1258,9 +1624,12 @@ new class extends Component
 
     {{-- ════ TAB 4: FINANCIAL CHECKLIST ════ --}}
     @if($activeTab === 'financial-checklist')
+        @php
+            $totalFinChecklistWeightage = array_reduce($financialChecklist, fn($acc, $i) => $acc + ($i['weightage'] ?? 0), 0);
+        @endphp
         <x-card>
             <div class="space-y-6">
-                {{-- Clean Header --}}
+                {{-- Clean Header with Total Weightage --}}
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
                     <div>
                         <div class="flex items-center gap-2">
@@ -1273,9 +1642,14 @@ new class extends Component
                             @else
                                 <x-badge variant="success" pill>Officer Mode</x-badge>
                             @endif
+
+                            {{-- Total Weightage Badge --}}
+                            <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
+                                Total Weightage: {{ $totalFinChecklistWeightage }}%
+                            </span>
                         </div>
                         <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                            Configure required financial documents, tender pricing tables, and bank statement uploads for suppliers.
+                            Configure required financial submission documents. <strong>Item #1 is linked directly to Financial Pricelist (BOQ)</strong>.
                         </p>
                     </div>
 
@@ -1306,18 +1680,32 @@ new class extends Component
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">#</th>
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Requirement / Document Title</th>
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Submission Type</th>
+                                    <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Weightage (%)</th>
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Requirement</th>
                                     <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800 text-sm">
                                 @foreach($financialChecklist as $index => $item)
-                                    <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
+                                    <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors {{ !empty($item['is_primary_link']) ? 'bg-emerald-50/30 dark:bg-emerald-950/10' : '' }}">
                                         <td class="px-4 py-3.5 font-mono text-xs font-bold text-zinc-400">{{ $index + 1 }}</td>
                                         <td class="px-4 py-3.5">
-                                            <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $item['title'] }}</div>
-                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $item['desc'] }}</div>
-                                            @if($item['template_filename'])
+                                            <div class="flex items-center gap-2">
+                                                <h4 class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $item['title'] }}</h4>
+                                                @if(!empty($item['is_primary_link']))
+                                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white">Primary Item #1</span>
+                                                @endif
+                                            </div>
+                                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $item['desc'] }}</p>
+
+                                            @if(!empty($item['is_primary_link']))
+                                                <div class="mt-1.5">
+                                                    <button wire:click="setTab('financial-pricelist')" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer">
+                                                        <x-heroicon-o-calculator class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                                        Urutkan / Lihat Tab Financial Pricelist (BOQ) →
+                                                    </button>
+                                                </div>
+                                            @elseif($item['template_filename'])
                                                 <div class="mt-1 flex items-center gap-1.5 text-xs font-mono text-indigo-600 dark:text-indigo-400">
                                                     <x-heroicon-o-paper-clip class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                                                     <span>Template: {{ $item['template_filename'] }}</span>
@@ -1337,6 +1725,9 @@ new class extends Component
                                                 <x-badge variant="secondary" pill>Yes/No Compliance</x-badge>
                                             @endif
                                         </td>
+                                        <td class="px-4 py-3.5 whitespace-nowrap text-center font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                            {{ $item['weightage'] ?? 0 }}%
+                                        </td>
                                         <td class="px-4 py-3.5 whitespace-nowrap">
                                             <button wire:click="toggleItemRequired('financial', '{{ $item['id'] }}')" class="cursor-pointer">
                                                 @if($item['is_required'])
@@ -1347,13 +1738,17 @@ new class extends Component
                                             </button>
                                         </td>
                                         <td class="px-4 py-3.5 whitespace-nowrap text-right">
-                                            <button
-                                                wire:click="deleteChecklistItem('financial', '{{ $item['id'] }}')"
-                                                class="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-colors"
-                                                title="Delete item"
-                                            >
-                                                <x-heroicon-o-trash class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                            </button>
+                                            @if(empty($item['is_primary_link']))
+                                                <button
+                                                    wire:click="deleteChecklistItem('financial', '{{ $item['id'] }}')"
+                                                    class="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-colors"
+                                                    title="Delete item"
+                                                >
+                                                    <x-heroicon-o-trash class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                                </button>
+                                            @else
+                                                <span class="text-xs text-zinc-400 italic">Protected</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -1361,7 +1756,7 @@ new class extends Component
                         </table>
                     </div>
                 @else
-                    {{-- ── SUPPLIER PREVIEW MODE (TABULAR VIEW WITH ACTION BUTTONS) ── --}}
+                    {{-- ── SUPPLIER PREVIEW MODE ── --}}
                     <div class="space-y-4">
                         <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 flex items-center justify-between text-xs text-amber-800 dark:text-amber-300">
                             <div class="flex items-center gap-2">
@@ -1484,6 +1879,511 @@ new class extends Component
         </x-card>
     @endif
 
+    {{-- ════ TAB 5: TECHNICAL SPECIFICATION (3-LAYER NESTED HIERARCHY) ════ --}}
+    @if($activeTab === 'technical-spec')
+        @php
+            $totalTechSpecWeightage = array_reduce($technicalSpecs, fn($acc, $cat) => $acc + ($cat['weightage'] ?? 0), 0);
+        @endphp
+        <x-card>
+            <div class="space-y-6">
+                {{-- Header with Total Weightage --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                <x-heroicon-o-cpu-chip class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Technical Specification & Evaluation Criteria
+                            </h3>
+
+                            {{-- Total Weightage Badge --}}
+                            <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
+                                Total Weightage: {{ $totalTechSpecWeightage }}%
+                            </span>
+                        </div>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                            Hierarchical 3-level technical breakdown (Category → Subcategory → Item Specification) for supplier technical scoring.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <x-button variant="primary" size="sm" wire:click="openAddTechSpecModal(1)" class="cursor-pointer">
+                            <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Add Level 1 Category
+                        </x-button>
+                    </div>
+                </div>
+
+                {{-- 3-Layer Nested Tree Render --}}
+                <div class="space-y-4">
+                    @foreach($technicalSpecs as $cat)
+                        {{-- Level 1: Category --}}
+                        <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/60 overflow-hidden shadow-xs">
+                            <div class="p-4 bg-zinc-100/80 dark:bg-zinc-800/60 flex items-center justify-between gap-4 border-b border-zinc-200/80 dark:border-zinc-800">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="px-2 py-0.5 rounded-lg bg-emerald-600 text-white font-mono text-xs font-bold">
+                                        {{ $cat['code'] }}
+                                    </span>
+                                    <div class="min-w-0">
+                                        <h4 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-tight">{{ $cat['name'] }}</h4>
+                                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $cat['desc'] }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3 shrink-0">
+                                    <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800/50">
+                                        Weight: {{ $cat['weightage'] }}%
+                                    </span>
+                                    <button
+                                        wire:click="openAddTechSpecModal(2, '{{ $cat['id'] }}')"
+                                        class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                                    >
+                                        + Subcategory (L2)
+                                    </button>
+                                    <button wire:click="deleteTechSpecNode('{{ $cat['id'] }}')" class="p-1 rounded-lg text-zinc-400 hover:text-rose-600 cursor-pointer">
+                                        <x-heroicon-o-trash class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {{-- Level 2: Subcategory --}}
+                            <div class="p-4 space-y-4">
+                                @foreach($cat['children'] as $sub)
+                                    <div class="pl-4 border-l-2 border-emerald-500/40 dark:border-emerald-500/30 space-y-3">
+                                        <div class="flex items-center justify-between gap-4 p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800">
+                                            <div class="flex items-center gap-2.5 min-w-0">
+                                                <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-mono text-xs font-semibold border border-indigo-200 dark:border-indigo-800/40">
+                                                    {{ $sub['code'] }}
+                                                </span>
+                                                <div>
+                                                    <h5 class="text-xs font-bold text-zinc-800 dark:text-zinc-200">{{ $sub['name'] }}</h5>
+                                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">{{ $sub['desc'] }}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <span class="text-xs font-mono font-medium text-zinc-500">Weight: {{ $sub['weightage'] }}%</span>
+                                                <button
+                                                    wire:click="openAddTechSpecModal(3, '{{ $sub['id'] }}')"
+                                                    class="px-2 py-1 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40 hover:bg-emerald-100 transition-colors cursor-pointer"
+                                                >
+                                                    + Spec Item (L3)
+                                                </button>
+                                                <button wire:click="deleteTechSpecNode('{{ $sub['id'] }}')" class="p-1 rounded-lg text-zinc-400 hover:text-rose-600 cursor-pointer">
+                                                    <x-heroicon-o-trash class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {{-- Level 3: Specification Sub-item --}}
+                                        <div class="pl-4 space-y-2">
+                                            @foreach($sub['children'] as $item)
+                                                <div class="p-3 rounded-xl bg-zinc-50/70 dark:bg-zinc-900/40 border border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between gap-3 text-xs">
+                                                    <div class="flex items-start gap-2 min-w-0">
+                                                        <span class="font-mono font-bold text-zinc-400 shrink-0">{{ $item['code'] }}</span>
+                                                        <div class="min-w-0">
+                                                            <div class="font-semibold text-zinc-900 dark:text-zinc-100">{{ $item['name'] }}</div>
+                                                            <div class="text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $item['desc'] }}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex items-center gap-3 shrink-0">
+                                                        <x-badge variant="info" pill>Type: {{ ucfirst($item['type']) }}</x-badge>
+                                                        <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Max Mark: {{ $item['max_mark'] }}</span>
+                                                        <button wire:click="deleteTechSpecNode('{{ $item['id'] }}')" class="text-zinc-400 hover:text-rose-600 cursor-pointer">
+                                                            <x-heroicon-o-trash class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </x-card>
+    @endif
+
+    {{-- ════ TAB 6: FINANCIAL PRICELIST (BILL OF QUANTITIES) ════ --}}
+    @if($activeTab === 'financial-pricelist')
+        @php
+            $totalPricelistWeightage = array_reduce($financialPricelist, fn($acc, $i) => $acc + ($i['weightage'] ?? 0), 0);
+        @endphp
+        <x-card>
+            <div class="space-y-6">
+                {{-- Header & Summary --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                                <x-heroicon-o-calculator class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                Financial Pricelist & Bill of Quantities (BOQ)
+                            </h3>
+
+                            {{-- Total Weightage Badge --}}
+                            <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
+                                Total Weightage: {{ $totalPricelistWeightage }}%
+                            </span>
+                        </div>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                            Itemized financial schedule for vendor bidding & price score evaluation.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <x-button variant="primary" size="sm" wire:click="openAddPricelistModal" class="cursor-pointer">
+                            <x-heroicon-o-plus class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Add Pricelist Item
+                        </x-button>
+                    </div>
+                </div>
+
+                {{-- Summary Stats --}}
+                @php
+                    $totalEstBudget = array_reduce($financialPricelist, fn($acc, $i) => $acc + ($i['qty'] * $i['est_unit_price']), 0);
+                @endphp
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800">
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Total Estimated Budget</span>
+                        <div class="mt-1 text-base font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            RM {{ number_format($totalEstBudget, 2) }}
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Total Pricelist Items</span>
+                        <div class="mt-1 text-base font-mono font-bold text-zinc-900 dark:text-zinc-100">
+                            {{ count($financialPricelist) }} Items
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Total Pricelist Weightage</span>
+                        <div class="mt-1 text-base font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                            {{ $totalPricelistWeightage }}%
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Pricelist Schedule Table --}}
+                <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs">
+                    <table class="min-w-full divide-y divide-zinc-100 dark:divide-zinc-800 text-sm">
+                        <thead class="bg-zinc-50/70 dark:bg-zinc-800/40">
+                            <tr>
+                                <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Item Ref</th>
+                                <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Item Description</th>
+                                <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Qty / UOM</th>
+                                <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Est. Unit Price (RM)</th>
+                                <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Est. Subtotal (RM)</th>
+                                <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Score Weight</th>
+                                <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                            @foreach($financialPricelist as $item)
+                                @php $subtotal = $item['qty'] * $item['est_unit_price']; @endphp
+                                <tr class="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 transition-colors">
+                                    <td class="px-4 py-4 font-mono font-bold text-xs text-emerald-600 dark:text-emerald-400 whitespace-nowrap">{{ $item['item_code'] }}</td>
+                                    <td class="px-4 py-4">
+                                        <div class="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">{{ $item['name'] }}</div>
+                                    </td>
+                                    <td class="px-4 py-4 text-center whitespace-nowrap font-mono text-xs font-medium">
+                                        {{ $item['qty'] }} {{ $item['uom'] }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right whitespace-nowrap font-mono text-xs font-medium">
+                                        RM {{ number_format($item['est_unit_price'], 2) }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right whitespace-nowrap font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                        RM {{ number_format($subtotal, 2) }}
+                                    </td>
+                                    <td class="px-4 py-4 text-center whitespace-nowrap">
+                                        <x-badge variant="info">{{ $item['weightage'] }}%</x-badge>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-right">
+                                        <button
+                                            wire:click="deletePricelistItem('{{ $item['id'] }}')"
+                                            class="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer transition-colors"
+                                            title="Delete item"
+                                        >
+                                            <x-heroicon-o-trash class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </x-card>
+    @endif
+
+    {{-- ════ TAB 7: SCORING (OVERALL EVALUATION MATRIX) ════ --}}
+    @if($activeTab === 'scoring')
+        @php
+            $sumTechChecklist = array_reduce($technicalChecklist, fn($a, $i) => $a + ($i['weightage'] ?? 0), 0);
+            $sumFinChecklist = array_reduce($financialChecklist, fn($a, $i) => $a + ($i['weightage'] ?? 0), 0);
+            $sumTechSpecs = array_reduce($technicalSpecs, fn($a, $c) => $a + ($c['weightage'] ?? 0), 0);
+            $sumFinPricelist = array_reduce($financialPricelist, fn($a, $i) => $a + ($i['weightage'] ?? 0), 0);
+        @endphp
+        <x-card>
+            <div class="space-y-6">
+                {{-- Header --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-zinc-100 dark:border-zinc-800">
+                    <div>
+                        <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                            <x-heroicon-o-chart-bar class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Overall Scoring & Evaluation Matrix
+                        </h3>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                            Configure evaluation weightage ratios, technical passing threshold marks, and overall scoring calculation.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 font-mono text-xs font-bold">
+                            Ratio: {{ $techWeightageRatio }}% Technical : {{ $finWeightageRatio }}% Financial
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Weightage Configuration Controls --}}
+                <div class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 space-y-4">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Configuration Ratio & Threshold Marks
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="space-y-1.5">
+                            <x-label for="techWeightageRatio">Nisbah Pemberat Teknikal (%)</x-label>
+                            <input id="techWeightageRatio" type="number" min="0" max="100" wire:model.live="techWeightageRatio" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <x-label for="finWeightageRatio">Nisbah Pemberat Kewangan (%)</x-label>
+                            <input id="finWeightageRatio" type="number" min="0" max="100" wire:model.live="finWeightageRatio" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <x-label for="passingTechMark">Lulus Min. Teknikal (%)</x-label>
+                            <input id="passingTechMark" type="number" min="0" max="100" wire:model.live="passingTechMark" class="block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 font-mono font-bold text-amber-600 dark:text-amber-400">
+                        </div>
+                    </div>
+                </div>
+
+                {{-- All 4 Evaluation Tables Weightage Summary Cards --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {{-- Card 1: Technical Checklist --}}
+                    <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                            <span>Technical Checklist</span>
+                            <x-heroicon-o-clipboard-document-check class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </div>
+                        <div class="text-xl font-bold font-mono text-zinc-900 dark:text-zinc-100">
+                            {{ $sumTechChecklist }}%
+                        </div>
+                        <p class="text-xs text-zinc-400 font-mono">{{ count($technicalChecklist) }} Checklist Items</p>
+                    </div>
+
+                    {{-- Card 2: Technical Specs --}}
+                    <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                            <span>Technical Specs (3-Layer)</span>
+                            <x-heroicon-o-cpu-chip class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </div>
+                        <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                            {{ $sumTechSpecs }}%
+                        </div>
+                        <p class="text-xs text-zinc-400 font-mono">{{ count($technicalSpecs) }} Categories</p>
+                    </div>
+
+                    {{-- Card 3: Financial Checklist --}}
+                    <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                            <span>Financial Checklist</span>
+                            <x-heroicon-o-banknotes class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </div>
+                        <div class="text-xl font-bold font-mono text-zinc-900 dark:text-zinc-100">
+                            {{ $sumFinChecklist }}%
+                        </div>
+                        <p class="text-xs text-zinc-400 font-mono">{{ count($financialChecklist) }} Checklist Items</p>
+                    </div>
+
+                    {{-- Card 4: Financial Pricelist --}}
+                    <div class="p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-semibold text-zinc-500">
+                            <span>Financial Pricelist (BOQ)</span>
+                            <x-heroicon-o-calculator class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        </div>
+                        <div class="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400">
+                            {{ $sumFinPricelist }}%
+                        </div>
+                        <p class="text-xs text-zinc-400 font-mono">{{ count($financialPricelist) }} BOQ Items</p>
+                    </div>
+                </div>
+
+                {{-- Full Scoring Calculation Formula Table --}}
+                <div class="overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs">
+                    <table class="min-w-full divide-y divide-zinc-100 dark:divide-zinc-800 text-sm">
+                        <thead class="bg-zinc-50/70 dark:bg-zinc-800/40">
+                            <tr>
+                                <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Evaluation Domain</th>
+                                <th scope="col" class="px-4 py-3.5 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">Primary Item Component</th>
+                                <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Internal List Weightage</th>
+                                <th scope="col" class="px-4 py-3.5 text-center text-xs font-semibold text-zinc-500 uppercase tracking-wider">Overall Domain Ratio</th>
+                                <th scope="col" class="px-4 py-3.5 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Weighted Max Score</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800">
+                            <tr>
+                                <td class="px-4 py-4 font-semibold text-emerald-700 dark:text-emerald-400">Teknikal (Technical)</td>
+                                <td class="px-4 py-4">
+                                    <div class="font-medium text-zinc-900 dark:text-zinc-100">Technical Specification (3-Layer) & Technical Checklist</div>
+                                    <div class="text-xs text-zinc-500">Item #1: Borang Spesifikasi Teknikal Sheet</div>
+                                </td>
+                                <td class="px-4 py-4 text-center font-mono font-bold">{{ $sumTechSpecs }}%</td>
+                                <td class="px-4 py-4 text-center font-mono font-bold text-emerald-600">{{ $techWeightageRatio }}%</td>
+                                <td class="px-4 py-4 text-right font-mono font-bold text-emerald-600">{{ $techWeightageRatio }} Marks</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 font-semibold text-indigo-700 dark:text-indigo-400">Kewangan (Financial)</td>
+                                <td class="px-4 py-4">
+                                    <div class="font-medium text-zinc-900 dark:text-zinc-100">Financial Pricelist (BOQ Schedule) & Financial Checklist</div>
+                                    <div class="text-xs text-zinc-500">Item #1: Jadual Harga Ringkasan & Pecahan BOQ</div>
+                                </td>
+                                <td class="px-4 py-4 text-center font-mono font-bold">{{ $sumFinPricelist }}%</td>
+                                <td class="px-4 py-4 text-center font-mono font-bold text-indigo-600">{{ $finWeightageRatio }}%</td>
+                                <td class="px-4 py-4 text-right font-mono font-bold text-indigo-600">{{ $finWeightageRatio }} Marks</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-zinc-50/80 dark:bg-zinc-800/60 font-bold">
+                            <tr>
+                                <td colspan="3" class="px-4 py-3.5 text-zinc-900 dark:text-zinc-100">JUMLAH MARKAH KESELURUHAN (TOTAL OVERALL SCORE)</td>
+                                <td class="px-4 py-3.5 text-center font-mono text-emerald-600 dark:text-emerald-400">100.0%</td>
+                                <td class="px-4 py-3.5 text-right font-mono text-emerald-600 dark:text-emerald-400">100.0 MARKS</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </x-card>
+    @endif
+
+    {{-- ════ ADD TECHNICAL SPEC MODAL ════ --}}
+    @if($showAddTechSpecModal)
+        <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddTechSpecModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                        Tambah Spesifikasi Teknikal (Tahap {{ $newSpecLevel }})
+                    </h3>
+                    <button wire:click="closeAddTechSpecModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <form wire:submit="saveTechSpecItem" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="newSpecCode" :required="true">Kod Item</x-label>
+                            <input id="newSpecCode" type="text" wire:model="newSpecCode" placeholder="e.g. 1.0, 1.1, 1.1.1" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newSpecWeightage">Pemberat (%) / Markah Maks</x-label>
+                            <input id="newSpecWeightage" type="number" step="0.5" wire:model="newSpecWeightage" placeholder="10.0" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-label for="newSpecName" :required="true">Nama Spesifikasi / Kategori</x-label>
+                        <input id="newSpecName" type="text" wire:model="newSpecName" placeholder="Tajuk spesifikasi teknikal..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        @error('newSpecName') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <x-label for="newSpecDesc">Keterangan / Terperinci</x-label>
+                        <textarea id="newSpecDesc" wire:model="newSpecDesc" rows="2" placeholder="Terangkan keperluan spesifikasi min..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100"></textarea>
+                    </div>
+
+                    @if($newSpecLevel === 3)
+                        <div>
+                            <x-label for="newSpecType">Jenis Penilaian</x-label>
+                            <select id="newSpecType" wire:model="newSpecType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="text">Teks / Penjelasan</option>
+                                <option value="number">Nombor / Nilai Terukur</option>
+                                <option value="boolean">Pematuhan Ya/Tidak</option>
+                                <option value="choice">Pilihan Peringkat SLA</option>
+                            </select>
+                        </div>
+                    @endif
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddTechSpecModal">Batal</x-button>
+                        <x-button variant="primary" size="sm" type="submit">Simpan Spesifikasi</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    {{-- ════ ADD FINANCIAL PRICELIST MODAL ════ --}}
+    @if($showAddPricelistModal)
+        <div x-data class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm" wire:click="closeAddPricelistModal"></div>
+
+            <div class="relative z-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-lg space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                        Tambah Perkara Jadual Harga (BOQ)
+                    </h3>
+                    <button wire:click="closeAddPricelistModal" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+                        <x-heroicon-o-x-mark class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                    </button>
+                </div>
+
+                <form wire:submit="savePricelistItem" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="newPriceCode" :required="true">Kod Rujukan BOQ</x-label>
+                            <input id="newPriceCode" type="text" wire:model="newPriceCode" placeholder="BOQ-01" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newPriceUom">Unit Ukuran (UOM)</x-label>
+                            <input id="newPriceUom" type="text" wire:model="newPriceUom" placeholder="e.g. Unit, Lesen, Pakej" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <x-label for="newPriceName" :required="true">Keterangan Barangan / Perkhidmatan</x-label>
+                        <input id="newPriceName" type="text" wire:model="newPriceName" placeholder="Keterangan item jadual harga..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        @error('newPriceName') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <x-label for="newPriceQty">Kuantiti</x-label>
+                            <input id="newPriceQty" type="number" min="1" wire:model="newPriceQty" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newPriceEstUnitPrice">Harga Unit (RM)</x-label>
+                            <input id="newPriceEstUnitPrice" type="number" step="0.01" wire:model="newPriceEstUnitPrice" placeholder="0.00" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                        <div>
+                            <x-label for="newPriceWeightage">Pemberat (%)</x-label>
+                            <input id="newPriceWeightage" type="number" step="0.5" wire:model="newPriceWeightage" placeholder="10" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                        <x-button variant="outline" size="sm" type="button" wire:click="closeAddPricelistModal">Batal</x-button>
+                        <x-button variant="primary" size="sm" type="submit">Simpan Item Harga</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
     {{-- ════ ADD CHECKLIST ITEM MODAL (OFFICER) ════ --}}
     @if($showAddItemModal)
         <div
@@ -1516,15 +2416,21 @@ new class extends Component
                         <textarea id="newItemDesc" wire:model="newItemDesc" rows="2" placeholder="Jelaskan apa yang perlu dimuat naik atau diisi oleh pembekal..." class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
                     </div>
 
-                    <div>
-                        <x-label for="newItemInputType" :required="true">Jenis Keperluan Input / Dokumen</x-label>
-                        <select id="newItemInputType" wire:model.live="newItemInputType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100 focus:ring-emerald-500 focus:border-emerald-500">
-                            <option value="file_upload">Muat Naik Fail Dokumen (File Upload)</option>
-                            <option value="file_download_upload">Muat Turun Templat Pegawai & Muat Naik Semula</option>
-                            <option value="text_input">Jawapan Teks Ringkas (Text Input)</option>
-                            <option value="number_input">Input Nombor / Nilai Harga (Number Input)</option>
-                            <option value="boolean">Kotak Semak Pematuhan (Yes/No Checkbox)</option>
-                        </select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <x-label for="newItemInputType" :required="true">Jenis Keperluan Input</x-label>
+                            <select id="newItemInputType" wire:model.live="newItemInputType" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                                <option value="file_upload">Muat Naik Fail</option>
+                                <option value="file_download_upload">Muat Turun & Muat Naik</option>
+                                <option value="text_input">Jawapan Teks</option>
+                                <option value="number_input">Input Nombor</option>
+                                <option value="boolean">Kotak Semak Pematuhan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <x-label for="newItemWeightage">Pemberat (%)</x-label>
+                            <input id="newItemWeightage" type="number" step="0.5" wire:model="newItemWeightage" placeholder="15" class="mt-1 block w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm p-2.5 text-zinc-900 dark:text-zinc-100">
+                        </div>
                     </div>
 
                     @if(in_array($newItemInputType, ['file_download_upload', 'file_download']))
