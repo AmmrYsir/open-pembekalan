@@ -9,19 +9,34 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-test('authenticated user can view dedicated acquisition show page', function () {
+test('authenticated user can view dedicated acquisition show page with long title', function () {
     $user = User::factory()->create(['email_verified_at' => now()]);
 
     $acquisition = Acquisition::create([
         'project_number' => 'PRJ-2026-999',
-        'project_name' => 'Full Page Acquisition Test',
+        'project_name' => 'SEBUT HARGA PERKHIDMATAN KAWALAN KESELAMATAN (TANPA SENJATA API) BAGI TEMPOH DUA (2) TAHUN DI SELADANG CAGE (GIMNASIUM ANGKAT BERAT, TINJU, GIMRAMA, TERJUN), MAJLIS SUKAN NEGERI PERAK',
     ]);
 
     $response = $this->actingAs($user)->get(route('acquisition.show', $acquisition));
 
     $response->assertOk();
-    $response->assertSee('Full Page Acquisition Test');
+    $response->assertSee('SEBUT HARGA PERKHIDMATAN KAWALAN KESELAMATAN');
     $response->assertSee('PRJ-2026-999');
+});
+
+test('acquisition show livewire component supports title expansion for long titles', function () {
+    $user = User::factory()->create(['email_verified_at' => now()]);
+
+    $acquisition = Acquisition::create([
+        'project_number' => 'PRJ-2026-777',
+        'project_name' => 'SEBUT HARGA PERKHIDMATAN KAWALAN KESELAMATAN (TANPA SENJATA API) BAGI TEMPOH DUA (2) TAHUN DI SELADANG CAGE (GIMNASIUM ANGKAT BERAT, TINJU, GIMRAMA, TERJUN), MAJLIS SUKAN NEGERI PERAK',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('acquisition.show', ['acquisition' => $acquisition])
+        ->assertSet('expandFullTitle', false)
+        ->call('$toggle', 'expandFullTitle')
+        ->assertSet('expandFullTitle', true);
 });
 
 test('acquisition show livewire component supports segmented tab bar and locked evaluation tabs', function () {

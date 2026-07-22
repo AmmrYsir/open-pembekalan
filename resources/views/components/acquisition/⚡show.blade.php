@@ -23,6 +23,7 @@ new class extends Component
     public bool $isEditing = false;
     public bool $previewSupplierMode = false;
     public bool $isEvaluationUnlocked = false; // Lock state for evaluation tabs
+    public bool $expandFullTitle = false; // Toggle full project title view
 
     // Add Checklist Item Modal State (Officer)
     public bool $showAddItemModal = false;
@@ -957,15 +958,23 @@ new class extends Component
         </div>
     @endif
 
-    {{-- ── Main Header & Overview Card ── --}}
-    <x-card>
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            {{-- Left: Project title, numbers, badges --}}
-            <div class="space-y-2 min-w-0">
-                <div class="flex items-center gap-3 flex-wrap">
-                    <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-semibold border border-emerald-200 dark:border-emerald-800/50">
+    {{-- ── COMPACT & CLEAN ACQUISITION HEADER CARD ── --}}
+    <x-card class="!p-4 sm:!p-5">
+        <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+            
+            {{-- Left Content Area --}}
+            <div class="space-y-2 min-w-0 flex-1">
+                {{-- Compact Top Metadata Badges Strip --}}
+                <div class="flex items-center gap-2 flex-wrap text-xs">
+                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 font-mono font-bold border border-emerald-200 dark:border-emerald-800/40 shrink-0">
                         {{ $acquisition->project_number }}
                     </span>
+
+                    @if($acquisition->tender_number)
+                        <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono text-[11px] border border-zinc-200 dark:border-zinc-700 shrink-0">
+                            Tender: {{ $acquisition->tender_number }}
+                        </span>
+                    @endif
 
                     @if($acquisition->status)
                         <x-badge variant="{{ $acquisition->status->color() }}">
@@ -978,38 +987,50 @@ new class extends Component
                             {{ $acquisition->type instanceof \App\Enums\AcquisitionType ? $acquisition->type->value : $acquisition->type }}
                         </x-badge>
                     @endif
-                </div>
 
-                <h1 class="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight leading-snug">
-                    {{ $acquisition->project_name }}
-                </h1>
-
-                <div class="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400 flex-wrap">
-                    @if($acquisition->tender_number)
-                        <span class="flex items-center gap-1.5 font-mono">
-                            <x-heroicon-o-document-text class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                            Tender: {{ $acquisition->tender_number }}
+                    @if($acquisition->siling_price !== null)
+                        <span class="px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold text-xs">
+                            RM {{ number_format((float) $acquisition->siling_price, 2) }}
                         </span>
                     @endif
+                </div>
 
+                {{-- Project Title (Responsive & Truncation Handling for Long Malay Titles) --}}
+                <div class="space-y-1">
+                    <h1 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight leading-snug {{ $expandFullTitle ? '' : 'line-clamp-2' }}">
+                        {{ $acquisition->project_name }}
+                    </h1>
+
+                    @if(strlen($acquisition->project_name) > 90)
+                        <button
+                            wire:click="$toggle('expandFullTitle')"
+                            class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
+                        >
+                            <span>{{ $expandFullTitle ? '▲ Tunjukkan Tajuk Ringkas' : '▼ Baca Tajuk Penuh Perolehan' }}</span>
+                        </button>
+                    @endif
+                </div>
+
+                {{-- Agency & Officer Subline --}}
+                <div class="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400 flex-wrap pt-0.5">
                     @if($acquisition->agency)
-                        <span class="flex items-center gap-1.5">
-                            <x-heroicon-o-building-office-2 class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        <span class="flex items-center gap-1 font-medium">
+                            <x-heroicon-o-building-office-2 class="w-3.5 h-3.5 text-zinc-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             {{ $acquisition->agency->name }}
                         </span>
                     @endif
 
-                    @if($acquisition->siling_price !== null)
-                        <span class="flex items-center gap-1.5 font-mono font-semibold text-emerald-600 dark:text-emerald-400">
-                            <x-heroicon-o-currency-dollar class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                            RM {{ number_format((float) $acquisition->siling_price, 2) }}
+                    @if($acquisition->user_id)
+                        <span class="flex items-center gap-1">
+                            <x-heroicon-o-user class="w-3.5 h-3.5 text-zinc-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Pegawai: <strong>{{ \App\Models\User::find($acquisition->user_id)?->name ?? 'Ditugaskan' }}</strong>
                         </span>
                     @endif
                 </div>
             </div>
 
-            {{-- Right: Actions & Pipeline Status Transitions --}}
-            <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+            {{-- Right Compact Action Toolbar --}}
+            <div class="flex items-center gap-2 shrink-0 self-start pt-1 lg:pt-0">
                 @if($acquisition->status)
                     @foreach($acquisition->status->transitionableStateInstances() as $targetState)
                         <x-button 
@@ -1019,12 +1040,12 @@ new class extends Component
                             wire:loading.attr="disabled"
                             wire:target="transitionTo('{{ addslashes(get_class($targetState)) }}')"
                         >
-                            <x-heroicon-o-arrow-right-circle class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            <x-heroicon-o-arrow-right-circle class="w-3.5 h-3.5 mr-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
                             <span wire:loading.remove wire:target="transitionTo('{{ addslashes(get_class($targetState)) }}')">
-                                Advance to {{ $targetState->label() }}
+                                {{ $targetState->label() }}
                             </span>
                             <span wire:loading wire:target="transitionTo('{{ addslashes(get_class($targetState)) }}')">
-                                Updating...
+                                ...
                             </span>
                         </x-button>
                     @endforeach
@@ -1033,8 +1054,8 @@ new class extends Component
                 @if($activeTab === 'project-info')
                     @if(!$isEditing)
                         <x-button variant="outline" size="sm" wire:click="enableEdit" class="cursor-pointer">
-                            <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                            Edit Project Info
+                            <x-heroicon-o-pencil class="w-3.5 h-3.5 mr-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                            Edit
                         </x-button>
                     @else
                         <x-button variant="outline" size="sm" wire:click="cancelEdit" class="cursor-pointer">
@@ -1042,12 +1063,10 @@ new class extends Component
                         </x-button>
                         <x-button variant="primary" size="sm" wire:click="save" wire:loading.attr="disabled" wire:target="save">
                             <span wire:loading.remove wire:target="save">
-                                <x-heroicon-o-arrow-down-tray class="w-4 h-4 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                                Save Changes
+                                Save
                             </span>
-                            <span wire:loading wire:target="save" class="flex items-center gap-1.5">
-                                <x-icon-spinner class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" />
-                                Saving...
+                            <span wire:loading wire:target="save">
+                                ...
                             </span>
                         </x-button>
                     @endif
@@ -1055,8 +1074,8 @@ new class extends Component
 
                 <a href="{{ route('acquisition') }}">
                     <x-button variant="secondary" size="sm" class="cursor-pointer">
-                        <x-heroicon-o-arrow-left class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
-                        Back to List
+                        <x-heroicon-o-arrow-left class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                        Back
                     </x-button>
                 </a>
             </div>

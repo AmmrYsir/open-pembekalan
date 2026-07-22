@@ -365,9 +365,10 @@ new class extends Component
                                     <a
                                         href="{{ route('acquisition.show', $acquisition) }}"
                                         title="Open Full Page (Tabs)"
-                                        class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 dark:hover:text-indigo-400 transition-all"
                                     >
-                                        <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                        <button class="p-1.5 rounded-lg cursor-pointer text-zinc-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 dark:hover:text-indigo-400 transition-all">
+                                            <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" />
+                                        </button>
                                     </a>
                                     {{-- Quick View (Drawer) --}}
                                     <button
