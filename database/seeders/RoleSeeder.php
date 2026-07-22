@@ -30,6 +30,20 @@ class RoleSeeder extends Seeder
             'is_active' => true,
             'is_hidden' => false,
         ],
+        [
+            'slug' => 'urusetia-1',
+            'name' => 'Urusetia L1',
+            'description' => 'Urusetia L1 role with access to specific features.',
+            'is_active' => true,
+            'is_hidden' => false,
+        ],
+        [
+            'slug' => 'urusetia-2',
+            'name' => 'Urusetia L2',
+            'description' => 'Urusetia L2 role with access to specific features.',
+            'is_active' => true,
+            'is_hidden' => false,
+        ],
     ];
 
     public function run(): void
